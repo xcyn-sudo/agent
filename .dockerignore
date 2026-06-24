@@ -1,0 +1,47 @@
+# ============================================
+# Docker 构建忽略文件
+# 加速构建并防止敏感文件进入镜像
+# ============================================
+
+# Git
+.git
+.gitattributes
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.iws
+*.ipr
+
+# Maven 构建产物
+target/
+*.jar
+!agent-qr-web/target/*.jar
+
+# 环境变量 (通过 docker-compose 注入)
+.env
+.env.local
+
+# 日志
+doc/log/
+*.log
+
+# 临时文件
+*.tmp
+*.swp
+*.swo
+*~
+
+# Docker
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# OS
+Thumbs.db
+.DS_Store
+
+# 上传目录
+uploads/

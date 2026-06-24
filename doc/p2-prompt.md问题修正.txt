@@ -1,0 +1,100 @@
+问题 1：第 5 步 catalog 模块的 pom.xml 依赖描述不完整
+位置：第 9.1 节
+
+当前描述：
+
+依赖：agent-qr-common, agent-qr-datasource, spring-boot-starter-web
+
+问题：KnowledgeCatalogService 需要注入 DocumentMapper 和 ChunkMapper（来自 agent-qr-knowledge），但依赖列表中未包含 agent-qr-knowledge。
+
+建议修正：
+
+xml
+依赖：agent-qr-common, agent-qr-datasource, agent-qr-knowledge, spring-boot-starter-web
+代码验证：KnowledgeCatalogService.getCatalogTree() 方法中需要 documentMapper.selectCount(null) 等操作，确实需要 knowledge 依赖。
+
+问题 2：第 5.3 节事件数量描述错误
+位置：第 5.3 节，## 五、第 1 步：agent-qr-common P2 扩展 → P2 新增类 (8个)
+
+当前描述：
+
+P2 新增类 (8个)：TraceIdFilter, MdcTaskDecorator, CaffeineConfig, DeadLetterQueue, DlqMessage, DlqMessageMapper, DocumentDeleteRequestedEvent, DataSyncCompletedEvent, DataQualityPassedEvent, DataETLedEvent
+
+问题：列出了 10 个类，但标注为 8 个。数量不符。
+
+建议修正：将 (8个) 改为 (10个)。
+
+问题 3：第 12 步 Web 模块遗漏了 AgentQrApplication 的 @ComponentScan
+位置：第 16.1 节
+
+当前描述：P1 已有类中包含 AgentQrApplication，但 P2 扩展内容中未提及需要修改启动类。
+
+问题：新增了 5 个 Maven 模块（compensation、datasource、data-quality、etl、catalog），如果这些模块的包路径都在 org.example.agent_qr 下，且 AgentQrApplication 已有 @ComponentScan(basePackages = "org.example.agent_qr")，则无需修改。但如果启动类扫描范围较窄，需要确认。
+
+建议：在 Web 模块任务清单中增加一个确认项：
+
+确认 AgentQrApplication 的 @ComponentScan 包含 org.example.agent_qr 全包，或补充扫描新增模块包路径。
+
+问题 4：第 12 步 AsyncConfigV2 与 P1 AsyncConfig 共存关系不明确
+位置：第 16.4 节
+
+当前描述：
+
+注意：与P1的AsyncConfig共存。建议将P1 AsyncConfig的Bean迁移至此，或在AsyncConfigV2中设@Primary。
+
+问题：这个描述是“建议”而非“明确指令”，子 Agent 可能会困惑。
+
+建议修正：明确指令：
+
+明确指令：P1 的 AsyncConfig 必须重命名或删除（建议重命名为 AsyncConfigP1 并标记 @Deprecated），AsyncConfigV2 作为唯一生效的线程池配置，不需要 @Primary。因为 docProcessExecutor Bean 名与 P1 重复，Spring 会报 Bean 冲突。
+
+问题 5：第 9 步 knowledge 模块 uploadDocument 方法签名变更未明确
+位置：第 13.2 节
+
+当前描述：
+
+改造 uploadDocument：新增 domain 和 sensitivityLevel 参数
+
+问题：这是一个接口签名变更，会影响调用方（KnowledgeController）。需要同时说明 Controller 的改造。
+
+建议修正：
+补充说明：KnowledgeController.uploadDocument() 的 API 也需要同步新增 domain 和 sensitivityLevel 请求参数（或从请求体中获取），并将这两个参数传递给 DocumentCommandService.uploadDocument()。
+
+问题 6：第 12 步根 pom.xml 调整的步骤位置矛盾
+位置：第 3 节“开发顺序” vs 第 16.2 节“根 pom.xml 修改”
+
+问题：根 pom.xml 调整列在第 12 步，但第 1 步 agent-qr-common 的子 Agent 创建时，5 个新模块的 pom.xml 尚未在根 pom 中注册，Maven 构建可能失败。
+
+建议：将根 pom.xml 调整提升为 “第 0 步”（前置步骤），在所有子模块代码生成之前完成。
+
+问题 7：第 8 步 RAG 模块的 ProviderFactory.getFallbackLLMProvider() 实现不完整
+位置：第 12.3 节
+
+当前描述：
+
+新增 getFallbackLLMProvider(): 返回 DeepSeek 作为降级 Provider
+
+问题：如果 DeepSeek Provider 初始化失败（如 API Key 为空），getFallbackLLMProvider() 需要处理这种情况。
+
+建议补充：
+
+java
+public LLMProvider getFallbackLLMProvider() {
+    if (deepSeekLLMProvider != null) {
+        return deepSeekLLMProvider;
+    }
+    log.error("降级链路不可用：DeepSeek Provider 未配置");
+    throw new BusinessException("所有 LLM Provider 均不可用");
+}
+问题 8：第 18 节 P3 边界中 EmbeddingDimensionManager 的 P2 替代方案未说明
+位置：第 18 节
+
+当前描述：
+
+Embedding 维度管理 → P3 实现 EmbeddingDimensionManager，P2 手动管理 Collection
+
+问题：P2 阶段如果 DeepSeek 和 Ollama 切换，Collection 名称不同，但 P2 没有自动维度检测。P2 的 application-p2.yml 中 langchain4j.chroma.collection-name 是否需要根据不同 Provider 手动配置不同值？
+
+建议补充：在 application-p2.yml 中添加注释说明：
+
+# P2 阶段：切换 Provider 时需要手动修改此配置为不同的 Collection 名称，避免维度冲突

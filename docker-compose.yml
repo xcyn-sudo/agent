@@ -1,0 +1,121 @@
+# ============================================
+# Agent-QR Docker Compose 编排文件
+# P1 阶段组件:
+#   - MySQL 8.0        (数据库)
+#   - ChromaDB         (向量数据库)
+#   - agent-qr-backend (Spring Boot 后端)
+# ============================================
+
+services:
+  # ==========================================
+  # MySQL 8.0 - 关系型数据库
+  # ==========================================
+  mysql:
+    image: mysql:8.0
+    container_name: agent-qr-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-agent_qr}
+      TZ: Asia/Shanghai
+    ports:
+      - "${MYSQL_PORT:-3308}:3306"
+    volumes:
+      # 数据持久化
+      - mysql-data:/var/lib/mysql
+      # 初始化 SQL 脚本 (首次启动自动执行)
+      - ./agent-qr-web/src/main/resources/db/p1-schema.sql:/docker-entrypoint-initdb.d/01-p1-schema.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - agent-qr-network
+
+  # ==========================================
+  # ChromaDB - 向量数据库
+  # 注意: chromadb/chroma:latest 是 Rust distroless 镜像，
+  # 内部没有 shell/curl/python，无法执行常规健康检查命令。
+  # 启动即代表服务可用。
+  # ==========================================
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: agent-qr-chromadb
+    restart: unless-stopped
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      ANONYMIZED_TELEMETRY: "FALSE"
+    ports:
+      - "${CHROMA_PORT:-8000}:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    networks:
+      - agent-qr-network
+
+  # ==========================================
+  # Spring Boot 后端
+  # ==========================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agent-qr-backend
+    restart: unless-stopped
+    environment:
+      # Spring 配置
+      SPRING_PROFILES_ACTIVE: p1
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-agent_qr}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-random-secret}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      # DeepSeek API
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      # ChromaDB
+      LANGCHAIN4J_CHROMA_BASE_URL: http://chromadb:8000
+      # 文件上传
+      FILE_UPLOAD_DIR: /app/uploads
+      # Java 内存配置
+      JAVA_OPTS: "-Xms256m -Xmx512m"
+    ports:
+      - "${BACKEND_PORT:-9090}:9090"
+    volumes:
+      - ${UPLOAD_DIR:-./uploads}:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -s -o /dev/null http://localhost:9090/api/auth/login || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    networks:
+      - agent-qr-network
+
+# ==========================================
+# 数据卷 (持久化存储)
+# ==========================================
+volumes:
+  mysql-data:
+    name: agent-qr-mysql-data
+  chroma-data:
+    name: agent-qr-chroma-data
+
+# ==========================================
+# 网络
+# ==========================================
+networks:
+  agent-qr-network:
+    name: agent-qr-network
+    driver: bridge

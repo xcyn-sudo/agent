@@ -1,0 +1,60 @@
+# ============================================================
+# P2 阶段配置文件 — 汇聚所有 P2 新增配置项
+# ============================================================
+
+# ── JWT 双 Token ──
+jwt:
+  access-expiration: 1800       # Access Token 30分钟
+  refresh-expiration: 604800    # Refresh Token 7天
+
+# ── Ollama 本地 LLM Provider ──
+ollama:
+  llm:
+    base-url: http://localhost:11434
+    model: qwen2.5:7b
+  embedding:
+    base-url: http://localhost:11434
+    model: nomic-embed-text
+
+# ── Agent-QR P2 增强配置 ──
+agent-qr:
+  # 混合检索
+  retrieval:
+    semantic-weight: 0.6        # 语义检索权重
+    keyword-weight: 0.4         # 关键词检索权重
+    wide-top-k: 20              # 宽召回 TopK
+    final-top-k: 5              # 最终返回 TopK
+
+  # Reranker
+  reranker:
+    model: bge-reranker-v2-m3   # 精排模型（P3 升级为 API 调用）
+
+  # LLM 熔断器
+  circuit-breaker:
+    failure-threshold: 3        # 连续失败次数阈值
+    open-duration-ms: 30000     # 熔断打开持续时间（毫秒）
+
+  # 批量向量化攒批
+  embedding:
+    batch-size: 32              # 攒批大小
+    batch-timeout-ms: 100       # 批超时（毫秒）
+
+  # DLQ 死信队列
+  dlq:
+    max-retries: 4              # 最大重试次数（3s→9s→27s→81s）
+    backoff-base: 3             # 退避基数（秒）
+
+  # 数据质量检查
+  data-quality:
+    block-threshold: 0.5        # 阻断阈值（通过率低于此值阻断）
+
+  # PDF 解析
+  pdf:
+    max-memory-mb: 256          # 内存模式最大文件大小（MB）
+    ocr:
+      enabled: false            # OCR 开关（P3 集成 Tesseract）
+
+  # Caffeine 缓存
+  cache:
+    max-size: 10000             # 最大缓存条数
+    ttl-hours: 1                # 缓存过期时间（小时）

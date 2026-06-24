@@ -1,0 +1,708 @@
+{
+  "info": {
+    "name": "agent-qr P1 后端 API 直测",
+    "description": "agent-qr 项目 P1 阶段后端 API 全量测试用例集。\n\n覆盖模块：\n- Auth: 登录/鉴权\n- Knowledge: 文档上传/查询/删除/切片\n- Admin: 用户 CRUD / 状态切换\n- Boundary: 各类边界值与异常输入\n\n使用方法：\n1. 先导入 agent-qr-p1-environment.json 环境文件\n2. 在 Postman 右上角选择 \"agent-qr P1 本地开发\" 环境\n3. 先执行 Auth 文件夹中的「登录获取Token」\n4. Token 会自动存入环境变量，后续请求自动携带\n5. 全部用例可用 Collection Runner 一键执行",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "agent-qr"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "认证相关接口 — 登录获取 Token、异常鉴权",
+      "item": [
+        {
+          "name": "登录获取Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data && json.data.token) {",
+                  "        pm.environment.set('token', json.data.token);",
+                  "        console.log('Token 已自动保存: ' + json.data.token.substring(0, 30) + '...');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "正常登录，成功后自动将 Token 写入环境变量"
+          },
+          "response": []
+        },
+        {
+          "name": "登录-密码错误",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"{{adminUsername}}\",\n  \"password\": \"wrong_password\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "密码错误应返回 401"
+          },
+          "response": []
+        },
+        {
+          "name": "登录-用户不存在",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"nobody\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "不存在的用户应返回 401"
+          },
+          "response": []
+        },
+        {
+          "name": "登录-缺少字段",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"usertest\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "缺少 password 字段应返回 400"
+          },
+          "response": []
+        },
+        {
+          "name": "无Token访问受保护接口",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents"]
+            },
+            "description": "不带 Authorization 头访问需认证的接口，应返回 401/403"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Knowledge",
+      "description": "知识库管理接口 — 文档上传、查询、删除、切片",
+      "item": [
+        {
+          "name": "文档列表",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data && json.data.records && json.data.records.length > 0) {",
+                  "        const first = json.data.records[0];",
+                  "        pm.environment.set('lastDocId', first.id);",
+                  "        console.log('lastDocId 已更新: ' + first.id + ' (' + first.status + ')');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents?page=1&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "分页查询文档列表，应将第一条文档的 ID 写入 lastDocId"
+          },
+          "response": []
+        },
+        {
+          "name": "上传文档",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data && json.data.id) {",
+                  "        pm.environment.set('lastDocId', json.data.id);",
+                  "        console.log('上传成功: id=' + json.data.id + ', status=' + json.data.status);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "选择一个 .docx / .pdf / .txt / .md 文件"
+                },
+                {
+                  "key": "title",
+                  "value": "测试文档",
+                  "type": "text",
+                  "description": "可选，为空时使用文件名"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "upload"]
+            },
+            "description": "上传文档到知识库。支持 pdf/docx/txt/md，大小不超过 50MB。\n\n⚠ 使用前请在 Body → form-data 中选择一个实际文件。\n上传成功后自动将文档 ID 写入 lastDocId。"
+          },
+          "response": []
+        },
+        {
+          "name": "查文档详情",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents/{{lastDocId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents", "{{lastDocId}}"]
+            },
+            "description": "根据 ID 查询文档详情，含状态和文件路径"
+          },
+          "response": []
+        },
+        {
+          "name": "查文档状态",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents/{{lastDocId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents", "{{lastDocId}}", "status"]
+            },
+            "description": "查询文档处理状态 (UPLOADED → PARSING → CHUNKING → EMBEDDING → READY)。\n上传后约 20-30 秒可到 READY。"
+          },
+          "response": []
+        },
+        {
+          "name": "查文档切片",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents/{{lastDocId}}/chunks",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents", "{{lastDocId}}", "chunks"]
+            },
+            "description": "查询文档的全部切片列表"
+          },
+          "response": []
+        },
+        {
+          "name": "删除文档",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents/{{lastDocId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents", "{{lastDocId}}"]
+            },
+            "description": "删除文档（含文件、切片、数据库记录）。\n⚠ 不可逆操作。"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Knowledge-异常",
+      "description": "知识库接口异常路径 — 文件类型、大小、边界值",
+      "item": [
+        {
+          "name": "上传-xlsx不受支持",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "选一个 .xlsx 文件"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "upload"]
+            },
+            "description": "xlsx 不属于支持格式，应返回 BusinessException"
+          },
+          "response": []
+        },
+        {
+          "name": "上传-不传文件",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "空上传",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "upload"]
+            },
+            "description": "不传文件应返回 400 (MissingServletRequestPartException)"
+          },
+          "response": []
+        },
+        {
+          "name": "查不存在的文档",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents/99999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents", "99999"]
+            },
+            "description": "查询不存在的文档 ID，应返回 404"
+          },
+          "response": []
+        },
+        {
+          "name": "查不存在文档的状态",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/knowledge/documents/99999/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "knowledge", "documents", "99999", "status"]
+            },
+            "description": "查询不存在文档的状态，应返回 404"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "管理员用户管理接口 — CRUD、状态切换",
+      "item": [
+        {
+          "name": "用户列表",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data && json.data.records && json.data.records.length > 0) {",
+                  "        const first = json.data.records[0];",
+                  "        pm.environment.set('lastUserId', first.id);",
+                  "        console.log('lastUserId 已更新: ' + first.id + ' (' + first.username + ')');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?page=1&size=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "10" }
+              ]
+            },
+            "description": "分页查询用户列表，将第一条用户的 ID 写入 lastUserId"
+          },
+          "response": []
+        },
+        {
+          "name": "搜索用户",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?page=1&size=10&keyword=test",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "10" },
+                { "key": "keyword", "value": "test" }
+              ]
+            },
+            "description": "按用户名搜索用户"
+          },
+          "response": []
+        },
+        {
+          "name": "创建用户",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    console.log('用户创建成功');",
+                  "    // 新用户ID需要通过列表查询获取，此处仅记录",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser_crud\",\n  \"password\": \"123456\",\n  \"realName\": \"测试用户\",\n  \"email\": \"test@example.com\",\n  \"role\": \"user\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "创建新用户（默认状态=1启用，角色=user）"
+          },
+          "response": []
+        },
+        {
+          "name": "创建用户-用户名重复",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser_crud\",\n  \"password\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "重复用户名应返回 BusinessException"
+          },
+          "response": []
+        },
+        {
+          "name": "更新用户信息",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"realName\": \"张三改\",\n  \"phone\": \"13800138000\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}"]
+            },
+            "description": "更新用户信息，仅更新非空字段"
+          },
+          "response": []
+        },
+        {
+          "name": "禁用用户",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "将用户状态设置为 0（禁用）。\n✅ 本次修复：@RequestParam → @RequestBody"
+          },
+          "response": []
+        },
+        {
+          "name": "启用用户",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "将用户状态设置为 1（启用）。\n✅ 本次修复：@RequestParam → @RequestBody"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin-边界状态",
+      "description": "用户状态切换边界测试 — 验证 @Min/@Max/@NotNull 校验生效",
+      "item": [
+        {
+          "name": "status=-1 负数",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": -1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "负数应被 @Min(0) 拦截，返回 400"
+          },
+          "response": []
+        },
+        {
+          "name": "status=2 超范围",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "超出范围应被 @Max(1) 拦截，返回 400"
+          },
+          "response": []
+        },
+        {
+          "name": "status=null 空值",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "null 应被 @NotNull 拦截，返回 400"
+          },
+          "response": []
+        },
+        {
+          "name": "缺字段-空对象",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "空对象缺少 status 字段，应被 @NotNull 拦截，返回 400"
+          },
+          "response": []
+        },
+        {
+          "name": "status类型错误-字符串",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"abc\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/{{lastUserId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "{{lastUserId}}", "status"]
+            },
+            "description": "字符串类型的 status 无法转为 Integer，应返回 400"
+          },
+          "response": []
+        },
+        {
+          "name": "不存在的用户ID",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": 0\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/99999/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", "99999", "status"]
+            },
+            "description": "不存在的用户 ID 应返回 404（BusinessException）"
+          },
+          "response": []
+        },
+        {
+          "name": "普通用户Token访问Admin接口",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"]
+            },
+            "description": "如果当前 Token 是普通用户（非 admin 角色），应返回 403。\n⚠ 当前环境用 usertest（role=admin），此用例需配合普通用户 Token 测试。"
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

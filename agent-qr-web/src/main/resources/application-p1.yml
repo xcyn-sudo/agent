@@ -1,0 +1,36 @@
+jwt:
+  secret: ${JWT_SECRET:your-secret-key-change-in-production}
+  expiration: 86400000  # 24 hours
+
+llm:
+  provider: deepseek
+  deepseek:
+    api-key: ${DEEPSEEK_API_KEY:your-api-key}
+    base-url: https://api.deepseek.com
+    model: deepseek-chat
+    temperature: 0.7
+    max-tokens: 2048
+
+embedding:
+  provider: ollama                    # ★ 切换为本地 Ollama qwen3-embedding:4b
+  deepseek:
+    api-key: ${DEEPSEEK_API_KEY:your-api-key}
+    base-url: https://api.deepseek.com
+    model: deepseek-embedding
+  ollama:
+    base-url: http://localhost:11434/v1
+    model: qwen3-embedding:4b
+
+langchain4j:
+  chroma:
+    base-url: http://localhost:8000
+    collection-name: enterprise_knowledge
+
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:./uploads}
+
+rag:
+  chunk-size: 500
+  chunk-overlap: 50
+  embedding:
+    write-to-chromadb: true  # P1: 关闭 ChromaDB 写入，节省 API 调用

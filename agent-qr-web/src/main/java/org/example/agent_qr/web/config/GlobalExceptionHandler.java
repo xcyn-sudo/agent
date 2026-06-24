@@ -1,0 +1,92 @@
+package org.example.agent_qr.web.config;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import lombok.extern.slf4j.Slf4j;
+import org.example.agent_qr.common.BusinessException;
+import org.example.agent_qr.common.Result;
+import org.slf4j.MDC;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+import java.util.stream.Collectors;
+
+/**
+ * 全局异常处理器（P2 扩展：TraceId 追踪）。
+ */
+@RestControllerAdvice
+@Slf4j
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(BusinessException.class)
+    public Result<Void> handleBusinessException(BusinessException e) {
+        log.warn("[traceId={}] 业务异常: {}", MDC.get("traceId"), e.getMessage());
+        return Result.error(e.getCode(), e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Result<Void> handleValidationException(MethodArgumentNotValidException e) {
+        String msg = e.getBindingResult().getFieldErrors().stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(", "));
+        return Result.error(400, msg);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public Result<Void> handleAccessDeniedException(AccessDeniedException e) {
+        log.warn("[traceId={}] 权限不足: {}", MDC.get("traceId"), e.getMessage());
+        return Result.error(403, "权限不足，无法访问该资源");
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public Result<Void> handleHttpMessageNotReadable(HttpMessageNotReadableException e) {
+        Throwable cause = e.getMostSpecificCause();
+        if (cause instanceof InvalidFormatException ife) {
+            String fieldPath = extractFieldPath(ife);
+            String msg = String.format("字段类型错误: %s 应为 %s 类型",
+                    fieldPath, ife.getTargetType().getSimpleName());
+            log.warn("[traceId={}] JSON 字段类型错误: {}", MDC.get("traceId"), msg);
+            return Result.error(400, msg);
+        }
+        log.warn("[traceId={}] 请求体不可读: {}", MDC.get("traceId"), e.getMessage());
+        return Result.error(400, "请求体 JSON 格式错误，请检查语法");
+    }
+
+    @ExceptionHandler(MissingServletRequestPartException.class)
+    public Result<Void> handleMissingServletRequestPart(MissingServletRequestPartException e) {
+        log.warn("[traceId={}] 缺少必传参数: {}", MDC.get("traceId"), e.getMessage());
+        String partName = e.getRequestPartName();
+        String msg = "file".equals(partName)
+                ? "缺少必传文件，请选择文件后上传"
+                : "缺少必传参数: " + partName;
+        return Result.error(400, msg);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public Result<Void> handleException(Exception e) {
+        log.error("[traceId={}] 系统异常", MDC.get("traceId"), e);
+        return Result.error(500, "服务器内部错误，请稍后重试");
+    }
+
+    private String extractFieldPath(InvalidFormatException e) {
+        String ref = e.getPathReference();
+        if (ref != null) {
+            int lastBracket = ref.lastIndexOf("[\"");
+            if (lastBracket >= 0) {
+                int end = ref.indexOf("\"]", lastBracket);
+                if (end >= 0) {
+                    return ref.substring(lastBracket + 2, end) + " 字段";
+                }
+            }
+            int lastDot = ref.lastIndexOf('.');
+            if (lastDot >= 0) {
+                return ref.substring(lastDot + 1);
+            }
+        }
+        return "请求参数";
+    }
+}

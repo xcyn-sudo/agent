@@ -1,0 +1,19 @@
+目标：
+
+完成项目的p1阶段前端
+
+输入：
+doc文件夹中的p1-frontend-prompt.md
+
+输出：
+
+项目p1阶段前端的各组件的编码实现
+
+提示：
+
+如果某个子agent的上下文窗口不足以支持整个模块代码的开发一定要停下和我商讨解决方案
+
+
+curl -X POST http://localhost:9090/api/auth/register -H "Content-Type: application/json" -d '{"username":"admin","password":"admin123","realName":"超级管理员"}'
+    
+    
