@@ -94,6 +94,10 @@ public class ChromaRetriever {
      * @param documentId 文档 ID
      */
     public void deleteByDocumentId(Long documentId) {
+        if (documentId == null) {
+            log.warn("documentId 为 null，跳过删除向量记录");
+            return;
+        }
         if (chromaEmbeddingStore == null) {
             log.warn("ChromaEmbeddingStore 未初始化，无法删除文档 ID={} 的向量", documentId);
             return;

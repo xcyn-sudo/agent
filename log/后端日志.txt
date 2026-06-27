@@ -1,282 +1,1014 @@
-JDBC Connection [HikariProxyConnection@1591581519 wrapping com.mysql.cj.jdbc.ConnectionImpl@17e2835c] will not be managed by Spring
-==>  Preparing: SELECT id,document_id,chunk_index,content,char_count,chroma_id,create_time,deleted FROM kb_chunk
-==> Parameters: 
-Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@14ca88bc]
-2026-06-24T11:55:32.076+08:00 ERROR 20220 --- [agent-qr] [           main] o.e.a.rag.retriever.BM25Retriever        : BM25 索引构建失败
-
-org.springframework.jdbc.BadSqlGrammarException: 
-### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'deleted' in 'field list'
-### The error may exist in org/example/agent_qr/knowledge/mapper/ChunkMapper.java (best guess)
-### The error may involve defaultParameterMap
-### The error occurred while setting parameters
-### SQL: SELECT  id,document_id,chunk_index,content,char_count,chroma_id,create_time,deleted  FROM kb_chunk
-### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'deleted' in 'field list'
-; bad SQL grammar []
-	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:246) ~[spring-jdbc-6.2.19.jar:6.2.19]
-	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.19.jar:6.2.19]
-	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:92) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:439) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at jdk.proxy2/jdk.proxy2.$Proxy81.selectList(Unknown Source) ~[na:na]
-	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:224) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:164) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at jdk.proxy2/jdk.proxy2.$Proxy91.selectList(Unknown Source) ~[na:na]
-	at org.example.agent_qr.knowledge.service.ChunkIndexableTextProvider.findAllIndexable(ChunkIndexableTextProvider.java:30) ~[classes/:na]
-	at org.example.agent_qr.rag.retriever.BM25Retriever.buildIndex(BM25Retriever.java:62) ~[classes/:na]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMethod.invoke(InitDestroyAnnotationBeanPostProcessor.java:457) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor$LifecycleMetadata.invokeInitMethods(InitDestroyAnnotationBeanPostProcessor.java:401) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.annotation.InitDestroyAnnotationBeanPostProcessor.postProcessBeforeInitialization(InitDestroyAnnotationBeanPostProcessor.java:219) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.applyBeanPostProcessorsBeforeInitialization(AbstractAutowireCapableBeanFactory.java:429) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1816) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:607) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1777) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1660) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:784) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:767) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:146) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1457) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:606) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1715) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1660) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1393) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1230) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1715) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1660) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:913) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:791) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:240) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1393) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1230) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:569) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:529) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:339) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:373) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:337) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:202) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.instantiateSingleton(DefaultListableBeanFactory.java:1235) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingleton(DefaultListableBeanFactory.java:1201) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:1130) ~[spring-beans-6.2.19.jar:6.2.19]
-	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:991) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:628) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.5.15.jar:3.5.15]
-	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:752) ~[spring-boot-3.5.15.jar:3.5.15]
-	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:439) ~[spring-boot-3.5.15.jar:3.5.15]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:318) ~[spring-boot-3.5.15.jar:3.5.15]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1361) ~[spring-boot-3.5.15.jar:3.5.15]
-	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1350) ~[spring-boot-3.5.15.jar:3.5.15]
-	at org.example.agent_qr.AgentQrApplication.main(AgentQrApplication.java:18) ~[classes/:na]
-Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'deleted' in 'field list'
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:988) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.ClientPreparedStatement.execute(ClientPreparedStatement.java:383) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44) ~[HikariCP-6.3.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.execute(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.apache.ibatis.logging.jdbc.PreparedStatementLogger.invoke(PreparedStatementLogger.java:58) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy3/jdk.proxy3.$Proxy107.execute(Unknown Source) ~[na:na]
-	at org.apache.ibatis.executor.statement.PreparedStatementHandler.query(PreparedStatementHandler.java:65) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.statement.RoutingStatementHandler.query(RoutingStatementHandler.java:80) ~[mybatis-3.5.15.jar:3.5.15]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:61) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy2/jdk.proxy2.$Proxy105.query(Unknown Source) ~[na:na]
-	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:65) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110) ~[mybatis-3.5.15.jar:3.5.15]
-	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81) ~[mybatis-plus-extension-3.5.5.jar:3.5.5]
-	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy2/jdk.proxy2.$Proxy104.query(Unknown Source) ~[na:na]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142) ~[mybatis-3.5.15.jar:3.5.15]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:425) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	... 74 common frames omitted
-
-2026-06-24T11:55:32.612+08:00  WARN 20220 --- [agent-qr] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
-
-Using generated security password: 7077bdfe-ce51-4f61-a2d4-559e253d87da
-
-This generated password is for development use only. Your security configuration must be updated before running your application in production.
-
-2026-06-24T11:55:32.622+08:00  INFO 20220 --- [agent-qr] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-06-24T11:55:33.168+08:00  INFO 20220 --- [agent-qr] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 9090 (http) with context path '/'
-2026-06-24T11:55:33.175+08:00  INFO 20220 --- [agent-qr] [           main] o.s.s.config.TaskSchedulerRouter         : No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
-2026-06-24T11:55:33.180+08:00  INFO 20220 --- [agent-qr] [           main] o.example.agent_qr.AgentQrApplication    : Started AgentQrApplication in 5.295 seconds (process running for 6.106)
 Creating a new SqlSession
-SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5adb625a] was not registered for synchronization because synchronization is not active
-JDBC Connection [HikariProxyConnection@192402067 wrapping com.mysql.cj.jdbc.ConnectionImpl@17e2835c] will not be managed by Spring
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@240e4dc7] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@988383151 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: SELECT id,source_name,source_type,domain,sync_strategy,cursor_field,last_cursor,connection_config,field_mapping,content_fields,status,total_synced,total_passed,last_sync_at,create_time,update_time FROM data_source_config WHERE id=?
+==> Parameters: 2(Long)
+<==    Columns: id, source_name, source_type, domain, sync_strategy, cursor_field, last_cursor, connection_config, field_mapping, content_fields, status, total_synced, total_passed, last_sync_at, create_time, update_time
+<==        Row: 2, 系统用户数据, JDBC, HR, FULL, null, null, <<BLOB>>, <<BLOB>>, username,real_name,email,create_time,role,phone,update_time,department,title,clearance_level, ACTIVE, 96, 60, 2026-06-27 21:34:36, 2026-06-27 19:17:32, 2026-06-27 21:34:36
+<==      Total: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@240e4dc7]
+2026-06-27T21:41:45.322+08:00  INFO 5940 --- [agent-qr] [nio-9090-exec-6] o.e.a.d.connector.JdbcConnector          : JDBC 全量同步: 表 sys_user 读取 12 行
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@165731d9] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@556476252 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE data_source_config SET last_cursor = ?, total_synced = IFNULL(total_synced, 0) + ?, last_sync_at = ? WHERE id = ?
+==> Parameters: null, 12(Integer), 2026-06-27T21:41:45.322886200(LocalDateTime), 2(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@165731d9]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@464b0efd] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1765615124 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE data_source_config SET status = ? WHERE id = ?
+==> Parameters: ACTIVE(String), 2(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@464b0efd]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7812e5a5] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1714434236 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: INSERT INTO sync_record ( datasource_id, sync_strategy, total_rows, status, sync_time, create_time ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), FULL(String), 12(Integer), SUCCESS(String), 2026-06-27T21:41:45.330587100(LocalDateTime), 2026-06-27T21:41:45.330587100(LocalDateTime)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7812e5a5]
+2026-06-27T21:41:45.337+08:00  INFO 5940 --- [agent-qr] [nio-9090-exec-6] o.e.a.d.service.DataSourceService        : 数据源同步完成: id=2, sourceName=系统用户数据, totalRows=12, nextCursor=null
+2026-06-27T21:41:45.337+08:00  INFO 5940 --- [agent-qr] [nio-9090-exec-6] o.e.a.d.service.DataSourceService        : 数据同步完成事件已发布: datasourceId=2, batchId=de83fa05-1613-48d6-908a-668cf41586fc, rows=12
+2026-06-27T21:41:45.337+08:00  INFO 5940 --- [agent-qr] [nio-9090-exec-6] o.e.a.d.controller.DataSourceController  : 手动触发同步完成: datasourceId=2, totalRows=12
+2026-06-27T21:41:45.337+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-4] o.e.a.d.listener.DataSyncListener        : 收到数据同步完成事件: datasourceId=2, sourceName=系统用户数据, batchId=de83fa05-1613-48d6-908a-668cf41586fc, rows=12
+Creating a new SqlSession
+Registering transaction synchronization for SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+JDBC Connection [HikariProxyConnection@1952109990 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will be managed by Spring
+==>  Preparing: SELECT id,source_name,source_type,domain,sync_strategy,cursor_field,last_cursor,connection_config,field_mapping,content_fields,status,total_synced,total_passed,last_sync_at,create_time,update_time FROM data_source_config WHERE id=?
+==> Parameters: 2(Long)
+<==    Columns: id, source_name, source_type, domain, sync_strategy, cursor_field, last_cursor, connection_config, field_mapping, content_fields, status, total_synced, total_passed, last_sync_at, create_time, update_time
+<==        Row: 2, 系统用户数据, JDBC, HR, FULL, null, null, <<BLOB>>, <<BLOB>>, username,real_name,email,create_time,role,phone,update_time,department,title,clearance_level, ACTIVE, 108, 60, 2026-06-27 21:41:45, 2026-06-27 19:17:32, 2026-06-27 21:41:45
+<==      Total: 1
+Releasing transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+2026-06-27T21:41:45.342+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-4] o.e.a.d.checker.DataQualityChecker       : 数据质量检查通过: batchId=de83fa05-1613-48d6-908a-668cf41586fc, passRate=12/12=1.00
+Fetched SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6] from current transaction
+==>  Preparing: INSERT INTO quality_report ( batch_id, datasource_id, source_name, total, pass, fail, rate, blocked, failures, check_time ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: de83fa05-1613-48d6-908a-668cf41586fc(String), 2(Long), 系统用户数据(String), 12(Integer), 12(Integer), 0(Integer), 1.0(Double), false(Boolean), [](String), 2026-06-27T21:41:45.342983400(LocalDateTime)
+<==    Updates: 1
+Releasing transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+2026-06-27T21:41:45.346+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-4] o.e.a.d.service.DataQualityService       : 质检报告已持久化: id=19, batchId=de83fa05-1613-48d6-908a-668cf41586fc, passRate=1.00
+Fetched SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6] from current transaction
+==>  Preparing: UPDATE data_source_config SET total_passed = IFNULL(total_passed, 0) + ? WHERE id = ?
+==> Parameters: 12(Integer), 2(Long)
+<==    Updates: 1
+Releasing transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+2026-06-27T21:41:45.348+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-4] o.e.a.d.service.DataQualityService       : 质检通过事件已发布: datasourceId=2, batchId=de83fa05-1613-48d6-908a-668cf41586fc, passRate=1.0, passedCount=12
+Transaction synchronization committing SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+Transaction synchronization deregistering SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+Transaction synchronization closing SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ea2bed6]
+2026-06-27T21:41:45.349+08:00  INFO 5940 --- [agent-qr] [        chunk-2] o.e.a.k.listener.DataSyncEtlListener     : 开始数据同步 ETL 处理: datasourceId=2, batchId=de83fa05-1613-48d6-908a-668cf41586fc, recordCount=12
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1c2f3e8c] was not registered for synchronization because synchronization is not active
+2026-06-27T21:41:45.349+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-5] o.e.a.c.service.KnowledgeCatalogService  : 收到质量通过事件: batchId=de83fa05-1613-48d6-908a-668cf41586fc, passedDataCount=12
+2026-06-27T21:41:45.349+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-5] o.e.a.c.service.KnowledgeCatalogService  : ETL 完成事件已发布: batchId=de83fa05-1613-48d6-908a-668cf41586fc, entityCount=12
+2026-06-27T21:41:45.349+08:00  INFO 5940 --- [agent-qr] [cTaskExecutor-6] o.e.a.c.service.KnowledgeCatalogService  : 收到 ETL 完成事件，更新目录索引: domain=null, sourceName=null, entityCount=12
+JDBC Connection [HikariProxyConnection@317244281 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: SELECT id,source_name,source_type,domain,sync_strategy,cursor_field,last_cursor,connection_config,field_mapping,content_fields,status,total_synced,total_passed,last_sync_at,create_time,update_time FROM data_source_config WHERE id=?
+==> Parameters: 2(Long)
+<==    Columns: id, source_name, source_type, domain, sync_strategy, cursor_field, last_cursor, connection_config, field_mapping, content_fields, status, total_synced, total_passed, last_sync_at, create_time, update_time
+<==        Row: 2, 系统用户数据, JDBC, HR, FULL, null, null, <<BLOB>>, <<BLOB>>, username,real_name,email,create_time,role,phone,update_time,department,title,clearance_level, ACTIVE, 108, 60, 2026-06-27 21:41:45, 2026-06-27 19:17:32, 2026-06-27 21:41:45
+<==      Total: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1c2f3e8c]
+2026-06-27T21:41:45.351+08:00  INFO 5940 --- [agent-qr] [        chunk-2] o.e.a.etl.normalizer.DataNormalizer      : 数据标准化完成: sourceName=系统用户数据, totalRecords=12, batchId=de83fa05-1613-48d6-908a-668cf41586fc
+2026-06-27T21:41:45.351+08:00  INFO 5940 --- [agent-qr] [        chunk-2] o.e.a.k.listener.DataSyncEtlListener     : ETL 标准化完成: datasourceId=2, recordCount=12
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@53d5c942] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@913004266 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 0(Integer), 【系统用户数据】username为testuser999，real_name为test，role为user，create_time为2026-06-23T01:19:57，update_time为2026-06-23T01:19:57，clearance_level为0，。(String), 137(Integer), pending(String), 2026-06-27T21:41:45.353492600(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@53d5c942]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@33fa360d] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1480814370 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11759(Long), HR(String), username(String), testuser999(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@33fa360d]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4a4c00a7] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1587965481 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11759(Long), HR(String), real_name(String), test(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4a4c00a7]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7d20f6f7] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@278530140 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11759(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7d20f6f7]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7b167208] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@990797278 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11759(Long), HR(String), create_time(String), 2026-06-23T01:19:57(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7b167208]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1d10101f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1421434574 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11759(Long), HR(String), update_time(String), 2026-06-23T01:19:57(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1d10101f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4a274dbb] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1425417503 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11759(Long), HR(String), clearance_level(String), 0(String), 0(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4a274dbb]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@53e0f18b] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@911996981 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 1(Integer), 【系统用户数据】username为usertest，role为admin，create_time为2026-06-23T01:20:53，update_time为2026-06-26T19:18:19，department为HR，clearance_level为2，。(String), 134(Integer), pending(String), 2026-06-27T21:41:45.395919500(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@53e0f18b]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6d9e8ba0] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@82660470 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11760(Long), HR(String), username(String), usertest(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6d9e8ba0]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1db2a774] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1943197256 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11760(Long), HR(String), role(String), admin(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1db2a774]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7025d0e6] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@354428988 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11760(Long), HR(String), create_time(String), 2026-06-23T01:20:53(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7025d0e6]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@279732f5] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@870490099 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11760(Long), HR(String), update_time(String), 2026-06-26T19:18:19(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@279732f5]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@606af130] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1196488649 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11760(Long), HR(String), department(String), HR(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@606af130]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6aa786c3] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@705284833 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11760(Long), HR(String), clearance_level(String), 2(String), 2(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6aa786c3]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4c949e8a] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@674110267 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 2(Integer), 【系统用户数据】username为usertest2，real_name为张三改，phone为13800138000，role为user，create_time为2026-06-23T18:24:28，update_time为2026-06-23T18:24:28，clearance_level为0，。(String), 152(Integer), pending(String), 2026-06-27T21:41:45.438022400(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4c949e8a]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7a22f06c] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@579722192 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), username(String), usertest2(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7a22f06c]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@44743769] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@149628780 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), real_name(String), 张三改(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@44743769]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@66c009a9] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@927040090 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), phone(String), 13800138000(String), 13800138000(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@66c009a9]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5db146e2] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1717132380 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5db146e2]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@773e1df6] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1529418993 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), create_time(String), 2026-06-23T18:24:28(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@773e1df6]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4657f72f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1430973832 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), update_time(String), 2026-06-23T18:24:28(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4657f72f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2e1847b5] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@750573907 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11761(Long), HR(String), clearance_level(String), 0(String), 0(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2e1847b5]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@72be77b3] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1673540251 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 3(Integer), 【系统用户数据】username为admin，real_name为系统管理员，email为admin@agent-qr.com，phone为13800000001，role为admin，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为COMMON，clearance_level为3，title为director。(String), 208(Integer), pending(String), 2026-06-27T21:41:45.502910(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@72be77b3]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@40afd076] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@572093970 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), username(String), admin(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@40afd076]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1d73f77f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1949547301 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), real_name(String), 系统管理员(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1d73f77f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@745b5f26] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@500709403 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), email(String), admin@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@745b5f26]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2159d381] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2099068753 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), phone(String), 13800000001(String), 13800000001(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2159d381]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1406884f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@16108073 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), role(String), admin(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1406884f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5ea5d72e] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1882192465 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5ea5d72e]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5c712dab] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1401137414 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5c712dab]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@433fce48] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@230327472 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), department(String), COMMON(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@433fce48]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@70456c23] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@696514975 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), clearance_level(String), 3(String), 3(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@70456c23]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@28fae884] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@511943429 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11762(Long), HR(String), title(String), director(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@28fae884]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3ca445e6] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1060918012 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 4(Integer), 【系统用户数据】username为zhangliu，real_name为张六，email为zhangliu@agent-qr.com，phone为13800000002，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为HR，clearance_level为2，title为manager。(String), 205(Integer), pending(String), 2026-06-27T21:41:45.615410800(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3ca445e6]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@b80d813] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1459011629 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), username(String), zhangliu(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@b80d813]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@38747683] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1491287560 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), real_name(String), 张六(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@38747683]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3f450410] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2123853454 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), email(String), zhangliu@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3f450410]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@30b7c852] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1964057556 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), phone(String), 13800000002(String), 13800000002(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@30b7c852]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4b0d1382] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@931038900 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4b0d1382]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@d33ca75] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1312536129 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@d33ca75]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@13e6a394] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@8164887 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@13e6a394]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@62a23d6a] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@109761287 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), department(String), HR(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@62a23d6a]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7de08c30] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@757230176 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), clearance_level(String), 2(String), 2(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7de08c30]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1c083577] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@575090172 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11763(Long), HR(String), title(String), manager(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1c083577]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5205d1f1] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1228291712 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 5(Integer), 【系统用户数据】username为wangqi，real_name为王七，email为wangqi@agent-qr.com，phone为13800000003，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为FINANCE，clearance_level为2，title为manager。(String), 206(Integer), pending(String), 2026-06-27T21:41:45.717055900(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5205d1f1]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6b9d2bd3] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@329763358 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), username(String), wangqi(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6b9d2bd3]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@235a15f2] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@243326141 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), real_name(String), 王七(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@235a15f2]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@ec5f2c6] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@111719063 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), email(String), wangqi@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@ec5f2c6]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3ad22d45] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2032995458 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), phone(String), 13800000003(String), 13800000003(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3ad22d45]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@604a9247] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1897057232 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@604a9247]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@613d8c8f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@110528307 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@613d8c8f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@485ba5dc] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2059799803 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@485ba5dc]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f3b1994] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@357590876 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), department(String), FINANCE(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f3b1994]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3eb4f810] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@684196381 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), clearance_level(String), 2(String), 2(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3eb4f810]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@704ed615] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@410970859 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11764(Long), HR(String), title(String), manager(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@704ed615]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@495b50b] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1809002176 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 6(Integer), 【系统用户数据】username为zhaoba，real_name为赵八，email为zhaoba@agent-qr.com，phone为13800000004，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为RD，clearance_level为2，title为manager。(String), 201(Integer), pending(String), 2026-06-27T21:41:45.811588600(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@495b50b]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@41ed6fe7] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@867892276 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), username(String), zhaoba(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@41ed6fe7]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@ef28599] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1783468847 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), real_name(String), 赵八(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@ef28599]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@34de4b46] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@839672345 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), email(String), zhaoba@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@34de4b46]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4b6b8e10] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@447099342 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), phone(String), 13800000004(String), 13800000004(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4b6b8e10]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3446d1d2] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@533049045 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3446d1d2]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7f2bc74] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@896735577 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7f2bc74]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3242b09] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@783307749 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3242b09]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7da38572] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1369497176 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), department(String), RD(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7da38572]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@741dd0df] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@588808730 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), clearance_level(String), 2(String), 2(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@741dd0df]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1905ee] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1735806885 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11765(Long), HR(String), title(String), manager(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1905ee]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4369086e] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@372731073 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 7(Integer), 【系统用户数据】username为sunjiu，real_name为孙九，email为sunjiu@agent-qr.com，phone为13800000005，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为SALES，clearance_level为2，title为manager。(String), 204(Integer), pending(String), 2026-06-27T21:41:45.914984500(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4369086e]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@28a7e342] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@89904115 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), username(String), sunjiu(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@28a7e342]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@363e9ffe] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1839269505 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), real_name(String), 孙九(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@363e9ffe]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@74a2629b] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@299038592 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), email(String), sunjiu@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@74a2629b]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@35db797d] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@867428017 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), phone(String), 13800000005(String), 13800000005(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@35db797d]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1b450f09] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@930084030 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1b450f09]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1ed0454f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1448249391 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1ed0454f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6646e127] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@613883440 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6646e127]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1211f9a5] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@250282825 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), department(String), SALES(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1211f9a5]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@76a92894] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@546212931 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), clearance_level(String), 2(String), 2(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@76a92894]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@57c13e7c] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@58281043 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11766(Long), HR(String), title(String), manager(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@57c13e7c]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@442a0457] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@234406741 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 8(Integer), 【系统用户数据】username为lijuan，real_name为李娟，email为lijuan@agent-qr.com，phone为13800000006，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为HR，clearance_level为1，title为employee。(String), 202(Integer), pending(String), 2026-06-27T21:41:46.021132500(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@442a0457]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@780aa7da] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@866329061 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), username(String), lijuan(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@780aa7da]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3950de1] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@689158271 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), real_name(String), 李娟(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3950de1]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@25815c3a] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@291887285 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), email(String), lijuan@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@25815c3a]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1546b372] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@710500639 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), phone(String), 13800000006(String), 13800000006(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1546b372]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f1bca98] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1043012093 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f1bca98]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@262557b6] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1076319870 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@262557b6]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@b895ad3] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1902606714 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@b895ad3]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5fd02d00] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@364262185 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), department(String), HR(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5fd02d00]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@65082aee] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1099133469 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), clearance_level(String), 1(String), 1(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@65082aee]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@53b83155] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@158446245 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11767(Long), HR(String), title(String), employee(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@53b83155]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ef7323e] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2048345055 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 9(Integer), 【系统用户数据】username为chenming，real_name为陈明，email为chenming@agent-qr.com，phone为13800000007，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为FINANCE，clearance_level为0，title为employee。(String), 211(Integer), pending(String), 2026-06-27T21:41:46.092268600(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7ef7323e]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3cc7934a] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2081302198 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), username(String), chenming(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3cc7934a]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@d2c3532] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@10127799 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), real_name(String), 陈明(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@d2c3532]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@70039dae] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@604009768 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), email(String), chenming@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@70039dae]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@452a8e1f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1646529191 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), phone(String), 13800000007(String), 13800000007(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@452a8e1f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@aadb93a] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1218374650 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@aadb93a]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7768daad] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1217805953 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7768daad]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@137d0ad8] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1785089024 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@137d0ad8]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@b030629] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1407016197 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), department(String), FINANCE(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@b030629]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5344b2c8] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1791551696 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), clearance_level(String), 0(String), 0(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5344b2c8]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5cacb638] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1896831765 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11768(Long), HR(String), title(String), employee(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5cacb638]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@52bce010] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1499520673 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 10(Integer), 【系统用户数据】username为liuyang，real_name为刘洋，email为liuyang@agent-qr.com，phone为13800000008，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为RD，clearance_level为1，title为employee。(String), 204(Integer), pending(String), 2026-06-27T21:41:46.160608700(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@52bce010]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@66d006c0] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@966416749 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), username(String), liuyang(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@66d006c0]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4647f160] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@771594740 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), real_name(String), 刘洋(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4647f160]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5b062b7f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@443890642 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), email(String), liuyang@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5b062b7f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7cfc93e0] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1331989510 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), phone(String), 13800000008(String), 13800000008(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7cfc93e0]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@e559ec7] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1706698679 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@e559ec7]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@459d5da7] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1898863932 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@459d5da7]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7e37911e] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@2104751193 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7e37911e]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7c2f8629] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@505177289 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), department(String), RD(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@7c2f8629]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f2d209d] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@577387933 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), clearance_level(String), 1(String), 1(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5f2d209d]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@28351b62] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1539333420 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11769(Long), HR(String), title(String), employee(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@28351b62]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6444a888] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1035251729 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk ( datasource_id, chunk_index, content, char_count, chroma_id, create_time, deleted ) VALUES ( ?, ?, ?, ?, ?, ?, ? )
+==> Parameters: 2(Long), 11(Integer), 【系统用户数据】username为huanglei，real_name为黄磊，email为huanglei@agent-qr.com，phone为13800000009，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为SALES，clearance_level为3，title为director。(String), 209(Integer), pending(String), 2026-06-27T21:41:46.237092600(LocalDateTime), 0(Integer)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6444a888]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@55b9fd6f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1301674993 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), username(String), huanglei(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@55b9fd6f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5b600a67] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@969422985 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), real_name(String), 黄磊(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5b600a67]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@30eff274] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1209768080 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), email(String), huanglei@agent-qr.com(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@30eff274]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@14502bf9] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1830651 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), phone(String), 13800000009(String), 13800000009(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@14502bf9]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4dee57bd] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@316478669 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), role(String), user(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4dee57bd]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4691b56f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1016117772 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), create_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4691b56f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6abefb79] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1397189880 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), update_time(String), 2026-06-26T19:38:31(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6abefb79]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3d6aa219] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1436695008 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), department(String), SALES(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@3d6aa219]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6cca919e] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@686020830 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, numeric_value, field_type ) VALUES ( ?, ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), clearance_level(String), 3(String), 3(BigDecimal), NUMBER(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6cca919e]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@18c46d27] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@777483209 wrapping com.mysql.cj.jdbc.ConnectionImpl@976dd7a] will not be managed by Spring
+==>  Preparing: INSERT INTO kb_chunk_structured ( chunk_id, domain, field_name, field_value, field_type ) VALUES ( ?, ?, ?, ?, ? )
+==> Parameters: 11770(Long), HR(String), title(String), director(String), STRING(String)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@18c46d27]
+2026-06-27T21:41:46.346+08:00  INFO 5940 --- [agent-qr] [        chunk-2] o.e.a.k.listener.DataSyncEtlListener     : 数据同步 ETL 处理完成: datasourceId=2, batchId=de83fa05-1613-48d6-908a-668cf41586fc, totalRecords=12, successChunks=12
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@21689842] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1099491804 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 0(Integer), 【系统用户数据】username为testuser999，real_name为test，role为user，create_time为2026-06-23T01:19:57，update_time为2026-06-23T01:19:57，clearance_level为0，。(String), 137(Integer), 3db169f2-88f4-4d90-801b-ee37c0838456(String), 2026-06-27T21:41:45.353492600(LocalDateTime), 11759(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@21689842]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@39efbde6] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1037057539 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 1(Integer), 【系统用户数据】username为usertest，role为admin，create_time为2026-06-23T01:20:53，update_time为2026-06-26T19:18:19，department为HR，clearance_level为2，。(String), 134(Integer), 0f5f2d85-06b5-41e5-89e0-d8e51d8ddf7c(String), 2026-06-27T21:41:45.395919500(LocalDateTime), 11760(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@39efbde6]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@14f959f5] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@891531712 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
 ==>  Preparing: SELECT * FROM dlq_message WHERE status = 'PENDING' AND next_retry_at <= ? ORDER BY next_retry_at ASC
-==> Parameters: 2026-06-24T11:55:33.185359100(LocalDateTime)
-Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5adb625a]
-2026-06-24T11:55:33.194+08:00 ERROR 20220 --- [agent-qr] [pool-2-thread-1] o.s.s.s.TaskUtils$LoggingErrorHandler    : Unexpected error occurred in scheduled task
-
-org.springframework.jdbc.BadSqlGrammarException: 
-### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Table 'agent_qr.dlq_message' doesn't exist
-### The error may exist in org/example/agent_qr/common/dlq/DlqMessageMapper.java (best guess)
-### The error may involve org.example.agent_qr.common.dlq.DlqMessageMapper.selectPendingRetries-Inline
-### The error occurred while setting parameters
-### SQL: SELECT * FROM dlq_message WHERE status = 'PENDING' AND next_retry_at <= ? ORDER BY next_retry_at ASC
-### Cause: java.sql.SQLSyntaxErrorException: Table 'agent_qr.dlq_message' doesn't exist
-; bad SQL grammar []
-	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:246) ~[spring-jdbc-6.2.19.jar:6.2.19]
-	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.19.jar:6.2.19]
-	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:92) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:439) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at jdk.proxy2/jdk.proxy2.$Proxy81.selectList(Unknown Source) ~[na:na]
-	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:224) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:164) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at jdk.proxy2/jdk.proxy2.$Proxy86.selectPendingRetries(Unknown Source) ~[na:na]
-	at org.example.agent_qr.web.scheduler.DlqRetryScheduler.retryDeadLetters(DlqRetryScheduler.java:50) ~[classes/:na]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.19.jar:6.2.19]
-	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.12.jar:1.15.12]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.19.jar:6.2.19]
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
-	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
-	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
-	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
-Caused by: java.sql.SQLSyntaxErrorException: Table 'agent_qr.dlq_message' doesn't exist
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:988) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.ClientPreparedStatement.execute(ClientPreparedStatement.java:383) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44) ~[HikariCP-6.3.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.execute(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.apache.ibatis.logging.jdbc.PreparedStatementLogger.invoke(PreparedStatementLogger.java:58) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy3/jdk.proxy3.$Proxy107.execute(Unknown Source) ~[na:na]
-	at org.apache.ibatis.executor.statement.PreparedStatementHandler.query(PreparedStatementHandler.java:65) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.statement.RoutingStatementHandler.query(RoutingStatementHandler.java:80) ~[mybatis-3.5.15.jar:3.5.15]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:61) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy2/jdk.proxy2.$Proxy105.query(Unknown Source) ~[na:na]
-	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:65) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110) ~[mybatis-3.5.15.jar:3.5.15]
-	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81) ~[mybatis-plus-extension-3.5.5.jar:3.5.5]
-	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy2/jdk.proxy2.$Proxy104.query(Unknown Source) ~[na:na]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142) ~[mybatis-3.5.15.jar:3.5.15]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:425) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	... 22 common frames omitted
-
-2026-06-24T11:55:33.194+08:00  INFO 20220 --- [agent-qr] [pool-2-thread-1] o.e.a.c.scanner.OrphanVectorScanner      : 开始孤儿向量扫描...
+==> Parameters: 2026-06-27T21:41:55.665757100(LocalDateTime)
+<==      Total: 0
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@14f959f5]
 Creating a new SqlSession
-SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4ab9b005] was not registered for synchronization because synchronization is not active
-JDBC Connection [HikariProxyConnection@1785570049 wrapping com.mysql.cj.jdbc.ConnectionImpl@17e2835c] will not be managed by Spring
-==>  Preparing: SELECT id,title,file_name,file_path,file_type,file_size,status,upload_user_id,error_msg,create_time,update_time,domain,sensitivity_level,sensitivity_label,deleted FROM kb_document
-==> Parameters: 
-Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4ab9b005]
-2026-06-24T11:55:33.196+08:00 ERROR 20220 --- [agent-qr] [pool-2-thread-1] o.e.a.c.scanner.OrphanVectorScanner      : 孤儿向量扫描异常
-
-org.springframework.jdbc.BadSqlGrammarException: 
-### Error querying database.  Cause: java.sql.SQLSyntaxErrorException: Unknown column 'domain' in 'field list'
-### The error may exist in org/example/agent_qr/knowledge/mapper/DocumentMapper.java (best guess)
-### The error may involve defaultParameterMap
-### The error occurred while setting parameters
-### SQL: SELECT  id,title,file_name,file_path,file_type,file_size,status,upload_user_id,error_msg,create_time,update_time,domain,sensitivity_level,sensitivity_label,deleted  FROM kb_document
-### Cause: java.sql.SQLSyntaxErrorException: Unknown column 'domain' in 'field list'
-; bad SQL grammar []
-	at org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator.doTranslate(SQLErrorCodeSQLExceptionTranslator.java:246) ~[spring-jdbc-6.2.19.jar:6.2.19]
-	at org.springframework.jdbc.support.AbstractFallbackSQLExceptionTranslator.translate(AbstractFallbackSQLExceptionTranslator.java:107) ~[spring-jdbc-6.2.19.jar:6.2.19]
-	at org.mybatis.spring.MyBatisExceptionTranslator.translateExceptionIfPossible(MyBatisExceptionTranslator.java:92) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:439) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at jdk.proxy2/jdk.proxy2.$Proxy81.selectList(Unknown Source) ~[na:na]
-	at org.mybatis.spring.SqlSessionTemplate.selectList(SqlSessionTemplate.java:224) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.executeForMany(MybatisMapperMethod.java:164) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperMethod.execute(MybatisMapperMethod.java:77) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy$PlainMethodInvoker.invoke(MybatisMapperProxy.java:152) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at com.baomidou.mybatisplus.core.override.MybatisMapperProxy.invoke(MybatisMapperProxy.java:89) ~[mybatis-plus-core-3.5.5.jar:3.5.5]
-	at jdk.proxy2/jdk.proxy2.$Proxy89.selectList(Unknown Source) ~[na:na]
-	at org.example.agent_qr.compensation.scanner.OrphanVectorScanner.scanAndCleanOrphanVectors(OrphanVectorScanner.java:54) ~[classes/:na]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.runInternal(ScheduledMethodRunnable.java:130) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.lambda$run$2(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.19.jar:6.2.19]
-	at io.micrometer.observation.Observation.observe(Observation.java:498) ~[micrometer-observation-1.15.12.jar:1.15.12]
-	at org.springframework.scheduling.support.ScheduledMethodRunnable.run(ScheduledMethodRunnable.java:124) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.scheduling.config.Task$OutcomeTrackingRunnable.run(Task.java:87) ~[spring-context-6.2.19.jar:6.2.19]
-	at org.springframework.scheduling.support.DelegatingErrorHandlingRunnable.run(DelegatingErrorHandlingRunnable.java:54) ~[spring-context-6.2.19.jar:6.2.19]
-	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
-	at java.base/java.util.concurrent.FutureTask.runAndReset(FutureTask.java:358) ~[na:na]
-	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:305) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
-	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
-	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
-Caused by: java.sql.SQLSyntaxErrorException: Unknown column 'domain' in 'field list'
-	at com.mysql.cj.jdbc.exceptions.SQLError.createSQLException(SQLError.java:112) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:114) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.ClientPreparedStatement.executeInternal(ClientPreparedStatement.java:988) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.mysql.cj.jdbc.ClientPreparedStatement.execute(ClientPreparedStatement.java:383) ~[mysql-connector-j-9.7.0.jar:9.7.0]
-	at com.zaxxer.hikari.pool.ProxyPreparedStatement.execute(ProxyPreparedStatement.java:44) ~[HikariCP-6.3.3.jar:na]
-	at com.zaxxer.hikari.pool.HikariProxyPreparedStatement.execute(HikariProxyPreparedStatement.java) ~[HikariCP-6.3.3.jar:na]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.apache.ibatis.logging.jdbc.PreparedStatementLogger.invoke(PreparedStatementLogger.java:58) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy3/jdk.proxy3.$Proxy107.execute(Unknown Source) ~[na:na]
-	at org.apache.ibatis.executor.statement.PreparedStatementHandler.query(PreparedStatementHandler.java:65) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.statement.RoutingStatementHandler.query(RoutingStatementHandler.java:80) ~[mybatis-3.5.15.jar:3.5.15]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:61) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy2/jdk.proxy2.$Proxy105.query(Unknown Source) ~[na:na]
-	at org.apache.ibatis.executor.SimpleExecutor.doQuery(SimpleExecutor.java:65) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.BaseExecutor.queryFromDatabase(BaseExecutor.java:336) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.BaseExecutor.query(BaseExecutor.java:158) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.executor.CachingExecutor.query(CachingExecutor.java:110) ~[mybatis-3.5.15.jar:3.5.15]
-	at com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor.intercept(MybatisPlusInterceptor.java:81) ~[mybatis-plus-extension-3.5.5.jar:3.5.5]
-	at org.apache.ibatis.plugin.Plugin.invoke(Plugin.java:59) ~[mybatis-3.5.15.jar:3.5.15]
-	at jdk.proxy2/jdk.proxy2.$Proxy104.query(Unknown Source) ~[na:na]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:154) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:147) ~[mybatis-3.5.15.jar:3.5.15]
-	at org.apache.ibatis.session.defaults.DefaultSqlSession.selectList(DefaultSqlSession.java:142) ~[mybatis-3.5.15.jar:3.5.15]
-	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
-	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
-	at org.mybatis.spring.SqlSessionTemplate$SqlSessionInterceptor.invoke(SqlSessionTemplate.java:425) ~[mybatis-spring-3.0.3.jar:3.0.3]
-	... 22 common frames omitted
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2deb857b] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1716885964 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 2(Integer), 【系统用户数据】username为usertest2，real_name为张三改，phone为13800138000，role为user，create_time为2026-06-23T18:24:28，update_time为2026-06-23T18:24:28，clearance_level为0，。(String), 152(Integer), b0c68b4c-1f21-49db-87be-151b0d720c2c(String), 2026-06-27T21:41:45.438022400(LocalDateTime), 11761(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@2deb857b]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5265b06f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@694832776 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 3(Integer), 【系统用户数据】username为admin，real_name为系统管理员，email为admin@agent-qr.com，phone为13800000001，role为admin，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为COMMON，clearance_level为3，title为director。(String), 208(Integer), 41f38378-24fa-4410-a197-393a26a9b823(String), 2026-06-27T21:41:45.502910(LocalDateTime), 11762(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@5265b06f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@696e06d9] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1388133238 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 4(Integer), 【系统用户数据】username为zhangliu，real_name为张六，email为zhangliu@agent-qr.com，phone为13800000002，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为HR，clearance_level为2，title为manager。(String), 205(Integer), 37701a72-f581-4d09-a011-4ecb8214d0a4(String), 2026-06-27T21:41:45.615410800(LocalDateTime), 11763(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@696e06d9]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4d89cf53] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1660090548 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 5(Integer), 【系统用户数据】username为wangqi，real_name为王七，email为wangqi@agent-qr.com，phone为13800000003，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为FINANCE，clearance_level为2，title为manager。(String), 206(Integer), 0776afab-8fe1-43b8-9f31-ed60f90dc78d(String), 2026-06-27T21:41:45.717055900(LocalDateTime), 11764(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@4d89cf53]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@74e1734f] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@617159536 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 6(Integer), 【系统用户数据】username为zhaoba，real_name为赵八，email为zhaoba@agent-qr.com，phone为13800000004，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为RD，clearance_level为2，title为manager。(String), 201(Integer), e3fb598d-3632-4ff3-9bfa-3556d22f2ec7(String), 2026-06-27T21:41:45.811588600(LocalDateTime), 11765(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@74e1734f]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6b9758dc] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@5932116 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 7(Integer), 【系统用户数据】username为sunjiu，real_name为孙九，email为sunjiu@agent-qr.com，phone为13800000005，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为SALES，clearance_level为2，title为manager。(String), 204(Integer), 4b66eda3-c2cf-4ff6-9c67-777d68d7d2b2(String), 2026-06-27T21:41:45.914984500(LocalDateTime), 11766(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@6b9758dc]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@66f1b9b] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@838615337 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 8(Integer), 【系统用户数据】username为lijuan，real_name为李娟，email为lijuan@agent-qr.com，phone为13800000006，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为HR，clearance_level为1，title为employee。(String), 202(Integer), b4abfbb3-d9af-479b-8b3e-38ecaa099d1a(String), 2026-06-27T21:41:46.021132500(LocalDateTime), 11767(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@66f1b9b]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@242b9e61] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@538185276 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 9(Integer), 【系统用户数据】username为chenming，real_name为陈明，email为chenming@agent-qr.com，phone为13800000007，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为FINANCE，clearance_level为0，title为employee。(String), 211(Integer), 9c33bac1-e7ba-4970-9bac-c761aca3520e(String), 2026-06-27T21:41:46.092268600(LocalDateTime), 11768(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@242b9e61]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1917b841] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@47237932 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 10(Integer), 【系统用户数据】username为liuyang，real_name为刘洋，email为liuyang@agent-qr.com，phone为13800000008，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为RD，clearance_level为1，title为employee。(String), 204(Integer), 34d58a80-2b8a-41af-89e6-6a177780bfae(String), 2026-06-27T21:41:46.160608700(LocalDateTime), 11769(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@1917b841]
+Creating a new SqlSession
+SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@511a56b5] was not registered for synchronization because synchronization is not active
+JDBC Connection [HikariProxyConnection@1004513420 wrapping com.mysql.cj.jdbc.ConnectionImpl@8e77c5b] will not be managed by Spring
+==>  Preparing: UPDATE kb_chunk SET datasource_id=?, chunk_index=?, content=?, char_count=?, chroma_id=?, create_time=? WHERE id=? AND deleted=0
+==> Parameters: 2(Long), 11(Integer), 【系统用户数据】username为huanglei，real_name为黄磊，email为huanglei@agent-qr.com，phone为13800000009，role为user，create_time为2026-06-26T19:38:31，update_time为2026-06-26T19:38:31，department为SALES，clearance_level为3，title为director。(String), 209(Integer), 1244fa4a-8a25-4cf9-bdfa-bf5b0f50aa99(String), 2026-06-27T21:41:46.237092600(LocalDateTime), 11770(Long)
+<==    Updates: 1
+Closing non transactional SqlSession [org.apache.ibatis.session.defaults.DefaultSqlSession@511a56b5]

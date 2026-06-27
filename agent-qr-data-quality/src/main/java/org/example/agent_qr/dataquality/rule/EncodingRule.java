@@ -34,7 +34,10 @@ public class EncodingRule implements QualityRule {
         for (Map.Entry<String, Object> entry : record.entrySet()) {
             if (entry.getValue() instanceof String text && !text.isBlank()) {
                 String detectedCharset = charsetDetector.detect(text);
-                if (detectedCharset != null && !"UTF-8".equalsIgnoreCase(detectedCharset)) {
+                if (detectedCharset != null
+                        && !"UTF-8".equalsIgnoreCase(detectedCharset)
+                        && !"US-ASCII".equalsIgnoreCase(detectedCharset)
+                        && !"ASCII".equalsIgnoreCase(detectedCharset)) {
                     return RuleResult.fail(
                             String.format("字段 '%s' 编码为 %s，非 UTF-8", entry.getKey(), detectedCharset));
                 }

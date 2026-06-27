@@ -1,7 +1,7 @@
 package org.example.agent_qr.rag.filter;
 
 import lombok.extern.slf4j.Slf4j;
-import org.example.agent_qr.rag.filter.mapper.ChunkStructuredMapper;
+import org.example.agent_qr.rag.filter.mapper.ChunkStructuredFilterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,7 +26,7 @@ import java.util.Set;
 public class StructuredFilterService {
 
     @Autowired
-    private ChunkStructuredMapper chunkStructuredMapper;
+    private ChunkStructuredFilterMapper chunkStructuredFilterMapper;
 
     /**
      * 根据域和过滤条件获取候选切片 ID 列表。
@@ -41,7 +41,7 @@ public class StructuredFilterService {
     public List<Long> filterChunkIds(String domain, List<FilterCondition> conditions) {
         if (conditions == null || conditions.isEmpty()) {
             if (domain != null && !domain.isBlank()) {
-                return chunkStructuredMapper.selectChunkIdsByDomain(domain);
+                return chunkStructuredFilterMapper.selectChunkIdsByDomain(domain);
             }
             return List.of();
         }
@@ -68,7 +68,7 @@ public class StructuredFilterService {
 
         // 域过滤
         if (domain != null && !domain.isBlank()) {
-            List<Long> domainIds = chunkStructuredMapper.selectChunkIdsByDomain(domain);
+            List<Long> domainIds = chunkStructuredFilterMapper.selectChunkIdsByDomain(domain);
             resultSet.retainAll(domainIds);
         }
 
@@ -89,16 +89,16 @@ public class StructuredFilterService {
             case "NUMBER" -> {
                 BigDecimal min = parseMinNumber(condition);
                 BigDecimal max = parseMaxNumber(condition);
-                yield chunkStructuredMapper.selectChunkIdsByNumberRange(
+                yield chunkStructuredFilterMapper.selectChunkIdsByNumberRange(
                         condition.getFieldName(), min, max);
             }
             case "DATE" -> {
                 LocalDate start = parseStartDate(condition);
                 LocalDate end = parseEndDate(condition);
-                yield chunkStructuredMapper.selectChunkIdsByDateRange(
+                yield chunkStructuredFilterMapper.selectChunkIdsByDateRange(
                         condition.getFieldName(), start, end);
             }
-            case "ENUM", "STRING" -> chunkStructuredMapper.selectChunkIdsByStringValue(
+            case "ENUM", "STRING" -> chunkStructuredFilterMapper.selectChunkIdsByStringValue(
                     condition.getFieldName(), condition.getValue());
             default -> List.<Long>of();
         };

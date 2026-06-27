@@ -11,8 +11,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.async.AsyncRequestNotUsableException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.stream.Collectors;
 
 /**
@@ -66,9 +68,20 @@ public class GlobalExceptionHandler {
         return Result.error(400, msg);
     }
 
+    @ExceptionHandler(AsyncRequestNotUsableException.class)
+    public void handleAsyncRequestNotUsable(AsyncRequestNotUsableException e) {
+        log.warn("[traceId={}] 客户端连接已断开，SSE 传输中断: {}", MDC.get("traceId"), e.getMessage());
+        // SSE 场景下 Content-Type 已锁定为 text/event-stream，无法写入 JSON 响应体，直接返回 void
+    }
+
     @ExceptionHandler(Exception.class)
-    public Result<Void> handleException(Exception e) {
+    public Object handleException(Exception e, HttpServletResponse response) {
         log.error("[traceId={}] 系统异常", MDC.get("traceId"), e);
+        // SSE 流式响应：Content-Type 已锁定为 text/event-stream，无法写入 JSON 响应体
+        if (response.getContentType() != null && response.getContentType().contains("text/event-stream")) {
+            log.warn("[traceId={}] SSE 异常已记录，跳过 JSON 响应写入", MDC.get("traceId"));
+            return null;
+        }
         return Result.error(500, "服务器内部错误，请稍后重试");
     }
 

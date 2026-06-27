@@ -1,20 +1,34 @@
 package org.example.agent_qr.dataquality.rule;
 
+import org.example.agent_qr.dataquality.context.RuleExecutionContext;
 import org.example.agent_qr.dataquality.entity.RuleResult;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
  * 完整性检查规则。
  * <p>
- * 检查关键字段（content / text）是否为空或仅含空白字符。
+ * 检查可配置的关键字段列表是否至少有一个非空。
+ * 优先使用数据源级配置 {@code DataSourceConfig.contentFields}，
+ * 未配置时回退到全局默认值 {@code agent-qr.data-quality.content-fields}。
  * </p>
  *
  * @author agent-qr
  */
 @Component
 public class CompletenessRule implements QualityRule {
+
+    /** 全局默认内容字段名列表（逗号分隔），作为回退值 */
+    @Value("${agent-qr.data-quality.content-fields:content,text,_content}")
+    private String globalContentFieldsConfig;
+
+    @Autowired
+    private RuleExecutionContext ruleExecutionContext;
 
     @Override
     public String getName() {
@@ -23,19 +37,27 @@ public class CompletenessRule implements QualityRule {
 
     @Override
     public RuleResult evaluate(Map<String, Object> record) {
-        // 检查 content 字段
-        Object content = record.get("content");
-        if (content == null || content.toString().isBlank()) {
-            // 也尝试检查 text 字段
-            Object text = record.get("text");
-            if (text == null || text.toString().isBlank()) {
-                // 尝试 _content（S3 文件内容字段）
-                Object s3Content = record.get("_content");
-                if (s3Content == null || s3Content.toString().isBlank()) {
-                    return RuleResult.fail("内容字段为空（content/text/_content 均为空）");
-                }
+        // 1. 优先使用数据源级配置
+        String fieldsConfig = ruleExecutionContext.get(
+                RuleExecutionContext.KEY_CONTENT_FIELDS, String.class);
+
+        // 2. 数据源未配置时回退到全局默认值
+        if (fieldsConfig == null || fieldsConfig.isBlank()) {
+            fieldsConfig = globalContentFieldsConfig;
+        }
+
+        List<String> contentFields = Arrays.stream(fieldsConfig.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .toList();
+
+        for (String field : contentFields) {
+            Object value = record.get(field);
+            if (value != null && !value.toString().isBlank()) {
+                return RuleResult.pass();
             }
         }
-        return RuleResult.pass();
+
+        return RuleResult.fail("内容字段为空（检查字段: " + contentFields + " 均为空）");
     }
 }

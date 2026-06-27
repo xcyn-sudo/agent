@@ -1,7 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, nextTick, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { chatApi } from '@/api/chat'
-import type { Conversation, Message, AskResponse, RetrievedDocument } from '@/types'
+import { useAuthStore } from '@/stores/auth'
+import { formatDomain } from '@/utils/format'
+import type { Conversation, Message, SourceVO } from '@/types'
 import ConversationList from '@/components/chat/ConversationList.vue'
 import MessageBubble from '@/components/chat/MessageBubble.vue'
 import ChatInput from '@/components/chat/ChatInput.vue'
@@ -11,11 +14,14 @@ interface LocalMessage {
   id: number | string
   role: 'user' | 'assistant'
   content: string
-  sources?: RetrievedDocument[]
+  sources?: SourceVO[]
   loading?: boolean
+  streaming?: boolean
+  feedback?: 'positive' | 'negative' | null
 }
 
 // ========== 状态 ==========
+const authStore = useAuthStore()
 const conversations = ref<Conversation[]>([])
 const conversationsLoading = ref(false)
 const activeConversationId = ref<number | null>(null)
@@ -25,9 +31,19 @@ const messagesLoading = ref(false)
 const deletingId = ref<number | null>(null)
 const sidebarCollapsed = ref(false)
 const messagesContainerRef = ref<HTMLElement | null>(null)
+const abortController = ref<AbortController | null>(null)
+
+// ========== 域选择器选项 ==========
+const availableDomains = computed(() => {
+  const allowed = authStore.user?.allowedDomains ?? []
+  return allowed.map((d) => ({
+    value: d,
+    label: formatDomain(d),
+  }))
+})
 
 // ========== 工具函数 ==========
-function parseSources(sourcesStr: string): RetrievedDocument[] {
+function parseSources(sourcesStr: string): SourceVO[] {
   if (!sourcesStr) return []
   try {
     const parsed = JSON.parse(sourcesStr)
@@ -102,8 +118,8 @@ async function handleDeleteConversation(conversationId: number) {
   }
 }
 
-// ========== 发送消息 ==========
-async function handleSend(content: string) {
+// ========== 发送消息（P2 SSE 流式） ==========
+async function handleSend(content: string, domain?: string) {
   if (!content.trim() || sending.value) return
 
   const query = content.trim()
@@ -117,66 +133,164 @@ async function handleSend(content: string) {
     content: query,
   })
 
-  // 2. 添加 loading 消息
-  const loadingMsgId = -(Date.now() + 1)
+  // 2. 添加空 assistant 消息（流式状态）
+  const assistantMsgId = -(Date.now() + 1)
   messages.value.push({
-    id: loadingMsgId,
+    id: assistantMsgId,
     role: 'assistant',
     content: '',
-    loading: true,
+    streaming: true,
   })
 
   sending.value = true
   scrollToBottom()
 
+  // 辅助函数：找到 assistant 消息的索引
+  const findAssistantIndex = () => messages.value.findIndex((m) => m.id === assistantMsgId)
+
   try {
-    const res = await chatApi.ask(query, conversationId ?? undefined)
-    const data: AskResponse = res.data
-
-    // 3. 替换 loading 消息为实际回答
-    const loadingIndex = messages.value.findIndex((m) => m.id === loadingMsgId)
-    if (loadingIndex !== -1) {
-      const answerContent = data.answer || ''
-      const hasSources = data.sources && data.sources.length > 0
-
-      if (!answerContent && !hasSources) {
-        // 空检索结果
-        messages.value[loadingIndex] = {
-          id: data.conversationId || loadingMsgId,
-          role: 'assistant',
-          content: '知识库中暂无相关信息，请联系管理员上传相关文档',
-          sources: [],
+    // 3. 调用 SSE 流式接口
+    const controller = chatApi.askStream(query, domain || null, conversationId ?? null, {
+      onToken(token: string) {
+        const idx = findAssistantIndex()
+        if (idx !== -1) {
+          messages.value[idx].content += token
+          scrollToBottom()
         }
-      } else {
-        messages.value[loadingIndex] = {
-          id: data.conversationId || loadingMsgId,
-          role: 'assistant',
-          content: answerContent,
-          sources: data.sources || [],
-        }
-      }
-    }
+      },
+      onDone(data: { answer: string; conversationId: number; messageId: number; sources: SourceVO[] }) {
+        const idx = findAssistantIndex()
+        if (idx !== -1) {
+          // ★ 优先使用后端返回的完整答案，避免 token 事件丢失导致正文为空
+          const answerContent = data.answer || messages.value[idx].content
+          const hasSources = data.sources && data.sources.length > 0
 
-    // 4. 如果之前没有选中会话（新会话），更新 activeConversationId
-    if (!activeConversationId.value && data.conversationId) {
-      activeConversationId.value = data.conversationId
-      // 刷新会话列表以获取新会话
-      await loadConversations()
-    }
+          if (!answerContent && !hasSources) {
+            // 空检索结果
+            messages.value[idx] = {
+              id: data.messageId || assistantMsgId,
+              role: 'assistant',
+              content: '知识库中暂无相关信息，请联系管理员上传相关文档',
+              sources: [],
+              streaming: false,
+            }
+          } else {
+            messages.value[idx] = {
+              id: data.messageId || assistantMsgId,
+              role: 'assistant',
+              content: answerContent,
+              sources: data.sources || [],
+              streaming: false,
+            }
+          }
+        }
+
+        // 如果是新会话，更新 activeConversationId 并刷新列表
+        if (!activeConversationId.value && data.conversationId) {
+          activeConversationId.value = data.conversationId
+          loadConversations()
+        }
+
+        sending.value = false
+        abortController.value = null
+        scrollToBottom()
+      },
+      onError(error: string) {
+        // 后端发送的 SSE error 事件数据是 JSON 字符串（如 {"message":"..."}），需解析
+        let errorMsg = '抱歉，请求失败，请重试'
+        try {
+          const parsed = JSON.parse(error)
+          errorMsg = parsed.message || errorMsg
+        } catch {
+          errorMsg = error || errorMsg
+        }
+
+        const idx = findAssistantIndex()
+        if (idx !== -1) {
+          const currentContent = messages.value[idx].content
+          messages.value[idx] = {
+            id: assistantMsgId,
+            role: 'assistant',
+            content: currentContent
+              ? currentContent + '\n\n_（生成出错，请重试）_'
+              : errorMsg,
+            sources: [],
+            streaming: false,
+          }
+        }
+
+        sending.value = false
+        abortController.value = null
+        scrollToBottom()
+      },
+    })
+
+    abortController.value = controller
   } catch {
-    // 5. 错误处理
-    const loadingIndex = messages.value.findIndex((m) => m.id === loadingMsgId)
-    if (loadingIndex !== -1) {
-      messages.value[loadingIndex] = {
-        id: loadingMsgId,
+    const idx = findAssistantIndex()
+    if (idx !== -1) {
+      messages.value[idx] = {
+        id: assistantMsgId,
         role: 'assistant',
         content: '抱歉，请求失败，请重试',
         sources: [],
+        streaming: false,
       }
     }
-  } finally {
+
     sending.value = false
+    abortController.value = null
     scrollToBottom()
+  }
+}
+
+// ========== 停止生成 ==========
+function handleStopGeneration() {
+  abortController.value?.abort()
+  abortController.value = null
+
+  // 在最后一条 assistant 消息末尾追加停止提示
+  const lastMsg = messages.value[messages.value.length - 1]
+  if (lastMsg && lastMsg.role === 'assistant' && lastMsg.streaming) {
+    lastMsg.content += '\n\n_（已停止生成）_'
+    lastMsg.streaming = false
+  }
+
+  sending.value = false
+  scrollToBottom()
+}
+
+// ========== 反馈评价 ==========
+async function handleFeedback(messageId: number | string, type: 'positive' | 'negative') {
+  // 找到对应消息
+  const msg = messages.value.find((m) => m.id === messageId)
+  if (!msg || typeof msg.id !== 'number') return
+
+  if (type === 'positive') {
+    try {
+      await chatApi.submitFeedback(msg.id, 'positive')
+      msg.feedback = 'positive'
+      ElMessage.success('感谢反馈')
+    } catch {
+      // 错误已在拦截器中处理
+    }
+  } else {
+    try {
+      const { value: reason } = await ElMessageBox.prompt(
+        '请选择或输入不满意的原因，帮助我们改进：',
+        '反馈原因',
+        {
+          confirmButtonText: '提交',
+          cancelButtonText: '取消',
+          inputPlaceholder: '请输入原因（可选）',
+        },
+      )
+      await chatApi.submitFeedback(msg.id, 'negative', reason || undefined)
+      msg.feedback = 'negative'
+      ElMessage.success('感谢反馈，我们会持续改进')
+    } catch {
+      // 用户取消操作
+    }
   }
 }
 
@@ -199,12 +313,13 @@ watch(activeConversationId, () => {
 
 // ========== 初始化 ==========
 onMounted(() => {
-  loadConversations().then(() => {
-    // 默认选中最近会话（第一个）
-    if (conversations.value.length > 0) {
-      handleSelectConversation(conversations.value[0].id)
-    }
-  })
+  loadConversations()
+  // 不再自动选中历史会话，用户看到欢迎页后自主选择
+})
+
+// ========== 销毁时中止未完成的请求 ==========
+onUnmounted(() => {
+  abortController.value?.abort()
 })
 </script>
 
@@ -259,6 +374,9 @@ onMounted(() => {
               :content="msg.content"
               :sources="msg.sources"
               :loading="msg.loading"
+              :streaming="msg.streaming"
+              :feedback="msg.feedback"
+              @feedback="(type) => handleFeedback(msg.id, type)"
             />
           </template>
         </div>
@@ -268,7 +386,9 @@ onMounted(() => {
       <ChatInput
         :loading="sending"
         :disabled="false"
+        :domains="availableDomains"
         @send="handleSend"
+        @stop="handleStopGeneration"
       />
     </div>
   </div>

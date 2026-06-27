@@ -20,7 +20,7 @@ import java.util.List;
  * @author agent-qr
  */
 @Mapper
-public interface ChunkStructuredMapper extends BaseMapper<ChunkStructured> {
+public interface ChunkStructuredFilterMapper extends BaseMapper<ChunkStructured> {
 
     /**
      * 按数值范围过滤切片 ID。

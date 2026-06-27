@@ -97,7 +97,7 @@ public class ChatController {
      * @param request   反馈请求体（feedback: positive/negative, reason: 可选原因）
      * @return 操作结果
      */
-    @PostMapping("/feedback/{messageId}")
+    @PostMapping("/messages/{messageId}/feedback")
     public Result<Void> submitFeedback(@PathVariable Long messageId,
                                         @RequestBody Map<String, String> request) {
         String feedback = request.get("feedback");

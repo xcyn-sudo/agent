@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DocumentInfo } from '@/types'
-import { formatFileSize, formatDateTime } from '@/utils/format'
+import { formatFileSize, formatDateTime, formatDomain } from '@/utils/format'
 import StatusTag from './StatusTag.vue'
 
 defineProps<{
@@ -45,6 +45,31 @@ const emit = defineEmits<{
       </template>
     </el-table-column>
     <el-table-column
+      prop="domain"
+      label="业务域"
+      width="120"
+    >
+      <template #default="{ row }">
+        <span class="domain-tag">{{ formatDomain(row.domain) }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column
+      prop="sensitivityLabel"
+      label="密级"
+      width="80"
+    >
+      <template #default="{ row }">
+        <span
+          :class="[
+            'sensitivity-tag',
+            `sensitivity-tag--${['public', 'internal', 'confidential', 'topsecret'][row.sensitivityLevel] || 'public'}`
+          ]"
+        >
+          {{ row.sensitivityLabel }}
+        </span>
+      </template>
+    </el-table-column>
+    <el-table-column
       prop="status"
       label="状态"
       width="120"
@@ -86,5 +111,40 @@ const emit = defineEmits<{
 </template>
 
 <style scoped lang="scss">
-// Element Plus el-table 自带样式，无需额外定制
+.domain-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  background-color: var(--el-color-info-light-9);
+  color: var(--el-text-color-regular);
+}
+
+.sensitivity-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &--public {
+    background-color: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  &--internal {
+    background-color: #e3f2fd;
+    color: #1565c0;
+  }
+
+  &--confidential {
+    background-color: #fff3e0;
+    color: #e65100;
+  }
+
+  &--topsecret {
+    background-color: #fce4ec;
+    color: #c62828;
+  }
+}
 </style>

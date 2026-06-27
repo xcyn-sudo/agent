@@ -4,6 +4,7 @@ import org.example.agent_qr.datasource.dto.ConnectionTestResult;
 import org.example.agent_qr.datasource.dto.SyncContext;
 import org.example.agent_qr.datasource.dto.SyncResult;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,4 +49,16 @@ public interface DataSourceConnector {
      * @return 同步结果（含增量数据和更新后的游标）
      */
     SyncResult incrementalSync(SyncContext context, String lastCursor);
+
+    /**
+     * 检测指定表的字段（列名）列表。
+     * 默认实现返回空列表（REST/S3 不支持）。
+     *
+     * @param config    连接配置（JSON 解析后的 Map）
+     * @param tableName 表名
+     * @return 字段名列表
+     */
+    default List<String> detectColumns(Map<String, Object> config, String tableName) {
+        return List.of();
+    }
 }

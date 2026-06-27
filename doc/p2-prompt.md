@@ -224,7 +224,7 @@ P2 阶段依赖 P1 全部产出，开发顺序按内部依赖关系编排：
 | 1 | agent-qr-common P2 | ⬜ | 10 | 0 | TraceId/MDC/DLQ/Caffeine/4事件 |
 | 2 | agent-qr-user P2 | ⬜ | 0 | 3 | SysUser+2 DTO |
 | 3 | agent-qr-auth P2 | ⬜ | 7 | 4 | UserPrincipal/Abac/RefreshToken |
-| 4 | agent-qr-datasource ★ | ⬜ | 12 | 0 | Connector/Service/Scheduler |
+| 4 | agent-qr-datasource ★ | ⬜ | 16 | 0 | Connector/Controller/Service/Scheduler/SyncRecord |
 | 5 | agent-qr-catalog ★ | ⬜ | 9 | 0 | 目录树/DomainRouter |
 | 6 | agent-qr-data-quality ★ | ⬜ | 9 | 0 | 规则链/报告 |
 | 7 | agent-qr-etl ★ | ⬜ | 7 | 0 | Normalizer/Converter |
@@ -491,19 +491,23 @@ private String title;               // 职级(employee/manager/director)
 
 ```
 agent-qr-datasource/src/main/java/org/example/agent_qr/datasource/
+├── controller/
+│   └── DataSourceController.java      ← ★ REST 控制器(/api/datasource)
 ├── connector/
 │   ├── DataSourceConnector.java      ← 策略接口(getType/testConnection/fullSync/incrementalSync)
 │   ├── JdbcConnector.java
 │   ├── RestApiConnector.java
 │   └── S3Connector.java
 ├── service/
-│   └── DataSourceService.java        ← CRUD+连通性测试+触发同步
+│   └── DataSourceService.java        ← CRUD+连通性测试+触发同步+分页查询+同步历史
 ├── scheduler/
 │   └── SyncScheduler.java            ← 同步调度器
 ├── entity/
-│   └── DataSourceConfig.java         ← 数据源配置实体
+│   ├── DataSourceConfig.java         ← 数据源配置实体
+│   └── SyncRecord.java               ← 同步历史记录实体 ★新增
 ├── mapper/
-│   └── DataSourceMapper.java
+│   ├── DataSourceMapper.java
+│   └── SyncRecordMapper.java         ← ★新增
 └── dto/
     ├── ConnectionTestResult.java
     ├── SyncResult.java
@@ -559,10 +563,34 @@ public interface DataSourceConnector {
 - `@Component`, 注入DataSourceMapper+connectorMap+ApplicationEventPublisher
 - scheduleSync(Long datasourceId): 查配置→获取Connector→testConnection→按策略full/incremental→updateSyncResult→发布DataSyncCompletedEvent
 
+#### DataSourceController ★新增
+- `@RestController @RequestMapping("/api/datasource")`，注入DataSourceService
+- `GET /list?page=&size=&domain=` → listByPage（分页列表）
+- `GET /{id}` → getById（详情）
+- `POST /` → create（创建）
+- `PUT /{id}` → update（更新）
+- `DELETE /{id}` → delete（删除）
+- `POST /{id}/test` → testConnection（连通性测试）
+- `POST /{id}/sync` → triggerSync（手动触发同步）
+- `GET /{id}/sync-history?page=&size=` → getSyncHistory（同步历史）
+- 所有接口 `@PreAuthorize("@abac.canManageDatasource(principal)")`
+
+#### DataSourceService 补充方法 ★新增
+- `listByPage(int page, int size, String domain)`: 分页查询，支持 domain 筛选，按 createTime 倒序
+- `getSyncHistory(Long datasourceId, int page, int size)`: 查询 sync_record 表，按 syncTime 倒序
+
+#### SyncRecord 实体 ★新增
+- 对应数据表 `sync_record`（需在 schema.sql 中建表）
+- 字段: id, datasourceId, syncStrategy, totalRows, nextCursor, status, errorMsg, syncTime
+- SyncRecordMapper 继承 BaseMapper<SyncRecord>
+
 ### 8.4 子 Agent 任务清单
 
 - [ ] 创建agent-qr-datasource/目录+pom.xml
 - [ ] 创建 4个Connector(接口+3实现) + 3个DTO + DataSourceConfig + DataSourceMapper + DataSourceService + SyncScheduler
+- [ ] 创建 DataSourceController ★（8个REST接口：list/getById/create/update/delete/testConnection/triggerSync/getSyncHistory）
+- [ ] 创建 SyncRecord 实体 + SyncRecordMapper + sync_record 建表 DDL ★
+- [ ] DataSourceService 补充 listByPage + getSyncHistory 方法 ★
 
 ---
 

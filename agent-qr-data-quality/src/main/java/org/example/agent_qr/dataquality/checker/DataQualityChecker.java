@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.Set;
  * <p>
  * 按顺序执行规则链（完整性 → 编码 → 格式），
  * 跨记录 MD5 去重失败项，统计通过率并与阻断阈值比较。
- * 当 passRate < blockThreshold 时标记为阻断。
+ * 当 passRate {@code <} blockThreshold 时标记为阻断。
  * </p>
  *
  * @author agent-qr
@@ -41,21 +42,28 @@ public class DataQualityChecker {
     /**
      * 对同步数据执行质量检查。
      *
-     * @param batchId 同步批次 ID
-     * @param rawData 原始数据（记录列表）
+     * @param batchId      同步批次 ID
+     * @param datasourceId 数据源配置 ID
+     * @param sourceName   数据源名称
+     * @param rawData      原始数据（记录列表）
      * @return 质量检查报告
      */
-    public QualityReport check(String batchId, List<Map<String, Object>> rawData) {
+    public QualityReport check(String batchId, Long datasourceId, String sourceName,
+                               List<Map<String, Object>> rawData) {
         if (rawData == null || rawData.isEmpty()) {
             QualityReport emptyReport = new QualityReport();
             emptyReport.setBatchId(batchId);
+            emptyReport.setDatasourceId(datasourceId);
+            emptyReport.setSourceName(sourceName);
             emptyReport.setTotal(0);
             emptyReport.setRate(1.0);
             emptyReport.setBlocked(false);
+            emptyReport.setCheckTime(LocalDateTime.now());
             return emptyReport;
         }
 
         List<QualityFailure> allFailures = new ArrayList<>();
+        Set<Integer> failedRecordIndices = new HashSet<>();
         int passCount = 0;
         int failCount = 0;
 
@@ -76,6 +84,7 @@ public class DataQualityChecker {
                 passCount++;
             } else {
                 failCount++;
+                failedRecordIndices.add(i);
             }
         }
 
@@ -94,8 +103,12 @@ public class DataQualityChecker {
                     batchId, passCount, total, String.format("%.2f", passRate));
         }
 
-        return new QualityReport(batchId, total, passCount, dedupedFailures.size(),
+        QualityReport report = new QualityReport(batchId, total, passCount, failCount,
                 passRate, blocked, dedupedFailures);
+        report.setDatasourceId(datasourceId);
+        report.setSourceName(sourceName);
+        report.setFailedIndices(failedRecordIndices);
+        return report;
     }
 
     /**

@@ -26,6 +26,9 @@ public class EntityNode {
     /** 记录数 */
     private Integer recordCount;
 
+    /** 最后更新时间 */
+    private java.time.LocalDateTime lastUpdated;
+
     /** 实体类型常量 */
     public static final String TYPE_TABLE = "TABLE";
     public static final String TYPE_FILE = "FILE";

@@ -21,7 +21,7 @@ import org.apache.lucene.store.ByteBuffersDirectory;
 import org.example.agent_qr.common.rag.IndexableText;
 import org.example.agent_qr.common.rag.IndexableTextProvider;
 import org.example.agent_qr.rag.entity.RetrievedDocument;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -31,9 +31,8 @@ import java.util.List;
 /**
  * BM25 关键词检索器 — 基于 Lucene 内存索引。
  * <p>
- * 使用 StandardAnalyzer 进行分词，在内存中构建倒排索引，
+ * 使用 SmartChineseAnalyzer 进行中文智能分词，在内存中构建倒排索引，
  * 支持 BM25 评分检索和增量更新。
- * P3 可升级为 SmartChineseAnalyzer 以获得更好的中文分词效果。
  * </p>
  *
  * @author agent-qr
@@ -46,7 +45,7 @@ public class BM25Retriever {
     private IndexableTextProvider indexableTextProvider;
 
     private final ByteBuffersDirectory directory = new ByteBuffersDirectory();
-    private final Analyzer analyzer = new StandardAnalyzer();
+    private final Analyzer analyzer = new SmartChineseAnalyzer();
     private volatile DirectoryReader reader;
     private volatile IndexSearcher searcher;
 

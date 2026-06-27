@@ -1,6 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { getToken, getUserRoleFromLocalStorage } from '@/utils/token'
+import { getAccessToken, getUserFromStorage, getUserRoleFromLocalStorage } from '@/utils/token'
 import { useAuthStore } from '@/stores/auth'
+
+// ★ P2 扩展路由 Meta 类型
+declare module 'vue-router' {
+  interface RouteMeta {
+    requiresAuth?: boolean
+    requiresAdmin?: boolean
+    requiresDomain?: string   // ★ P2 ABAC 域检查
+    requiresTitle?: string[]  // ★ P2 ABAC 职级检查
+    layout?: 'main' | 'guest'
+    title?: string
+    guest?: boolean
+  }
+}
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,7 +34,7 @@ const router = createRouter({
       path: '/chat',
       name: 'Chat',
       component: () => import('@/views/chat/ChatView.vue'),
-      meta: { requiresAuth: true, layout: 'main' },
+      meta: { requiresAuth: true, layout: 'main', title: '问答' },
     },
     {
       path: '/admin/users',
@@ -41,6 +54,25 @@ const router = createRouter({
       component: () => import('@/views/dashboard/DashboardView.vue'),
       meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '数据仪表盘' },
     },
+    // ★ P2 新增路由
+    {
+      path: '/admin/datasource',
+      name: 'DataSource',
+      component: () => import('@/views/datasource/DataSourceView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '数据接入' },
+    },
+    {
+      path: '/admin/catalog',
+      name: 'Catalog',
+      component: () => import('@/views/catalog/CatalogView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '知识目录' },
+    },
+    {
+      path: '/admin/quality',
+      name: 'QualityReport',
+      component: () => import('@/views/dataquality/QualityReportView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '质量报告' },
+    },
     {
       path: '/403',
       name: 'Forbidden',
@@ -54,19 +86,18 @@ const router = createRouter({
   ],
 })
 
+// ★ P2 ABAC 路由守卫升级
 router.beforeEach((to, _from, next) => {
   let token: string | null = null
-  let userRole: string | null = null
+  let user: any = null
 
   try {
-    // 尝试使用 auth store 获取状态
     const authStore = useAuthStore()
-    token = authStore.token
-    userRole = authStore.user?.role ?? null
+    token = authStore.accessToken
+    user = authStore.user
   } catch {
-    // Pinia 未初始化时回退到 localStorage 方式
-    token = getToken()
-    userRole = getUserRoleFromLocalStorage()
+    token = getAccessToken()
+    user = getUserFromStorage()
   }
 
   if (to.path === '/login' || to.path === '/register') {
@@ -76,16 +107,35 @@ router.beforeEach((to, _from, next) => {
     if (!token) {
       // 未登录 → 重定向到 /login，携带 redirect 参数
       next(`/login?redirect=${to.path}`)
-    } else if (to.meta.requiresAdmin) {
-      // 需要管理员权限 → 检查角色
-      if (userRole !== 'admin') {
-        next('/403')
-      } else {
-        next()
-      }
-    } else {
-      next()
+      return
     }
+
+    // ★ P1 角色判断保留
+    if (to.meta.requiresAdmin && user?.role !== 'admin') {
+      next('/403')
+      return
+    }
+
+    // ★ P2 ABAC 扩展：页面级域权限
+    if (to.meta.requiresDomain && user) {
+      const requiredDomain = to.meta.requiresDomain as string
+      const allowedDomains: string[] = user.allowedDomains || []
+      if (!allowedDomains.includes(requiredDomain)) {
+        next('/403')
+        return
+      }
+    }
+
+    // ★ P2 ABAC 扩展：职级限制
+    if (to.meta.requiresTitle && user) {
+      const allowedTitles = to.meta.requiresTitle as string[]
+      if (!allowedTitles.includes(user.title || '')) {
+        next('/403')
+        return
+      }
+    }
+
+    next()
   }
 })
 

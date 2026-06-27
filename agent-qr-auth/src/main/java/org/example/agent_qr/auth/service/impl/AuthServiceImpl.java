@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
  * 认证服务实现类，处理登录、注册和获取当前用户的核心业务逻辑。
  * <p>
  * P1 原有：单 Token 登录/注册。
- * P2 扩展：双 Token 机制（Access + Refresh）。
+ * P2 扩展：双 Token 机制（Access + Refresh），LoginVO 同步返回 ABAC 属性。
  * </p>
  *
  * @author agent-qr
@@ -58,9 +58,10 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException("用户名或密码错误");
         }
 
-        // P2: 签发双 Token
+        // P2: 签发双 Token（含 ABAC 属性）
         TokenPair tokenPair = refreshTokenService.issueTokens(user);
-        log.info("用户 {} 登录成功（双Token）", user.getUsername());
+        log.info("用户 {} 登录成功（双Token，部门={}，密级={}）",
+                user.getUsername(), user.getDepartment(), user.getClearanceLevel());
 
         return new LoginVO(
                 tokenPair.getAccessToken(),
@@ -68,7 +69,11 @@ public class AuthServiceImpl implements AuthService {
                 tokenPair.getExpiresIn(),
                 user.getId(),
                 user.getUsername(),
-                user.getRole()
+                user.getRole(),
+                user.getDepartment(),         // ★ P2 ABAC
+                user.getClearanceLevel(),     // ★ P2 ABAC
+                user.getAllowedDomains(),     // ★ P2 ABAC
+                user.getTitle()               // ★ P2 ABAC
         );
     }
 

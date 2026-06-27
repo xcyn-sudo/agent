@@ -68,6 +68,23 @@ public class StructuredDataConverter {
             }
         }
 
+        // 兜底：无 FieldMapping 配置时，遍历所有字段生成文本
+        if (fieldCount == 0) {
+            int i = 0;
+            int totalFields = mappedRecord.size();
+            for (Map.Entry<String, Object> entry : mappedRecord.entrySet()) {
+                Object value = entry.getValue();
+                if (value == null || value.toString().isBlank()) {
+                    continue;
+                }
+                sb.append(entry.getKey()).append("为").append(value);
+                i++;
+                if (i < totalFields) {
+                    sb.append("，");
+                }
+            }
+        }
+
         sb.append("。");
         return sb.toString();
     }

@@ -1,6 +1,7 @@
 package org.example.agent_qr.etl.normalizer;
 
 import lombok.extern.slf4j.Slf4j;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.agent_qr.datasource.entity.DataSourceConfig;
 import org.example.agent_qr.etl.entity.CanonicalRecord;
 import org.example.agent_qr.etl.entity.FieldMapping;
@@ -37,6 +38,9 @@ public class DataNormalizer {
 
     @Autowired
     private StructuredDataConverter structuredDataConverter;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * 对原始数据执行标准化处理。
@@ -146,8 +150,7 @@ public class DataNormalizer {
             return List.of();
         }
         try {
-            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
-            List<Map<String, Object>> rawList = mapper.readValue(fieldMappingJson, List.class);
+            List<Map<String, Object>> rawList = objectMapper.readValue(fieldMappingJson, List.class);
             List<FieldMapping> mappings = new ArrayList<>();
             for (Map<String, Object> raw : rawList) {
                 FieldMapping fm = FieldMapping.builder()

@@ -39,6 +39,17 @@
             <artifactId>agent-qr-auth</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!-- P2: ETL 标准化管道 + 数据源配置（DataSyncEtlListener 需要） -->
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>agent-qr-etl</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.example</groupId>
+            <artifactId>agent-qr-datasource</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>

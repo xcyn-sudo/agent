@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { knowledgeApi } from '@/api/knowledge'
+import { SENSITIVITY_LEVELS } from '@/types'
+import { formatDomain } from '@/utils/format'
 
 const props = defineProps<{
   visible: boolean
+  allowedDomains: string[]
+  maxClearanceLevel: number
 }>()
 
 const emit = defineEmits<{
@@ -22,10 +26,16 @@ watch(dialogVisible, (val) => {
 
 const fileList = ref<any[]>([])
 const title = ref('')
+const domain = ref('')
+const sensitivityLevel = ref<number>(0)
 const uploading = ref(false)
 
 const allowedTypes = ['.pdf', '.docx', '.txt', '.md']
 const maxSize = 50 * 1024 * 1024
+
+const availableSensitivityLevels = computed(() =>
+  SENSITIVITY_LEVELS.filter(s => s.value <= props.maxClearanceLevel)
+)
 
 function beforeUpload(file: File) {
   const ext = '.' + file.name.split('.').pop()?.toLowerCase()
@@ -48,6 +58,8 @@ function handleClose() {
   dialogVisible.value = false
   fileList.value = []
   title.value = ''
+  domain.value = ''
+  sensitivityLevel.value = 0
 }
 
 async function handleUpload() {
@@ -60,9 +72,13 @@ async function handleUpload() {
     ElMessage.warning('文件无效')
     return
   }
+  if (!domain.value) {
+    ElMessage.warning('请选择业务域')
+    return
+  }
   uploading.value = true
   try {
-    await knowledgeApi.upload(file, title.value || undefined)
+    await knowledgeApi.upload(file, title.value || undefined, domain.value, sensitivityLevel.value)
     ElMessage.success('上传成功')
     emit('success')
     handleClose()
@@ -108,8 +124,34 @@ async function handleUpload() {
       v-model="title"
       placeholder="默认使用文件名"
       clearable
-      class="title-input"
+      class="form-item"
     />
+
+    <el-select
+      v-model="domain"
+      placeholder="请选择业务域"
+      class="form-item"
+    >
+      <el-option
+        v-for="d in props.allowedDomains"
+        :key="d"
+        :label="formatDomain(d)"
+        :value="d"
+      />
+    </el-select>
+
+    <el-select
+      v-model="sensitivityLevel"
+      placeholder="请选择密级"
+      class="form-item"
+    >
+      <el-option
+        v-for="s in availableSensitivityLevels"
+        :key="s.value"
+        :label="s.label"
+        :value="s.value"
+      />
+    </el-select>
 
     <template #footer>
       <span class="dialog-footer">
@@ -134,8 +176,9 @@ async function handleUpload() {
   width: 100%;
 }
 
-.title-input {
+.form-item {
   margin-top: 16px;
+  width: 100%;
 }
 
 .dialog-footer {

@@ -24,6 +24,9 @@ public class DataSyncCompletedEvent {
     /** 数据源 ID */
     private Long datasourceId;
 
+    /** 数据源名称 */
+    private String sourceName;
+
     /** 同步获取的原始数据 */
     private List<Map<String, Object>> rawData;
 

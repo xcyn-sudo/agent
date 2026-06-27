@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.example.agent_qr.common.rag.IndexableText;
@@ -30,9 +31,15 @@ public class Chunk implements IndexableText {
     private Long id;
 
     /**
-     * 所属文档 ID。
+     * 所属文档 ID（文档上传管线使用；数据同步管线为 NULL）。
      */
     private Long documentId;
+
+    /**
+     * 所属数据源 ID（数据同步管线使用；文档上传管线为 NULL）。
+     * P2 新增：支持 JDBC/REST/S3 等数据源同步产生的切片。
+     */
+    private Long datasourceId;
 
     /**
      * 切片在文档中的序号，从 0 开始。
@@ -65,6 +72,8 @@ public class Chunk implements IndexableText {
 
     /**
      * 软删除标记：0=未删除 / 1=已删除。
+     * MyBatis-Plus @TableLogic 自动在所有查询中追加 WHERE deleted = 0。
      */
+    @TableLogic
     private Integer deleted;
 }

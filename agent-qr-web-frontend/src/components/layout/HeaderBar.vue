@@ -1,20 +1,67 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
-import { getUserFromStorage } from '@/utils/token'
+import { getTokenExpiresAt } from '@/utils/token'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
+// ★ P2 Token 过期倒计时
+const tokenRemainingSeconds = ref(0)
+const isRefreshingToken = ref(false)
+let countdownTimer: ReturnType<typeof setInterval> | null = null
+
 const user = computed(() => {
-  const u = getUserFromStorage()
-  return u ? (u as { username: string }).username : ''
+  return authStore.user?.username || ''
 })
 
+const tokenCountdownDisplay = computed(() => {
+  if (tokenRemainingSeconds.value <= 0) return ''
+  const minutes = Math.floor(tokenRemainingSeconds.value / 60)
+  const seconds = tokenRemainingSeconds.value % 60
+  if (minutes > 0) {
+    return `${minutes}分${seconds}秒后过期`
+  }
+  return `${seconds}秒后过期`
+})
+
+const isTokenWarning = computed(() => {
+  return tokenRemainingSeconds.value > 0 && tokenRemainingSeconds.value <= 60
+})
+
+function updateCountdown() {
+  const expiresAt = getTokenExpiresAt()
+  if (expiresAt) {
+    tokenRemainingSeconds.value = Math.max(0, Math.floor((expiresAt - Date.now()) / 1000))
+  } else {
+    tokenRemainingSeconds.value = 0
+  }
+}
+
+function startCountdown() {
+  updateCountdown()
+  countdownTimer = setInterval(updateCountdown, 10000)
+}
+
 function handleLogout() {
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+    countdownTimer = null
+  }
   authStore.logout()
 }
+
+onMounted(() => {
+  startCountdown()
+})
+
+onUnmounted(() => {
+  if (countdownTimer) {
+    clearInterval(countdownTimer)
+    countdownTimer = null
+  }
+})
 </script>
 
 <template>
@@ -26,6 +73,16 @@ function handleLogout() {
       <span class="system-name">Agent-QR 企业知识库</span>
     </div>
     <div class="header-bar__right">
+      <!-- ★ P2 Token 过期倒计时 -->
+      <span
+        v-if="tokenRemainingSeconds > 0"
+        class="token-countdown"
+        :class="{ 'token-countdown--warning': isTokenWarning }"
+      >
+        {{ tokenCountdownDisplay }}
+      </span>
+      <!-- ★ 静默刷新中提示 -->
+      <span v-if="isRefreshingToken" class="refreshing-hint">正在刷新凭证...</span>
       <span class="username">{{ user }}</span>
       <el-button type="danger" text @click="handleLogout">退出</el-button>
     </div>
@@ -72,5 +129,21 @@ function handleLogout() {
 
 .username {
   color: $text-regular;
+}
+
+.token-countdown {
+  font-size: 12px;
+  color: #909399;
+  margin-right: 8px;
+
+  &--warning {
+    color: #f56c6c;
+    font-weight: 600;
+  }
+}
+
+.refreshing-hint {
+  font-size: 12px;
+  color: #409eff;
 }
 </style>

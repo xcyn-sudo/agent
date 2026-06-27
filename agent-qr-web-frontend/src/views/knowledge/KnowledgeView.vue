@@ -1,14 +1,20 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import { knowledgeApi } from '@/api/knowledge'
 import type { DocumentInfo } from '@/types'
+import { SENSITIVITY_LEVELS } from '@/types'
+import { useAuthStore } from '@/stores/auth'
 import UploadDialog from '@/components/knowledge/UploadDialog.vue'
 import DocumentTable from '@/components/knowledge/DocumentTable.vue'
 import Pagination from '@/components/common/Pagination.vue'
 
-/** 处理中状态集合，文档处于这些状态时需持续轮询 */
+/** 处理中状态集合，文档处于这些状态时需持续轮询（DELETING 不在此列：后端 @TableLogic 自动过滤已删除文档，无需轮询） */
 const PROCESSING_STATUSES = new Set(['UPLOADED', 'PARSING', 'CHUNKING', 'EMBEDDING'])
+
+const authStore = useAuthStore()
+const allowedDomains = computed(() => authStore.user?.allowedDomains ?? [])
+const clearanceLevel = computed(() => authStore.user?.clearanceLevel ?? 0)
 
 const documents = ref<DocumentInfo[]>([])
 const loading = ref(false)
@@ -16,12 +22,25 @@ const total = ref(0)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const uploadDialogVisible = ref(false)
+
+/** 筛选 */
+const filterDomain = ref('')
+const filterSensitivityLevel = ref<number>(-1)
+
+/** 当前用户可见的密级选项 */
+const filteredSensitivityLevels = computed(() =>
+  SENSITIVITY_LEVELS.filter(s => s.value <= clearanceLevel.value)
+)
+
 let pollTimer: ReturnType<typeof setTimeout> | null = null
 
 async function fetchDocuments() {
   loading.value = true
   try {
-    const res = await knowledgeApi.listDocuments({ page: currentPage.value, size: pageSize.value })
+    const params: any = { page: currentPage.value, size: pageSize.value }
+    if (filterDomain.value) params.domain = filterDomain.value
+    if (filterSensitivityLevel.value !== -1) params.sensitivityLevel = filterSensitivityLevel.value
+    const res = await knowledgeApi.listDocuments(params)
     documents.value = res.data.records
     total.value = res.data.total
   } catch {
@@ -55,6 +74,12 @@ function handlePageChange() {
   fetchDocuments().then(schedulePollIfNeeded)
 }
 
+function handleFilterChange() {
+  currentPage.value = 1
+  clearPoll()
+  fetchDocuments().then(schedulePollIfNeeded)
+}
+
 function handleUploadSuccess() {
   currentPage.value = 1
   clearPoll()
@@ -63,7 +88,7 @@ function handleUploadSuccess() {
 
 async function handleDelete(id: number) {
   try {
-    await ElMessageBox.confirm('确定要删除该文档吗？删除后数据将无法恢复。', '删除确认', {
+    await ElMessageBox.confirm('确认删除该文档？删除后系统将异步清理相关数据', '删除确认', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning',
@@ -94,6 +119,37 @@ onUnmounted(() => {
       </el-button>
     </div>
 
+    <div class="filter-bar">
+      <el-select
+        v-model="filterDomain"
+        placeholder="全部业务域"
+        clearable
+        @change="handleFilterChange"
+      >
+        <el-option label="全部" value="" />
+        <el-option
+          v-for="d in allowedDomains"
+          :key="d"
+          :label="d"
+          :value="d"
+        />
+      </el-select>
+
+      <el-select
+        v-model="filterSensitivityLevel"
+        placeholder="全部密级"
+        @change="handleFilterChange"
+      >
+        <el-option label="全部" :value="-1" />
+        <el-option
+          v-for="s in filteredSensitivityLevels"
+          :key="s.value"
+          :label="s.label"
+          :value="s.value"
+        />
+      </el-select>
+    </div>
+
     <DocumentTable
       :documents="documents"
       :loading="loading"
@@ -111,6 +167,8 @@ onUnmounted(() => {
 
     <UploadDialog
       v-model:visible="uploadDialogVisible"
+      :allowed-domains="allowedDomains"
+      :max-clearance-level="clearanceLevel"
       @success="handleUploadSuccess"
     />
   </div>
@@ -129,6 +187,16 @@ onUnmounted(() => {
       font-size: 20px;
       font-weight: 600;
       color: var(--el-text-color-primary);
+    }
+  }
+
+  .filter-bar {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    .el-select {
+      width: 180px;
     }
   }
 }

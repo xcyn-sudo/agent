@@ -61,7 +61,7 @@ public class OrphanVectorScanner {
             List<Chunk> chunks = chunkMapper.selectAllReadyChunks();
             Set<Long> orphanDocIds = chunks.stream()
                     .map(Chunk::getDocumentId)
-                    .filter(docId -> !validDocIds.contains(docId))
+                    .filter(docId -> docId != null && !validDocIds.contains(docId))
                     .collect(Collectors.toSet());
 
             // 3. 按文档批量清理孤儿向量

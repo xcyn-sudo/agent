@@ -26,6 +26,9 @@ public class DomainNode {
     /** 该域下的数据源数量 */
     private int sourceCount;
 
+    /** 该域下所有数据源的实体总数 */
+    private int totalEntities;
+
     /** 该域下的数据源节点列表（二级目录） */
     private List<SourceNode> sources = new ArrayList<>();
 }

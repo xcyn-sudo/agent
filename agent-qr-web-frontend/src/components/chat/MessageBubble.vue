@@ -1,12 +1,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import type { RetrievedDocument } from '@/types'
+import type { SourceVO } from '@/types'
 
 const props = defineProps<{
   role: 'user' | 'assistant'
   content: string
-  sources?: RetrievedDocument[] | null
+  sources?: SourceVO[] | null
   loading?: boolean
+  streaming?: boolean
+  feedback?: 'positive' | 'negative' | null
+}>()
+
+const emit = defineEmits<{
+  feedback: [type: 'positive' | 'negative']
 }>()
 
 /**
@@ -59,23 +65,33 @@ function escapeHtml(str: string): string {
 }
 
 const renderedContent = computed(() => {
-  if (props.loading) return ''
+  if (props.loading && !props.streaming) return ''
   return parseMarkdown(props.content)
 })
 
 const hasSources = computed(() => {
   return props.sources && props.sources.length > 0
 })
+
+const showFeedback = computed(() => {
+  return props.role === 'assistant' && !props.streaming && !props.loading && props.content
+})
 </script>
 
 <template>
-  <div class="message-bubble" :class="`message-bubble--${role}`">
-    <!-- 加载状态 -->
-    <div v-if="loading && role === 'assistant'" class="message-bubble__loading">
+  <div
+    class="message-bubble"
+    :class="[
+      `message-bubble--${role}`,
+      { 'message-bubble--streaming': streaming },
+    ]"
+  >
+    <!-- 加载状态（旧同步方式） -->
+    <div v-if="loading && !streaming && role === 'assistant'" class="message-bubble__loading">
       <span class="loading-dots">思考中<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span></span>
     </div>
 
-    <!-- 正常内容 -->
+    <!-- 正常内容 / 流式内容 -->
     <div v-else class="message-bubble__content">
       <div class="message-bubble__text" v-html="renderedContent" />
 
@@ -83,16 +99,48 @@ const hasSources = computed(() => {
       <div v-if="hasSources" class="message-bubble__sources">
         <div class="message-bubble__sources-title">📎 引用来源：</div>
         <div class="message-bubble__sources-list">
-          <el-tag
+          <el-popover
             v-for="(source, idx) in sources"
             :key="idx"
-            size="small"
-            type="info"
-            class="message-bubble__source-tag"
+            placement="top"
+            :width="360"
+            trigger="hover"
           >
-            {{ source.documentTitle }}
-          </el-tag>
+            <template #reference>
+              <el-tag
+                size="small"
+                type="info"
+                class="message-bubble__source-tag"
+              >
+                {{ source.documentTitle }}
+              </el-tag>
+            </template>
+            <div class="message-bubble__source-detail">
+              <div class="message-bubble__source-detail-title">{{ source.documentTitle }}</div>
+              <div class="message-bubble__source-detail-content">{{ source.content }}</div>
+            </div>
+          </el-popover>
         </div>
+      </div>
+
+      <!-- 反馈评价按钮 -->
+      <div v-if="showFeedback" class="message-bubble__feedback">
+        <button
+          class="feedback-btn"
+          :class="{ 'feedback-btn--active': feedback === 'positive' }"
+          :disabled="feedback === 'negative'"
+          @click="emit('feedback', 'positive')"
+        >
+          👍 有帮助
+        </button>
+        <button
+          class="feedback-btn"
+          :class="{ 'feedback-btn--active': feedback === 'negative' }"
+          :disabled="feedback === 'positive'"
+          @click="emit('feedback', 'negative')"
+        >
+          👎 无帮助
+        </button>
       </div>
     </div>
   </div>
@@ -109,6 +157,14 @@ const hasSources = computed(() => {
 
   &--assistant {
     justify-content: flex-start;
+  }
+
+  // 流式输出光标
+  &--streaming &__text::after {
+    content: '▊';
+    animation: cursor-blink 1s step-end infinite;
+    color: $primary-color;
+    font-weight: bold;
   }
 
   &__content {
@@ -192,7 +248,63 @@ const hasSources = computed(() => {
   }
 
   &__source-tag {
-    cursor: default;
+    cursor: pointer;
+  }
+
+  &__source-detail {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  &__source-detail-title {
+    font-size: $font-size-small;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 8px;
+  }
+
+  &__source-detail-content {
+    font-size: $font-size-small;
+    color: $text-regular;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &__feedback {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+}
+
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border: 1px solid $border-color-light;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 13px;
+  color: $text-secondary;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover:not(:disabled) {
+    background: $bg-color;
+    border-color: $border-color;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--active {
+    color: $primary-color;
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.05);
   }
 }
 
@@ -212,5 +324,10 @@ const hasSources = computed(() => {
   0%, 20% { opacity: 0; }
   50% { opacity: 1; }
   100% { opacity: 0; }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
 }
 </style>

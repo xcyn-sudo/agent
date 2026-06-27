@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import type { UserInfo } from '@/types'
+import { DEPARTMENTS } from '@/types'
 import { userApi } from '@/api/user'
 import UserTable from '@/components/user/UserTable.vue'
 import UserFormDialog from '@/components/user/UserFormDialog.vue'
@@ -15,6 +16,10 @@ const currentPage = ref(1)
 const pageSize = ref(10)
 const searchKeyword = ref('')
 
+// --- 筛选 ---
+const filterDepartment = ref('')
+const filterTitle = ref('')
+
 // --- 弹窗控制 ---
 const formVisible = ref(false)
 const formMode = ref<'create' | 'edit'>('create')
@@ -27,6 +32,8 @@ async function fetchUsers() {
       page: currentPage.value,
       size: pageSize.value,
       keyword: searchKeyword.value || undefined,
+      department: filterDepartment.value || undefined,
+      title: filterTitle.value || undefined,
     })
     users.value = res.data.records
     total.value = res.data.total
@@ -95,29 +102,58 @@ onMounted(() => {
     <!-- 操作栏 -->
     <div class="user-manage__toolbar">
       <el-button type="primary" @click="handleCreate">+ 新增用户</el-button>
-      <el-input
-        v-model="searchKeyword"
-        placeholder="搜索用户名/姓名..."
-        clearable
-        style="width: 240px"
-        @keyup.enter="handleSearch"
-        @clear="handleSearch"
-      >
-        <template #suffix>
-          <el-icon
-            class="search-icon"
-            style="cursor: pointer"
-            @click="handleSearch"
-          >
-            <svg viewBox="0 0 1024 1024" width="1em" height="1em">
-              <path
-                fill="currentColor"
-                d="M795.904 750.72l124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM448 768a320 320 0 1 0 0-640 320 320 0 0 0 0 640z"
-              />
-            </svg>
-          </el-icon>
-        </template>
-      </el-input>
+      <div class="user-manage__filters">
+        <el-select
+          v-model="filterDepartment"
+          placeholder="部门筛选"
+          clearable
+          style="width: 140px"
+          @change="handleSearch"
+        >
+          <el-option label="全部" value="" />
+          <el-option
+            v-for="item in DEPARTMENTS"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-select
+          v-model="filterTitle"
+          placeholder="职级筛选"
+          clearable
+          style="width: 120px"
+          @change="handleSearch"
+        >
+          <el-option label="全部" value="" />
+          <el-option label="员工" value="employee" />
+          <el-option label="经理" value="manager" />
+          <el-option label="总监" value="director" />
+        </el-select>
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索用户名/姓名..."
+          clearable
+          style="width: 240px"
+          @keyup.enter="handleSearch"
+          @clear="handleSearch"
+        >
+          <template #suffix>
+            <el-icon
+              class="search-icon"
+              style="cursor: pointer"
+              @click="handleSearch"
+            >
+              <svg viewBox="0 0 1024 1024" width="1em" height="1em">
+                <path
+                  fill="currentColor"
+                  d="M795.904 750.72l124.992 124.928a32 32 0 0 1-45.248 45.248L750.656 795.904a416 416 0 1 1 45.248-45.248zM448 768a320 320 0 1 0 0-640 320 320 0 0 0 0 640z"
+                />
+              </svg>
+            </el-icon>
+          </template>
+        </el-input>
+      </div>
     </div>
 
     <!-- 表格 -->
@@ -160,6 +196,12 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 }
 

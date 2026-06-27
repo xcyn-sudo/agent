@@ -7,11 +7,14 @@ import org.example.agent_qr.datasource.dto.ConnectionTestResult;
 import org.example.agent_qr.datasource.dto.SyncContext;
 import org.example.agent_qr.datasource.dto.SyncResult;
 import org.example.agent_qr.datasource.entity.DataSourceConfig;
+import org.example.agent_qr.datasource.entity.SyncRecord;
 import org.example.agent_qr.datasource.mapper.DataSourceMapper;
+import org.example.agent_qr.datasource.mapper.SyncRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 /**
@@ -35,6 +38,9 @@ public class SyncScheduler {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
+
+    @Autowired
+    private SyncRecordMapper syncRecordMapper;
 
     /**
      * 调度指定数据源的同步任务。
@@ -67,6 +73,17 @@ public class SyncScheduler {
         } catch (Exception e) {
             log.error("同步调度失败：连接配置 JSON 解析错误, id={}", datasourceId, e);
             dataSourceMapper.updateStatus(datasourceId, DataSourceConfig.STATUS_ERROR);
+            // 记录同步失败历史
+            SyncRecord failRecord = new SyncRecord();
+            failRecord.setDatasourceId(datasourceId);
+            failRecord.setSyncStrategy(config.getSyncStrategy());
+            failRecord.setTotalRows(0);
+            failRecord.setNextCursor(null);
+            failRecord.setStatus(SyncRecord.STATUS_FAILED);
+            failRecord.setErrorMsg("连接配置 JSON 解析错误: " + e.getMessage());
+            failRecord.setSyncTime(LocalDateTime.now());
+            failRecord.setCreateTime(LocalDateTime.now());
+            syncRecordMapper.insert(failRecord);
             return;
         }
 
@@ -76,6 +93,17 @@ public class SyncScheduler {
             log.error("同步调度失败：连通性测试不通过, id={}, error={}",
                     datasourceId, testResult.getErrorMsg());
             dataSourceMapper.updateStatus(datasourceId, DataSourceConfig.STATUS_ERROR);
+            // 记录同步失败历史
+            SyncRecord failRecord = new SyncRecord();
+            failRecord.setDatasourceId(datasourceId);
+            failRecord.setSyncStrategy(config.getSyncStrategy());
+            failRecord.setTotalRows(0);
+            failRecord.setNextCursor(null);
+            failRecord.setStatus(SyncRecord.STATUS_FAILED);
+            failRecord.setErrorMsg("连通性测试不通过: " + testResult.getErrorMsg());
+            failRecord.setSyncTime(LocalDateTime.now());
+            failRecord.setCreateTime(LocalDateTime.now());
+            syncRecordMapper.insert(failRecord);
             return;
         }
 
@@ -91,17 +119,41 @@ public class SyncScheduler {
         } catch (Exception e) {
             log.error("同步调度失败：同步执行异常, id={}", datasourceId, e);
             dataSourceMapper.updateStatus(datasourceId, DataSourceConfig.STATUS_ERROR);
+            // 记录同步失败历史
+            SyncRecord failRecord = new SyncRecord();
+            failRecord.setDatasourceId(datasourceId);
+            failRecord.setSyncStrategy(config.getSyncStrategy());
+            failRecord.setTotalRows(0);
+            failRecord.setNextCursor(null);
+            failRecord.setStatus(SyncRecord.STATUS_FAILED);
+            failRecord.setErrorMsg("同步执行异常: " + e.getMessage());
+            failRecord.setSyncTime(LocalDateTime.now());
+            failRecord.setCreateTime(LocalDateTime.now());
+            syncRecordMapper.insert(failRecord);
             return;
         }
 
         // 更新同步结果
         dataSourceMapper.updateSyncResult(config.getId(),
-                result.getNextCursor(), result.getTotalRows(), java.time.LocalDateTime.now());
+                result.getNextCursor(), result.getTotalRows(), LocalDateTime.now());
         dataSourceMapper.updateStatus(datasourceId, DataSourceConfig.STATUS_ACTIVE);
+
+        // 记录同步成功历史
+        SyncRecord successRecord = new SyncRecord();
+        successRecord.setDatasourceId(datasourceId);
+        successRecord.setSyncStrategy(config.getSyncStrategy());
+        successRecord.setTotalRows(result.getTotalRows());
+        successRecord.setNextCursor(result.getNextCursor());
+        successRecord.setStatus(SyncRecord.STATUS_SUCCESS);
+        successRecord.setErrorMsg(null);
+        successRecord.setSyncTime(LocalDateTime.now());
+        successRecord.setCreateTime(LocalDateTime.now());
+        syncRecordMapper.insert(successRecord);
 
         // 发布数据同步完成事件
         DataSyncCompletedEvent event = new DataSyncCompletedEvent(
-                datasourceId, result.getRawData(), context.getSyncBatchId());
+                datasourceId, config.getSourceName(),
+                result.getRawData(), context.getSyncBatchId());
         eventPublisher.publishEvent(event);
 
         log.info("同步调度完成: id={}, sourceName={}, totalRows={}, batchId={}",

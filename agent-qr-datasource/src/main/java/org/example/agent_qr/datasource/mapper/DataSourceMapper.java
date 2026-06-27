@@ -46,6 +46,16 @@ public interface DataSourceMapper extends BaseMapper<DataSourceConfig> {
     int updateStatus(@Param("id") Long id, @Param("status") String status);
 
     /**
+     * 累加质量检测通过数（即使 blocked 时也调用，传入 0 以初始化字段，避免 NULL 回退泄露全量数据）。
+     *
+     * @param id          数据源 ID
+     * @param passedCount 本次通过数（blocked 时传 0）
+     * @return 影响行数
+     */
+    @Update("UPDATE data_source_config SET total_passed = IFNULL(total_passed, 0) + #{passedCount} WHERE id = #{id}")
+    int updateTotalPassed(@Param("id") Long id, @Param("passedCount") int passedCount);
+
+    /**
      * 查询所有活跃的数据源。
      *
      * @return 活跃数据源列表

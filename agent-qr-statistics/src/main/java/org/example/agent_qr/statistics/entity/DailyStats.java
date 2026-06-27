@@ -71,4 +71,11 @@ public class DailyStats {
      * 点踩数，默认为 0。
      */
     private Integer negativeCount = 0;
+
+    /**
+     * 满意率 = positiveCount / (positiveCount + negativeCount)，0-1 之间的小数。
+     * 不映射数据库字段，仅用于前端展示。
+     */
+    @TableField(exist = false)
+    private Double satisfactionRate;
 }

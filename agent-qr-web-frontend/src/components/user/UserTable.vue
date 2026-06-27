@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { UserInfo } from '@/types'
-import { formatDateTime } from '@/utils/format'
+import { DEPARTMENTS } from '@/types'
+import { formatDateTime, formatSensitivityLevel } from '@/utils/format'
 
 defineProps<{
   users: UserInfo[]
@@ -11,6 +12,25 @@ const emit = defineEmits<{
   edit: [user: UserInfo]
   toggleStatus: [user: UserInfo]
 }>()
+
+function getDepartmentLabel(department: string): string {
+  const item = DEPARTMENTS.find((d) => d.value === department)
+  return item?.label || department
+}
+
+function getTitleLabel(title: string): string {
+  const map: Record<string, string> = {
+    employee: '员工',
+    manager: '经理',
+    director: '总监',
+  }
+  return map[title] || title
+}
+
+function parseDomains(raw: string): string[] {
+  if (!raw) return []
+  return raw.split(',').map((d) => d.trim()).filter(Boolean)
+}
 </script>
 
 <template>
@@ -26,6 +46,34 @@ const emit = defineEmits<{
       <template #default="{ row }">
         <el-tag v-if="row.role === 'admin'" type="danger">admin</el-tag>
         <el-tag v-else type="info">user</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column prop="department" label="部门" width="110" align="center">
+      <template #default="{ row }">
+        {{ getDepartmentLabel(row.department) }}
+      </template>
+    </el-table-column>
+    <el-table-column prop="clearanceLevel" label="密级" width="80" align="center">
+      <template #default="{ row }">
+        <span :class="`sensitivity-tag sensitivity-tag--${row.clearanceLevel}`">
+          {{ formatSensitivityLevel(row.clearanceLevel) }}
+        </span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="allowedDomains" label="允许域" width="200">
+      <template #default="{ row }">
+        <span
+          v-for="domain in parseDomains(row.allowedDomains)"
+          :key="domain"
+          class="domain-tag"
+        >
+          {{ domain }}
+        </span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="title" label="职级" width="80" align="center">
+      <template #default="{ row }">
+        {{ getTitleLabel(row.title) }}
       </template>
     </el-table-column>
     <el-table-column prop="status" label="状态" width="80" align="center">
@@ -50,4 +98,39 @@ const emit = defineEmits<{
 </template>
 
 <style scoped lang="scss">
+.sensitivity-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &--0 {
+    color: #67c23a;
+    background: #f0f9eb;
+  }
+  &--1 {
+    color: #409eff;
+    background: #ecf5ff;
+  }
+  &--2 {
+    color: #e6a23c;
+    background: #fdf6ec;
+  }
+  &--3 {
+    color: #f56c6c;
+    background: #fef0f0;
+  }
+}
+
+.domain-tag {
+  display: inline-block;
+  padding: 2px 6px;
+  margin: 2px 4px 2px 0;
+  border-radius: 4px;
+  font-size: 12px;
+  color: #409eff;
+  background: #ecf5ff;
+  border: 1px solid #d9ecff;
+}
 </style>

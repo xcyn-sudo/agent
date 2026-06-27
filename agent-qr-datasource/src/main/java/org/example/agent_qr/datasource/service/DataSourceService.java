@@ -1,17 +1,25 @@
 package org.example.agent_qr.datasource.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.common.BusinessException;
+import org.example.agent_qr.common.event.DataSyncCompletedEvent;
 import org.example.agent_qr.datasource.connector.DataSourceConnector;
 import org.example.agent_qr.datasource.dto.ConnectionTestResult;
 import org.example.agent_qr.datasource.dto.SyncContext;
 import org.example.agent_qr.datasource.dto.SyncResult;
 import org.example.agent_qr.datasource.entity.DataSourceConfig;
+import org.example.agent_qr.datasource.entity.SyncRecord;
 import org.example.agent_qr.datasource.mapper.DataSourceMapper;
+import org.example.agent_qr.datasource.mapper.SyncRecordMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +39,13 @@ public class DataSourceService {
     private DataSourceMapper dataSourceMapper;
 
     @Autowired
+    private SyncRecordMapper syncRecordMapper;
+
+    @Autowired
     private Map<String, DataSourceConnector> connectorMap;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     // ==================== CRUD ====================
 
@@ -128,29 +142,142 @@ public class DataSourceService {
         try {
             connConfig = parseJson(config.getConnectionConfig());
         } catch (Exception e) {
+            // 记录同步失败历史
+            SyncRecord failRecord = new SyncRecord();
+            failRecord.setDatasourceId(config.getId());
+            failRecord.setSyncStrategy(config.getSyncStrategy());
+            failRecord.setTotalRows(0);
+            failRecord.setNextCursor(null);
+            failRecord.setStatus(SyncRecord.STATUS_FAILED);
+            failRecord.setErrorMsg("连接配置 JSON 解析失败: " + e.getMessage());
+            failRecord.setSyncTime(LocalDateTime.now());
+            failRecord.setCreateTime(LocalDateTime.now());
+            syncRecordMapper.insert(failRecord);
             throw new BusinessException("连接配置 JSON 解析失败: " + e.getMessage());
         }
 
         SyncContext context = new SyncContext(config.getId(), connConfig);
 
-        SyncResult result;
-        if (DataSourceConfig.SYNC_INCREMENTAL.equals(config.getSyncStrategy())
-                && config.getLastCursor() != null) {
-            result = connector.incrementalSync(context, config.getLastCursor());
-        } else {
-            result = connector.fullSync(context);
-        }
+        try {
+            SyncResult result;
+            if (DataSourceConfig.SYNC_INCREMENTAL.equals(config.getSyncStrategy())
+                    && config.getLastCursor() != null) {
+                result = connector.incrementalSync(context, config.getLastCursor());
+            } else {
+                result = connector.fullSync(context);
+            }
 
-        // 更新同步结果
-        if (result.getNextCursor() != null) {
+            // 更新同步结果
             dataSourceMapper.updateSyncResult(config.getId(),
-                    result.getNextCursor(), result.getTotalRows(), java.time.LocalDateTime.now());
-        }
-        dataSourceMapper.updateStatus(config.getId(), DataSourceConfig.STATUS_ACTIVE);
+                    result.getNextCursor(), result.getTotalRows(), LocalDateTime.now());
+            dataSourceMapper.updateStatus(config.getId(), DataSourceConfig.STATUS_ACTIVE);
 
-        log.info("数据源同步完成: id={}, sourceName={}, totalRows={}, nextCursor={}",
-                id, config.getSourceName(), result.getTotalRows(), result.getNextCursor());
-        return result;
+            // 记录同步成功历史
+            SyncRecord successRecord = new SyncRecord();
+            successRecord.setDatasourceId(config.getId());
+            successRecord.setSyncStrategy(config.getSyncStrategy());
+            successRecord.setTotalRows(result.getTotalRows());
+            successRecord.setNextCursor(result.getNextCursor());
+            successRecord.setStatus(SyncRecord.STATUS_SUCCESS);
+            successRecord.setErrorMsg(null);
+            successRecord.setSyncTime(LocalDateTime.now());
+            successRecord.setCreateTime(LocalDateTime.now());
+            syncRecordMapper.insert(successRecord);
+
+            log.info("数据源同步完成: id={}, sourceName={}, totalRows={}, nextCursor={}",
+                    id, config.getSourceName(), result.getTotalRows(), result.getNextCursor());
+
+            // 发布同步完成事件 → 触发数据质量检查
+            eventPublisher.publishEvent(new DataSyncCompletedEvent(
+                    config.getId(), config.getSourceName(),
+                    result.getRawData(), context.getSyncBatchId()));
+            log.info("数据同步完成事件已发布: datasourceId={}, batchId={}, rows={}",
+                    config.getId(), context.getSyncBatchId(), result.getTotalRows());
+
+            return result;
+        } catch (Exception e) {
+            log.error("数据源同步执行失败: id={}, sourceName={}", id, config.getSourceName(), e);
+            // 记录同步失败历史
+            SyncRecord failRecord = new SyncRecord();
+            failRecord.setDatasourceId(config.getId());
+            failRecord.setSyncStrategy(config.getSyncStrategy());
+            failRecord.setTotalRows(0);
+            failRecord.setNextCursor(null);
+            failRecord.setStatus(SyncRecord.STATUS_FAILED);
+            failRecord.setErrorMsg(e.getMessage());
+            failRecord.setSyncTime(LocalDateTime.now());
+            failRecord.setCreateTime(LocalDateTime.now());
+            syncRecordMapper.insert(failRecord);
+            throw e;
+        }
+    }
+
+    // ==================== 字段检测 ====================
+
+    /**
+     * 检测指定表的字段（列名）列表。
+     * 直接接收连接配置 JSON 和表名，不需要已保存的数据源 ID。
+     *
+     * @param connectionConfigJson 连接配置 JSON 字符串
+     * @param tableName            表名
+     * @return 字段名列表
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> detectColumns(String connectionConfigJson, String tableName) {
+        Map<String, Object> config = parseJson(connectionConfigJson);
+        DataSourceConnector connector = getConnector("JDBC");
+        return connector.detectColumns(config, tableName);
+    }
+
+    // ==================== 分页查询 ====================
+
+    /**
+     * 分页查询数据源配置列表，支持按 domain 筛选。
+     *
+     * @param page   页码（从 1 开始）
+     * @param size   每页条数
+     * @param domain 业务域筛选（可选，为空则不筛选）
+     * @return 包含 total、page、size、records 的分页结果
+     */
+    public Map<String, Object> listByPage(int page, int size, String domain) {
+        IPage<DataSourceConfig> ipage = new Page<>(page, size);
+        LambdaQueryWrapper<DataSourceConfig> wrapper = new LambdaQueryWrapper<>();
+        if (domain != null && !domain.isBlank()) {
+            wrapper.eq(DataSourceConfig::getDomain, domain);
+        }
+        wrapper.orderByDesc(DataSourceConfig::getCreateTime);
+        IPage<DataSourceConfig> result = dataSourceMapper.selectPage(ipage, wrapper);
+
+        Map<String, Object> pageResult = new HashMap<>();
+        pageResult.put("total", result.getTotal());
+        pageResult.put("page", page);
+        pageResult.put("size", size);
+        pageResult.put("records", result.getRecords());
+        return pageResult;
+    }
+
+    /**
+     * 查询数据源同步历史，按同步时间倒序分页。
+     *
+     * @param datasourceId 数据源 ID
+     * @param page         页码（从 1 开始）
+     * @param size         每页条数
+     * @return 包含 total、page、size、records 的分页结果
+     */
+    public Map<String, Object> getSyncHistory(Long datasourceId, int page, int size) {
+        // 确认数据源存在
+        getById(datasourceId);
+
+        int offset = (page - 1) * size;
+        List<SyncRecord> records = syncRecordMapper.selectByDatasourceIdPaged(datasourceId, offset, size);
+        long total = syncRecordMapper.countByDatasourceId(datasourceId);
+
+        Map<String, Object> pageResult = new HashMap<>();
+        pageResult.put("total", total);
+        pageResult.put("page", page);
+        pageResult.put("size", size);
+        pageResult.put("records", records);
+        return pageResult;
     }
 
     /**

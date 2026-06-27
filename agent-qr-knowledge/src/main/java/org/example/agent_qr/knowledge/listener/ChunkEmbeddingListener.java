@@ -2,11 +2,16 @@ package org.example.agent_qr.knowledge.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import dev.langchain4j.data.document.Metadata;
+import dev.langchain4j.data.embedding.Embedding;
+import dev.langchain4j.data.segment.TextSegment;
+import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import org.example.agent_qr.common.dlq.DeadLetterQueue;
 import org.example.agent_qr.common.event.ChunksCreatedEvent;
 import org.example.agent_qr.common.event.DocumentParsedEvent;
 import org.example.agent_qr.common.event.EmbeddingCompletedEvent;
 import org.example.agent_qr.knowledge.entity.Chunk;
+import org.example.agent_qr.knowledge.entity.Document;
 import org.example.agent_qr.knowledge.enums.DocumentStatus;
 import org.example.agent_qr.knowledge.mapper.ChunkMapper;
 import org.example.agent_qr.knowledge.mapper.DocumentMapper;
@@ -20,6 +25,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 切片向量化事件监听器（P2 增强版）。
@@ -42,6 +48,7 @@ public class ChunkEmbeddingListener {
     private final ApplicationEventPublisher eventPublisher;
     private final DeadLetterQueue deadLetterQueue;
     private final BatchEmbeddingService batchEmbeddingService;
+    private final ChromaEmbeddingStore chromaEmbeddingStore;
 
     /**
      * 处理文档解析完成事件（P2 BatchEmbedding + DLQ 版）。
@@ -80,14 +87,34 @@ public class ChunkEmbeddingListener {
 
             // 6. P2: 使用 BatchEmbeddingService 攒批向量化
             List<Chunk> savedChunks = chunkMapper.selectByDocumentId(documentId);
+            // 获取文档标题用于 ChromaDB 元数据
+            Document doc = documentMapper.selectById(documentId);
+            final String docTitle = doc != null && doc.getFileName() != null
+                    ? doc.getFileName() : ("doc-" + documentId);
             int successCount = 0;
             for (Chunk chunk : savedChunks) {
                 try {
-                    // 提交到攒批队列（异步完成）
+                    // 提交到攒批队列（异步完成，回调写入 ChromaDB）
                     batchEmbeddingService.submit(chunk)
                             .thenAccept(vector -> {
-                                chunk.setChromaId("embedded");
-                                chunkMapper.updateById(chunk);
+                                try {
+                                    // 写入 ChromaDB
+                                    Embedding embedding = new Embedding(vector);
+                                    TextSegment segment = TextSegment.from(
+                                            chunk.getContent(),
+                                            new Metadata(Map.of("chunk_id", chunk.getId().toString(),
+                                                   "document_id", documentId.toString(),
+                                                   "document_title", docTitle)));
+                                    String chromaId = chromaEmbeddingStore.add(embedding, segment);
+                                    chunk.setChromaId(chromaId);
+                                    chunkMapper.updateById(chunk);
+                                    log.debug("ChromaDB 向量写入成功: chunkId={}, chromaId={}", chunk.getId(), chromaId);
+                                } catch (Exception ex) {
+                                    log.error("ChromaDB 向量写入失败: chunkId={}, error={}", chunk.getId(), ex.getMessage());
+                                    String payload = String.format("{\"chunkId\":%d,\"documentId\":%d}",
+                                            chunk.getId(), documentId);
+                                    deadLetterQueue.enqueue("CHROMA_WRITE", documentId, payload, ex);
+                                }
                             })
                             .exceptionally(ex -> {
                                 log.error("切片向量化失败: chunkId={}, error={}", chunk.getId(), ex.getMessage());
@@ -103,7 +130,6 @@ public class ChunkEmbeddingListener {
                             chunk.getId(), documentId);
                     deadLetterQueue.enqueue("EMBED", documentId, payload, e);
                 }
-                successCount++;
             }
 
             // 7. 更新状态为 READY

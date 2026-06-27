@@ -11,10 +11,10 @@ jwt:
 ollama:
   llm:
     base-url: http://localhost:11434
-    model: qwen2.5:7b
+    model: qwen2.5:4b
   embedding:
     base-url: http://localhost:11434
-    model: nomic-embed-text
+    model: qwen3-embedding:4b
 
 # ── Agent-QR P2 增强配置 ──
 agent-qr:
@@ -47,6 +47,7 @@ agent-qr:
   # 数据质量检查
   data-quality:
     block-threshold: 0.5        # 阻断阈值（通过率低于此值阻断）
+    content-fields: content,text,_content  # 完整性检查的字段名（逗号分隔）
 
   # PDF 解析
   pdf:

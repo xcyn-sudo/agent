@@ -1,6 +1,8 @@
 package org.example.agent_qr.catalog.router;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.example.agent_qr.catalog.dto.DomainRoutingResult;
 import org.example.agent_qr.catalog.entity.CatalogTree;
 import org.example.agent_qr.catalog.entity.DomainNode;
@@ -10,6 +12,7 @@ import org.example.agent_qr.catalog.service.KnowledgeCatalogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -140,17 +143,33 @@ public class DomainRouter {
     /**
      * 从查询文本中提取关键词。
      * <p>
-     * P2 简化实现：按空格和常见分隔符分词，过滤停用词和短词。
+     * 使用 SmartChineseAnalyzer 进行中文智能分词，
+     * 过滤停用词和单字词。
      * </p>
      */
     private List<String> extractKeywords(String query) {
         List<String> keywords = new ArrayList<>();
-        // 按空格、逗号、句号等分隔
-        String[] tokens = query.split("[\\s,，。.、]+");
-        for (String token : tokens) {
-            String trimmed = token.trim().toLowerCase();
-            if (trimmed.length() >= 2 && !isStopWord(trimmed)) {
-                keywords.add(trimmed);
+        try (SmartChineseAnalyzer analyzer = new SmartChineseAnalyzer()) {
+            var tokenStream = analyzer.tokenStream("query", new StringReader(query));
+            tokenStream.reset();
+            CharTermAttribute attr = tokenStream.getAttribute(CharTermAttribute.class);
+            while (tokenStream.incrementToken()) {
+                String term = attr.toString().trim().toLowerCase();
+                if (term.length() >= 2 && !isStopWord(term)) {
+                    keywords.add(term);
+                }
+            }
+            tokenStream.end();
+            tokenStream.close();
+        } catch (Exception e) {
+            // 分词失败时降级到原始分隔符方式
+            log.debug("SmartChineseAnalyzer 分词失败，降级到分隔符分词: {}", e.getMessage());
+            String[] tokens = query.split("[\\s,，。.、]+");
+            for (String token : tokens) {
+                String trimmed = token.trim().toLowerCase();
+                if (trimmed.length() >= 2 && !isStopWord(trimmed)) {
+                    keywords.add(trimmed);
+                }
             }
         }
         return keywords;

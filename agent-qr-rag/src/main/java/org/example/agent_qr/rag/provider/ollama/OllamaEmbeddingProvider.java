@@ -56,10 +56,10 @@ public class OllamaEmbeddingProvider implements EmbeddingProvider {
                 log.debug("Ollama Embedding 成功，维度: {}", vector.length);
                 return vector;
             }
-            return new float[0];
+            throw new RuntimeException("Ollama Embedding 返回结果为空或格式异常: response=" + response);
         } catch (Exception e) {
             log.error("Ollama Embedding 调用失败", e);
-            return new float[0];
+            throw new RuntimeException("Ollama Embedding 调用失败: " + e.getMessage(), e);
         }
     }
 

@@ -11,7 +11,7 @@ services:
   # MySQL 8.0 - 关系型数据库
   # ==========================================
   mysql:
-    image: mysql:8.0
+    image: mysql
     container_name: agent-qr-mysql
     restart: unless-stopped
     environment:
@@ -25,6 +25,7 @@ services:
       - mysql-data:/var/lib/mysql
       # 初始化 SQL 脚本 (首次启动自动执行)
       - ./agent-qr-web/src/main/resources/db/p1-schema.sql:/docker-entrypoint-initdb.d/01-p1-schema.sql
+      - ./agent-qr-web/src/main/resources/db/p2-schema.sql:/docker-entrypoint-initdb.d/02-p2-schema.sql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci

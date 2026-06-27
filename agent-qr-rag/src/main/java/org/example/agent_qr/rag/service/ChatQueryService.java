@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.langchain4j.data.message.ChatMessage;
 import dev.langchain4j.data.message.SystemMessage;
+import dev.langchain4j.data.message.UserMessage;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -116,14 +117,19 @@ public class ChatQueryService {
                     .map(doc -> String.format("【%s】\n%s", doc.getDocumentTitle(), doc.getContent()))
                     .collect(Collectors.joining("\n\n"));
 
-            String prompt = promptTemplate.build(query, contextText);
+            String systemPrompt = promptTemplate.buildSystemPrompt(contextText);
 
             List<ChatMessage> messages = new ArrayList<>();
-            messages.add(new SystemMessage(prompt));
+            messages.add(new SystemMessage(systemPrompt));
+            messages.add(new UserMessage(query));
 
             LLMProvider llmProvider = circuitBreaker.getActiveProvider();
             try {
                 answer = llmProvider.generate(messages);
+                if (answer == null || answer.isBlank()) {
+                    log.warn("LLM 返回空内容，conversationId={}, query={}", conversationId, query);
+                    answer = "抱歉，AI 未能生成有效回答，请稍后重试";
+                }
                 circuitBreaker.recordSuccess();
             } catch (Exception e) {
                 circuitBreaker.recordFailure();
@@ -195,13 +201,30 @@ public class ChatQueryService {
                 }
             }
 
+            // 空检索短路 — 与 ask() 保持一致，避免无结果时浪费 LLM 调用
+            if (retrievedDocs.isEmpty()) {
+                String emptyAnswer = "知识库中暂无相关信息";
+                saveMessage(conversationId, "assistant", emptyAnswer, "[]");
+                conversationService.incrementMessageCount(conversationId);
+                sendSseEvent(emitter, "token", emptyAnswer);
+                Map<String, Object> doneData = new HashMap<>();
+                doneData.put("conversationId", conversationId);
+                doneData.put("sources", List.of());
+                doneData.put("answer", emptyAnswer);
+                sendSseEvent(emitter, "done", doneData);
+                eventPublisher.publishEvent(new AnswerGeneratedEvent(this, userId, conversationId));
+                emitter.complete();
+                return;
+            }
+
             String contextText = retrievedDocs.stream()
                     .map(doc -> String.format("【%s】\n%s", doc.getDocumentTitle(), doc.getContent()))
                     .collect(Collectors.joining("\n\n"));
-            String prompt = promptTemplate.build(query, contextText);
+            String systemPrompt = promptTemplate.buildSystemPrompt(contextText);
 
             List<ChatMessage> messages = new ArrayList<>();
-            messages.add(new SystemMessage(prompt));
+            messages.add(new SystemMessage(systemPrompt));
+            messages.add(new UserMessage(query));
 
             LLMProvider llmProvider = circuitBreaker.getActiveProvider();
             StringBuilder fullAnswer = new StringBuilder();
@@ -214,23 +237,42 @@ public class ChatQueryService {
                     })
                     .doOnComplete(() -> {
                         try {
+                            String answer = fullAnswer.toString();
+                            // ★ 防御：LLM 成功完成但未产出任何内容 token
+                            if (answer.isEmpty()) {
+                                log.warn("SSE 完成但 LLM 返回空内容，conversationId={}, sources.size={}",
+                                        finalConversationId, sources.size());
+                                if (!sources.isEmpty()) {
+                                    answer = "已找到参考资料，但 AI 未能生成回答，请重试或查看下方来源文档";
+                                } else {
+                                    answer = "抱歉，AI 未能生成有效回答，请稍后重试";
+                                }
+                            }
                             String sourcesJson = OBJECT_MAPPER.writeValueAsString(sources);
-                            saveMessage(finalConversationId, "assistant", fullAnswer.toString(), sourcesJson);
+                            Long messageId = saveMessage(finalConversationId, "assistant", answer, sourcesJson);
                             conversationService.incrementMessageCount(finalConversationId);
 
                             Map<String, Object> doneData = new HashMap<>();
                             doneData.put("conversationId", finalConversationId);
+                            doneData.put("messageId", messageId);
                             doneData.put("sources", sources);
-                            doneData.put("answer", fullAnswer.toString());
+                            doneData.put("answer", answer);
                             sendSseEvent(emitter, "done", doneData);
 
                             eventPublisher.publishEvent(new AnswerGeneratedEvent(this, userId, finalConversationId));
                             circuitBreaker.recordSuccess();
                             emitter.complete();
 
-                            log.info("SSE 流式问答完成，conversationId={}", finalConversationId);
+                            log.info("SSE 流式问答完成，conversationId={}, answerLength={}",
+                                    finalConversationId, answer.length());
                         } catch (Exception e) {
-                            log.error("SSE 完成处理失败", e);
+                            log.warn("SSE 完成事件处理失败: conversationId={}", finalConversationId, e);
+                            // 尝试发送 error 事件通知前端
+                            try {
+                                sendSseEvent(emitter, "error", Map.of("message", "响应处理异常"));
+                            } catch (Exception ignored) {
+                                // 连接已断开
+                            }
                             emitter.completeWithError(e);
                         }
                     })
@@ -239,16 +281,31 @@ public class ChatQueryService {
                         circuitBreaker.recordFailure();
                         sendSseEvent(emitter, "error", Map.of("message", error.getMessage()));
 
+                        String assistantContent;
                         if (!fullAnswer.isEmpty()) {
-                            saveMessage(finalConversationId, "assistant",
-                                    fullAnswer.toString() + "\n[生成中断]", "[]");
+                            assistantContent = fullAnswer + "\n[生成中断]";
+                        } else {
+                            // LLM 未产出任何 token → 保存占位消息，避免会话变空
+                            assistantContent = "抱歉，AI 服务暂时不可用，请稍后重试";
                         }
+                        saveMessage(finalConversationId, "assistant", assistantContent, "[]");
+                        conversationService.incrementMessageCount(finalConversationId);
                         emitter.completeWithError(error);
                     })
                     .subscribe();
         } catch (Exception e) {
             log.error("SSE 流式问答初始化失败", e);
             sendSseEvent(emitter, "error", Map.of("message", e.getMessage()));
+            // 如果用户消息已保存（conversationId 已创建），保存占位 assistant 消息避免空对话
+            if (conversationId != null) {
+                try {
+                    saveMessage(conversationId, "assistant",
+                            "抱歉，AI 服务暂时不可用，请稍后重试", "[]");
+                    conversationService.incrementMessageCount(conversationId);
+                } catch (Exception ignored) {
+                    // 保存失败不影响主流程
+                }
+            }
             emitter.completeWithError(e);
         }
     }
@@ -274,15 +331,19 @@ public class ChatQueryService {
                     .data(data));
         } catch (IOException e) {
             log.error("SSE 事件发送失败: eventName={}", eventName, e);
+        } catch (Exception e) {
+            // AsyncRequestNotUsableException 等运行时异常：连接已断开，静默跳过
+            log.warn("SSE 事件发送异常，连接可能已断开: eventName={}", eventName);
         }
     }
 
-    private void saveMessage(Long conversationId, String role, String content, String sources) {
+    private Long saveMessage(Long conversationId, String role, String content, String sources) {
         Message message = new Message();
         message.setConversationId(conversationId);
         message.setRole(role);
         message.setContent(content);
         message.setSources(sources);
         messageMapper.insert(message);
+        return message.getId();
     }
 }

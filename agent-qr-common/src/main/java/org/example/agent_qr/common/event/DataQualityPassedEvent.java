@@ -27,6 +27,20 @@ public class DataQualityPassedEvent {
     /** 通过质量检查的数据 */
     private List<Map<String, Object>> passedData;
 
+    /** 数据源 ID */
+    private Long datasourceId;
+
     /** 同步批次 ID（UUID） */
     private String syncBatchId;
+
+    /**
+     * 轻量构造器 — 通知数据源 ID 和批次 ID，下游模块自行查询报告。
+     *
+     * @param datasourceId 数据源 ID
+     * @param syncBatchId  同步批次 ID
+     */
+    public DataQualityPassedEvent(Long datasourceId, String syncBatchId) {
+        this.datasourceId = datasourceId;
+        this.syncBatchId = syncBatchId;
+    }
 }

@@ -54,6 +54,46 @@ public class JdbcConnector implements DataSourceConnector {
     }
 
     @Override
+    public List<String> detectColumns(Map<String, Object> config, String tableName) {
+        String url = (String) config.get("url");
+        String username = (String) config.get("username");
+        String password = (String) config.get("password");
+
+        List<String> columns = new ArrayList<>();
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            DatabaseMetaData meta = conn.getMetaData();
+            try (ResultSet rs = meta.getColumns(null, null, tableName, null)) {
+                while (rs.next()) {
+                    columns.add(rs.getString("COLUMN_NAME"));
+                }
+            }
+            log.info("检测表字段成功: table={}, columns={}", tableName, columns);
+        } catch (Exception e) {
+            log.error("检测表字段失败: table={}, error={}", tableName, e.getMessage());
+            throw new RuntimeException("无法获取表字段: " + e.getMessage());
+        }
+        return columns;
+    }
+
+    /**
+     * 根据 tableFields 配置构建 SELECT SQL。
+     * 若该表未指定字段或字段列表为空，返回 SELECT *。
+     */
+    @SuppressWarnings("unchecked")
+    private String buildSelectSql(String table, Map<String, Object> config) {
+        Map<String, List<String>> tableFields =
+                (Map<String, List<String>>) config.get("tableFields");
+        if (tableFields == null || !tableFields.containsKey(table)) {
+            return "SELECT * FROM " + table;
+        }
+        List<String> fields = tableFields.get(table);
+        if (fields == null || fields.isEmpty()) {
+            return "SELECT * FROM " + table;
+        }
+        return "SELECT " + String.join(", ", fields) + " FROM " + table;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public SyncResult fullSync(SyncContext context) {
         Map<String, Object> config = context.getConfig();
@@ -70,7 +110,7 @@ public class JdbcConnector implements DataSourceConnector {
         List<Map<String, Object>> allRows = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, username, password)) {
             for (String table : tableNames) {
-                String sql = "SELECT * FROM " + table;
+                String sql = buildSelectSql(table, config);
                 try (PreparedStatement ps = conn.prepareStatement(sql);
                      ResultSet rs = ps.executeQuery()) {
                     ResultSetMetaData meta = rs.getMetaData();
@@ -110,8 +150,9 @@ public class JdbcConnector implements DataSourceConnector {
         String newCursor = lastCursor;
 
         try (Connection conn = DriverManager.getConnection(url, username, password)) {
-            String sql = "SELECT * FROM " + tableName
-                    + " WHERE " + cursorField + " > ? ORDER BY " + cursorField + " ASC";
+            String baseSelect = buildSelectSql(tableName, config);
+            String sql = baseSelect + " WHERE " + cursorField
+                    + " > ? ORDER BY " + cursorField + " ASC";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setString(1, lastCursor != null ? lastCursor : "");
                 try (ResultSet rs = ps.executeQuery()) {

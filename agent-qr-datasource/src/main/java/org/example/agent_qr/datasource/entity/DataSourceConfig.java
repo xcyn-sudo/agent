@@ -47,11 +47,17 @@ public class DataSourceConfig {
     /** 字段映射配置（JSON 格式） */
     private String fieldMapping;
 
+    /** 该数据源完整性检查的字段列表（逗号分隔），为空时回退到全局默认值 content,text,_content */
+    private String contentFields;
+
     /** 状态：ACTIVE / INACTIVE / ERROR */
     private String status;
 
     /** 累计同步总数 */
     private Integer totalSynced;
+
+    /** 累计质量通过数（NULL 表示从未执行过质量检查） */
+    private Integer totalPassed;
 
     /** 上次同步时间 */
     private LocalDateTime lastSyncAt;

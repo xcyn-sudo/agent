@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.example.agent_qr.knowledge.enums.DocumentStatus;
@@ -101,6 +102,9 @@ public class Document {
 
     /**
      * 软删除标记：0=未删除 / 1=已删除。
+     * MyBatis-Plus @TableLogic 自动在所有查询中追加 WHERE deleted = 0，
+     * 并在 deleteById 调用时自动转换为 UPDATE SET deleted = 1。
      */
+    @TableLogic
     private Integer deleted;
 }

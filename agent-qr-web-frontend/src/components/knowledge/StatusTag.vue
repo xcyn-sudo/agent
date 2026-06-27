@@ -11,7 +11,7 @@ const statusMap: Record<string, { type: 'info' | 'success' | 'danger' | 'warning
   EMBEDDING: { type: '', label: '向量化中', loading: true },
   READY: { type: 'success', label: '就绪', loading: false },
   FAILED: { type: 'danger', label: '失败', loading: false },
-  DELETING: { type: 'warning', label: '删除中', loading: true },
+  DELETING: { type: '', label: '删除中', loading: true },
 }
 </script>
 

@@ -6,9 +6,11 @@ import org.example.agent_qr.catalog.entity.DomainNode;
 import org.example.agent_qr.catalog.entity.EntityNode;
 import org.example.agent_qr.catalog.entity.SourceNode;
 import org.example.agent_qr.common.event.DataETLedEvent;
+import org.example.agent_qr.common.event.DataQualityPassedEvent;
 import org.example.agent_qr.datasource.entity.DataSourceConfig;
 import org.example.agent_qr.datasource.mapper.DataSourceMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,9 @@ public class KnowledgeCatalogService {
 
     @Autowired
     private DataSourceMapper dataSourceMapper;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     /**
      * 获取完整的三级目录树。
@@ -75,12 +80,39 @@ public class KnowledgeCatalogService {
                 sourceNodes.add(sourceNode);
             }
 
-            DomainNode domainNode = new DomainNode(domainName, sources.size(), sourceNodes);
+            // 统计域下所有数据源的实体总数
+            int totalEntities = sourceNodes.stream()
+                    .mapToInt(s -> s.getEntities() != null ? s.getEntities().size() : 0)
+                    .sum();
+            DomainNode domainNode = new DomainNode(domainName, sources.size(), totalEntities, sourceNodes);
             domains.add(domainNode);
         }
 
         log.debug("目录树构建完成: {} 个域", domains.size());
         return new CatalogTree(domains);
+    }
+
+    /**
+     * 获取知识目录统计概览。
+     * <p>
+     * 聚合统计域数量、数据源总数和实体总数。
+     * </p>
+     *
+     * @return 统计数据 Map（totalDomains / totalSources / totalEntities）
+     */
+    public Map<String, Object> getStats() {
+        CatalogTree tree = getCatalogTree();
+        int totalSources = 0;
+        int totalEntities = 0;
+        for (DomainNode domain : tree.getDomains()) {
+            totalSources += domain.getSourceCount();
+            totalEntities += domain.getTotalEntities();
+        }
+        Map<String, Object> stats = new LinkedHashMap<>();
+        stats.put("totalDomains", tree.getDomains().size());
+        stats.put("totalSources", totalSources);
+        stats.put("totalEntities", totalEntities);
+        return stats;
     }
 
     /**
@@ -96,9 +128,14 @@ public class KnowledgeCatalogService {
         String entityName = ds.getSourceName();
         String entityType = mapSourceTypeToEntityType(ds.getSourceType());
 
-        // 如果 totalSynced 有值则使用，否则设为 0
-        int recordCount = ds.getTotalSynced() != null ? ds.getTotalSynced() : 0;
-        entities.add(new EntityNode(entityName, entityType, recordCount));
+        // 优先使用质量检测通过数；若从未做过质检（totalPassed 为 NULL），回退到 totalSynced 以兼容旧数据
+        int recordCount;
+        if (ds.getTotalPassed() != null) {
+            recordCount = ds.getTotalPassed();
+        } else {
+            recordCount = ds.getTotalSynced() != null ? ds.getTotalSynced() : 0;
+        }
+        entities.add(new EntityNode(entityName, entityType, recordCount, ds.getLastSyncAt()));
 
         return entities;
     }
@@ -116,6 +153,37 @@ public class KnowledgeCatalogService {
             case "S3" -> EntityNode.TYPE_FILE;
             default -> EntityNode.TYPE_TABLE;
         };
+    }
+
+    /**
+     * 监听数据质量通过事件，触发 ETL 处理。
+     *
+     * @param event 质量通过事件
+     */
+    @Async
+    @EventListener
+    public void onDataQualityPassed(DataQualityPassedEvent event) {
+        log.info("收到质量通过事件: batchId={}, passedDataCount={}",
+                event.getSyncBatchId(),
+                event.getPassedData() != null ? event.getPassedData().size() : 0);
+
+        try {
+            // 质量通过后，发布 ETL 完成事件 → 触发目录索引更新
+            // 目录索引为惰性计算（下次调用 getCatalogTree 时重建），
+            // 这里仅记录日志并发布下游事件
+            int entityCount = event.getPassedData() != null ? event.getPassedData().size() : 0;
+            eventPublisher.publishEvent(new DataETLedEvent(
+                    null,   // domain 由下游自行推断
+                    null,   // sourceName 由下游自行推断
+                    entityCount,
+                    event.getSyncBatchId()
+            ));
+            log.info("ETL 完成事件已发布: batchId={}, entityCount={}",
+                    event.getSyncBatchId(), entityCount);
+        } catch (Exception e) {
+            log.error("质量通过事件处理失败: batchId={}, error={}",
+                    event.getSyncBatchId(), e.getMessage(), e);
+        }
     }
 
     /**

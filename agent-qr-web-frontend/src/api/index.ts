@@ -1,19 +1,54 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
-import { getToken, removeToken, removeUserFromStorage } from '@/utils/token'
+import {
+  getAccessToken,
+  getRefreshToken,
+  setAccessToken,
+  setRefreshToken,
+  setTokenExpiresAt,
+  removeAllTokens,
+  getTokenExpiresAt,
+} from '@/utils/token'
 
 const request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '',
-  timeout: 15000,
+  timeout: 30000,
 })
 
-// 请求拦截器：自动添加 Authorization 头
+// ★ 是否正在刷新 Token
+let isRefreshing = false
+// ★ 等待刷新期间暂存的请求队列
+let pendingRequests: Array<{
+  resolve: (token: string) => void
+  reject: (error: Error) => void
+}> = []
+
+// ★ 处理等待队列
+function processQueue(error: Error | null, token?: string) {
+  pendingRequests.forEach(({ resolve, reject }) => {
+    if (error || !token) reject(error || new Error('Token 刷新失败'))
+    else resolve(token)
+  })
+  pendingRequests = []
+}
+
+/** ★ 生成前端 TraceId（16位 hex） */
+function generateTraceId(): string {
+  const arr = new Uint8Array(8)
+  crypto.getRandomValues(arr)
+  return Array.from(arr, (b) => b.toString(16).padStart(2, '0')).join('')
+}
+
+// 请求拦截器：自动添加 Authorization 头 + TraceId
 request.interceptors.request.use(
   (config) => {
-    const token = getToken()
+    const token = getAccessToken()
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    // ★ P2 新增 TraceId
+    const traceId = generateTraceId()
+    config.headers['X-Trace-Id'] = traceId
     return config
   },
   (error) => {
@@ -21,18 +56,62 @@ request.interceptors.request.use(
   },
 )
 
-// 响应拦截器：统一错误处理
+/**
+ * ★ 调用 Refresh Token 接口，静默刷新 Access Token
+ * 使用队列机制保证并发请求只刷新一次
+ */
+async function handleTokenRefresh(failedConfig: any): Promise<any> {
+  if (isRefreshing) {
+    // 已有刷新请求在进行中 → 加入等待队列
+    return new Promise((resolve, reject) => {
+      pendingRequests.push({ resolve, reject })
+    }).then((token) => {
+      failedConfig.headers.Authorization = `Bearer ${token}`
+      return request(failedConfig)
+    })
+  }
+
+  isRefreshing = true
+  try {
+    const refreshTokenStr = getRefreshToken()
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL}/api/auth/refresh`,
+      { refreshToken: refreshTokenStr },
+    )
+    const { accessToken, refreshToken, expiresIn } = res.data.data
+    setAccessToken(accessToken)
+    setRefreshToken(refreshToken)
+    setTokenExpiresAt(Date.now() + expiresIn * 1000)
+
+    processQueue(null, accessToken)
+
+    failedConfig.headers.Authorization = `Bearer ${accessToken}`
+    return request(failedConfig)
+  } catch (error) {
+    processQueue(error as Error)
+    removeAllTokens()
+    window.location.href = '/login'
+    return Promise.reject(error)
+  } finally {
+    isRefreshing = false
+  }
+}
+
+// ★ 响应拦截器 — P2 双 Token 静默刷新逻辑
 request.interceptors.response.use(
   (response) => {
     const res = response.data
     if (res.code === 200) {
       return res
     }
-    // 401: Token 无效或过期
+    // 401: 不再直接跳登录，先尝试刷新 Token
     if (res.code === 401) {
-      removeToken()
-      removeUserFromStorage()
-      ElMessage.error('登录已过期，请重新登录')
+      const refreshTokenValue = getRefreshToken()
+      if (refreshTokenValue && !isRefreshing) {
+        return handleTokenRefresh(response.config)
+      }
+      // 无可用的 refreshToken → 跳登录
+      removeAllTokens()
       window.location.href = '/login'
       return Promise.reject(new Error(res.message || '未授权'))
     }
@@ -51,10 +130,72 @@ request.interceptors.response.use(
     return Promise.reject(new Error(res.message || '请求失败'))
   },
   (error) => {
-    // 网络异常
+    // SSE 流式请求错误特殊处理
+    if (error.config?.responseType === 'stream') {
+      return Promise.reject(error)
+    }
     ElMessage.error('网络连接失败')
     return Promise.reject(error)
   },
 )
+
+/**
+ * ★ 供 SSE（fetchEventSource）等非 axios 请求使用：
+ * 主动检查 token 有效期，过期或即将过期时静默刷新。
+ * 复用 handleTokenRefresh 的队列机制，并发调用只刷新一次。
+ *
+ * @returns 有效的 accessToken，刷新失败时返回 null
+ */
+export async function ensureValidToken(): Promise<string | null> {
+  const token = getAccessToken()
+  if (!token) return null
+
+  const expiresAt = getTokenExpiresAt()
+  // 提前 60 秒刷新，避免刚好在请求过程中过期
+  if (expiresAt && Date.now() < expiresAt - 60_000) {
+    return token
+  }
+
+  // Token 即将过期或已过期 → 尝试刷新
+  const refreshTokenStr = getRefreshToken()
+  if (!refreshTokenStr) {
+    // 无 refreshToken 且已过期 → 返回 null 触发重新登录
+    if (expiresAt && Date.now() >= expiresAt) {
+      removeAllTokens()
+      window.location.href = '/login'
+      return null
+    }
+    // expiresAt 异常（null）但 token 存在 → 保守原样返回
+    return token
+  }
+
+  if (isRefreshing) {
+    return new Promise((resolve, reject) => {
+      pendingRequests.push({ resolve, reject })
+    })
+  }
+
+  isRefreshing = true
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_API_BASE_URL || ''}/api/auth/refresh`,
+      { refreshToken: refreshTokenStr },
+    )
+    const { accessToken, refreshToken, expiresIn } = res.data.data
+    setAccessToken(accessToken)
+    setRefreshToken(refreshToken)
+    setTokenExpiresAt(Date.now() + expiresIn * 1000)
+
+    processQueue(null, accessToken)
+    return accessToken
+  } catch {
+    processQueue(new Error('Token 刷新失败'))
+    removeAllTokens()
+    window.location.href = '/login'
+    return null
+  } finally {
+    isRefreshing = false
+  }
+}
 
 export default request

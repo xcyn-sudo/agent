@@ -59,6 +59,16 @@ public class StatisticsQueryService {
             List<DailyStats> weeklyTrend = dailyStatsMapper.selectWeeklyTrend(today);
             vo.setWeeklyTrend(weeklyTrend != null ? weeklyTrend : Collections.emptyList());
 
+            // 为周趋势中每一天计算满意率
+            if (weeklyTrend != null) {
+                for (DailyStats ds : weeklyTrend) {
+                    int pos = ds.getPositiveCount() != null ? ds.getPositiveCount() : 0;
+                    int neg = ds.getNegativeCount() != null ? ds.getNegativeCount() : 0;
+                    int total = pos + neg;
+                    ds.setSatisfactionRate(total > 0 ? (double) pos / total : 0.0);
+                }
+            }
+
             // 7. 文档类型分布
             List<Map<String, Object>> typeDistributionList = documentMapper.selectTypeDistribution();
             Map<String, Long> typeDistribution = Collections.emptyMap();
@@ -83,7 +93,7 @@ public class StatisticsQueryService {
                 int totalFeedback = vo.getTodayPositive() + vo.getTodayNegative();
                 vo.setTotalFeedbackCount(totalFeedback);
                 vo.setSatisfactionRate(totalFeedback > 0
-                        ? (double) vo.getTodayPositive() / totalFeedback * 100
+                        ? (double) vo.getTodayPositive() / totalFeedback
                         : 0.0);
             } else {
                 vo.setTodayPositive(0);
