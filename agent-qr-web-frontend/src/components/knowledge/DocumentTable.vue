@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import type { DocumentInfo } from '@/types'
 import { formatFileSize, formatDateTime, formatDomain } from '@/utils/format'
 import StatusTag from './StatusTag.vue'
+
+const { t } = useI18n()
 
 defineProps<{
   documents: DocumentInfo[]
@@ -22,13 +25,13 @@ const emit = defineEmits<{
   >
     <el-table-column
       prop="fileName"
-      label="文件名"
+      :label="$t('knowledge.documentName')"
       min-width="180"
       show-overflow-tooltip
     />
     <el-table-column
       prop="fileType"
-      label="类型"
+      :label="$t('knowledge.fileType')"
       width="80"
     >
       <template #default="{ row }">
@@ -37,7 +40,7 @@ const emit = defineEmits<{
     </el-table-column>
     <el-table-column
       prop="fileSize"
-      label="大小"
+      :label="$t('knowledge.fileSize')"
       width="100"
     >
       <template #default="{ row }">
@@ -46,7 +49,7 @@ const emit = defineEmits<{
     </el-table-column>
     <el-table-column
       prop="domain"
-      label="业务域"
+      :label="$t('knowledge.domain')"
       width="120"
     >
       <template #default="{ row }">
@@ -55,7 +58,7 @@ const emit = defineEmits<{
     </el-table-column>
     <el-table-column
       prop="sensitivityLabel"
-      label="密级"
+      :label="$t('knowledge.clearance')"
       width="80"
     >
       <template #default="{ row }">
@@ -71,7 +74,7 @@ const emit = defineEmits<{
     </el-table-column>
     <el-table-column
       prop="status"
-      label="状态"
+      :label="$t('knowledge.status')"
       width="120"
     >
       <template #default="{ row }">
@@ -80,7 +83,7 @@ const emit = defineEmits<{
     </el-table-column>
     <el-table-column
       prop="createTime"
-      label="上传时间"
+      :label="$t('knowledge.uploadTime')"
       width="160"
     >
       <template #default="{ row }">
@@ -88,24 +91,25 @@ const emit = defineEmits<{
       </template>
     </el-table-column>
     <el-table-column
-      label="操作"
+      :label="$t('common.operation')"
       width="100"
       fixed="right"
     >
       <template #default="{ row }">
         <el-button
+          v-permission="'canDeleteKnowledge'"
           type="danger"
           size="small"
           link
           @click="emit('delete', row.id)"
         >
-          删除
+          {{ $t('common.delete') }}
         </el-button>
       </template>
     </el-table-column>
 
     <template #empty>
-      <el-empty description="暂无文档，请上传" />
+      <el-empty :description="$t('knowledge.noDocument')" />
     </template>
   </el-table>
 </template>

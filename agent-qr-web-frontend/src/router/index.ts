@@ -40,7 +40,7 @@ const router = createRouter({
       path: '/admin/users',
       name: 'UserManage',
       component: () => import('@/views/user/UserManageView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '用户管理' },
+      meta: { requiresAuth: true, layout: 'main', title: '用户管理' },
     },
     {
       path: '/admin/knowledge',
@@ -52,7 +52,7 @@ const router = createRouter({
       path: '/admin/dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/DashboardView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '数据仪表盘' },
+      meta: { requiresAuth: true, layout: 'main', title: '数据仪表盘' },
     },
     // ★ P2 新增路由
     {
@@ -72,6 +72,13 @@ const router = createRouter({
       name: 'QualityReport',
       component: () => import('@/views/dataquality/QualityReportView.vue'),
       meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '质量报告' },
+    },
+    // ★ P3 新增路由
+    {
+      path: '/admin/quality/rules',
+      name: 'QualityRules',
+      component: () => import('@/views/quality/RulesManager.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true, layout: 'main', title: '规则管理' },
     },
     {
       path: '/403',
@@ -110,10 +117,30 @@ router.beforeEach((to, _from, next) => {
       return
     }
 
-    // ★ P1 角色判断保留
+    // ★ P1 角色判断保留（admin 专有页面）
     if (to.meta.requiresAdmin && user?.role !== 'admin') {
       next('/403')
       return
+    }
+
+    // ★ P2 ABAC: 数据仪表盘 → 仅总监+绝密
+    if (to.path === '/admin/dashboard') {
+      const titleOk = user?.title === 'director'
+      const clearanceOk = user?.clearanceLevel === 3
+      if (!titleOk || !clearanceOk) {
+        next('/403')
+        return
+      }
+    }
+
+    // ★ P2 ABAC: 用户管理 → 职级>=经理 且 密级>=机密
+    if (to.path === '/admin/users') {
+      const titleLevel = { employee: 1, manager: 2, director: 3 }[user?.title || 'employee'] || 0
+      const clearanceLevel = user?.clearanceLevel || 0
+      if (titleLevel < 2 || clearanceLevel < 2) {
+        next('/403')
+        return
+      }
     }
 
     // ★ P2 ABAC 扩展：页面级域权限

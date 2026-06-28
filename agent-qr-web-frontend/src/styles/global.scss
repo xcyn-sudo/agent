@@ -126,3 +126,83 @@ a {
     font-weight: 600;
   }
 }
+
+// ==================== P3 新增样式 ====================
+
+// ★ 权限禁用状态
+.is-permission-disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}
+
+// ★ 移动端触摸优化
+@media (max-width: 767px) {
+  // 增大可点击区域
+  .el-button,
+  .el-menu-item,
+  .el-dropdown-item {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  // 表格在移动端隐藏次要列
+  .el-table {
+    .col-mobile-hide {
+      display: none;
+    }
+  }
+
+  // 表单全宽
+  .el-form {
+    .el-form-item {
+      .el-input,
+      .el-select,
+      .el-date-picker {
+        width: 100%;
+      }
+    }
+  }
+}
+
+// ★ 移动端卡片列表（用于替代表格）
+@media (max-width: 767px) {
+  .mobile-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .mobile-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+
+      &__title {
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      &__row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: $text-secondary;
+        margin-bottom: 4px;
+      }
+    }
+  }
+}
+
+// ★ 图表导出按钮
+.chart-export-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 5;
+  opacity: 0;
+  transition: opacity 0.2s;
+
+  .chart-container:hover & {
+    opacity: 1;
+  }
+}

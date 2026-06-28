@@ -1,0 +1,53 @@
+# ============================================================
+# P3 阶段配置：CQRS 读写分离 + Embedding 语义路由 + Provider 切换
+# 激活方式：spring.profiles.active=p3 或 spring.profiles.active=p1,p2,p3
+# ============================================================
+
+spring:
+  datasource:
+    # 写库（主库）— 与 P1/P2 配置一致
+    write:
+      jdbc-url: jdbc:mysql://localhost:3308/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      username: ${MYSQL_USERNAME:root}
+      password: ${MYSQL_PASSWORD:root}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 20
+        minimum-idle: 5
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+    # 读库（从库）— 初期可与主库同实例
+    read:
+      jdbc-url: jdbc:mysql://localhost:3309/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      username: ${MYSQL_USERNAME:root}
+      password: ${MYSQL_PASSWORD:root}
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      hikari:
+        maximum-pool-size: 10
+        minimum-idle: 2
+        connection-timeout: 30000
+        idle-timeout: 600000
+        max-lifetime: 1800000
+
+# ============================================================
+# P3 专属配置
+# ============================================================
+agent-qr:
+  cqrs:
+    enabled: true                          # 启用 CQRS 读写分离
+    read-replica-fallback-to-primary: true # 初期从库不存在时回退到主库
+
+  routing:
+    mode: semantic                         # 域路由模式：keyword | semantic | auto
+    similarity-threshold: 0.3              # Embedding 余弦相似度阈值
+    top-k: 2                               # 返回 Top K 个匹配域
+
+  provider:
+    auto-failover: true                    # 熔断时自动切换备用 Provider
+    preferred-llm: deepseek                # 首选 LLM Provider
+    preferred-embedding: ollama            # 首选 Embedding Provider（仅 Ollama 可用）
+
+  embedding:
+    collection-prefix: kb                  # ChromaDB Collection 前缀（暂未使用）
+    auto-dimension-check: true             # 启动时自动检测向量维度一致性

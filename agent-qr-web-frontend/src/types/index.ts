@@ -196,6 +196,7 @@ export interface DataSourceForm {
   sourceType: 'JDBC' | 'REST' | 'S3'
   domain: string
   syncStrategy: 'FULL' | 'INCREMENTAL'
+  cursorField?: string
   cronExpression?: string
   connectionConfig: Record<string, any>
   contentFields?: string

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { datasourceApi } from '@/api/datasource'
 import { DOMAINS } from '@/types'
@@ -7,6 +8,8 @@ import type { DataSourceConfig, DataSourceForm } from '@/types'
 import DataSourceTable from '@/components/datasource/DataSourceTable.vue'
 import DataSourceFormDialog from '@/components/datasource/DataSourceFormDialog.vue'
 import Pagination from '@/components/common/Pagination.vue'
+
+const { t } = useI18n()
 
 const dataSources = ref<DataSourceConfig[]>([])
 const loading = ref(false)
@@ -60,10 +63,10 @@ async function handleSubmit(formData: DataSourceForm) {
   try {
     if (editingRow.value) {
       await datasourceApi.update(editingRow.value.id, formData)
-      ElMessage.success('更新数据源成功')
+      ElMessage.success(t('datasource.updateSuccess'))
     } else {
       await datasourceApi.create(formData)
-      ElMessage.success('创建数据源成功')
+      ElMessage.success(t('datasource.createSuccess'))
     }
     showFormDialog.value = false
     fetchDataSources()
@@ -87,9 +90,9 @@ async function handleTestConnection(formData: DataSourceForm) {
 
     const result = await datasourceApi.testConnection(datasourceId)
     if (result.data.success) {
-      ElMessage.success(`连接成功，延迟: ${result.data.latencyMs}ms`)
+      ElMessage.success(t('datasource.connectionSuccess', { latency: result.data.latencyMs }))
     } else {
-      ElMessage.error(result.data.errorMsg || '连接失败')
+      ElMessage.error(result.data.errorMsg || t('datasource.connectionFailed'))
     }
     fetchDataSources()
   } catch {
@@ -101,9 +104,9 @@ async function handleTest(id: number) {
   try {
     const result = await datasourceApi.testConnection(id)
     if (result.data.success) {
-      ElMessage.success(`连接成功，延迟: ${result.data.latencyMs}ms`)
+      ElMessage.success(t('datasource.connectionSuccess', { latency: result.data.latencyMs }))
     } else {
-      ElMessage.error(result.data.errorMsg || '连接失败')
+      ElMessage.error(result.data.errorMsg || t('datasource.connectionFailed'))
     }
   } catch {
     // 错误已在拦截器中处理
@@ -112,13 +115,13 @@ async function handleTest(id: number) {
 
 async function handleSync(id: number) {
   try {
-    await ElMessageBox.confirm('确定要立即执行同步吗？', '同步确认', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(t('datasource.syncConfirm'), t('datasource.syncConfirmTitle'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
       type: 'info',
     })
     await datasourceApi.triggerSync(id)
-    ElMessage.success('同步任务已启动')
+    ElMessage.success(t('datasource.syncSuccess'))
   } catch {
     // 用户取消或操作失败（错误已在拦截器中处理）
   }
@@ -126,13 +129,13 @@ async function handleSync(id: number) {
 
 async function handleDelete(id: number) {
   try {
-    await ElMessageBox.confirm('确定要删除该数据源吗？删除后数据将无法恢复。', '删除确认', {
-      confirmButtonText: '确定',
-      cancelButtonText: '取消',
+    await ElMessageBox.confirm(t('datasource.deleteConfirmMsg'), t('datasource.deleteConfirmTitle'), {
+      confirmButtonText: t('common.confirm'),
+      cancelButtonText: t('common.cancel'),
       type: 'warning',
     })
     await datasourceApi.delete(id)
-    ElMessage.success('删除成功')
+    ElMessage.success(t('datasource.deleteSuccess'))
     fetchDataSources()
   } catch {
     // 用户取消或删除失败（错误已在拦截器中处理）
@@ -145,23 +148,23 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="datasource-page">
+  <div class="datasource-view datasource-page">
     <div class="page-header">
-      <h2 class="page-title">多源数据接入管理</h2>
+      <h2 class="page-title">{{ $t('datasource.title') }}</h2>
     </div>
 
     <div class="page-toolbar">
-      <el-button type="primary" @click="handleAdd">
-        + 新增数据源
+      <el-button v-permission="'canConfigureDatasource'" type="primary" @click="handleAdd">
+        + {{ $t('datasource.addSource') }}
       </el-button>
       <el-select
         v-model="filterDomain"
-        placeholder="全部"
+        :placeholder="$t('common.all')"
         clearable
         style="width: 160px"
         @change="handleFilterChange"
       >
-        <el-option label="全部" value="" />
+        <el-option :label="$t('common.all')" value="" />
         <el-option
           v-for="domain in DOMAINS"
           :key="domain"
@@ -190,7 +193,7 @@ onMounted(() => {
     />
 
     <div v-if="!loading && dataSources.length === 0 && !filterDomain" class="empty-wrapper">
-      <el-empty description="暂无数据源，请点击新增按钮添加" />
+      <el-empty :description="$t('datasource.noDataSource')" />
     </div>
 
     <DataSourceFormDialog
@@ -227,6 +230,15 @@ onMounted(() => {
 
   .empty-wrapper {
     margin-top: 60px;
+  }
+}
+
+@media (max-width: 767px) {
+  .datasource-view {
+    .el-form-item .el-input,
+    .el-form-item .el-select {
+      width: 100%;
+    }
   }
 }
 </style>

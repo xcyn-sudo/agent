@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.dataquality.entity.QualityFailure;
 import org.example.agent_qr.dataquality.entity.QualityReport;
 import org.example.agent_qr.dataquality.entity.RuleResult;
+import org.example.agent_qr.dataquality.rule.DeduplicationRule;
 import org.example.agent_qr.dataquality.rule.QualityRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,53 +63,69 @@ public class DataQualityChecker {
             return emptyReport;
         }
 
-        List<QualityFailure> allFailures = new ArrayList<>();
-        Set<Integer> failedRecordIndices = new HashSet<>();
-        int passCount = 0;
-        int failCount = 0;
+        // 0. 初始化去重规则（加载历史指纹）
+        for (QualityRule rule : rules) {
+            if (rule instanceof DeduplicationRule dedup) {
+                dedup.reset(datasourceId);
+            }
+        }
 
-        for (int i = 0; i < rawData.size(); i++) {
-            Map<String, Object> record = rawData.get(i);
-            boolean recordPassed = true;
+        try {
+            List<QualityFailure> allFailures = new ArrayList<>();
+            Set<Integer> failedRecordIndices = new HashSet<>();
+            int passCount = 0;
+            int failCount = 0;
 
-            // 规则链顺序执行
-            for (QualityRule rule : rules) {
-                RuleResult result = rule.evaluate(record);
-                if (!result.isPassed()) {
-                    allFailures.add(new QualityFailure(rule.getName(), i, result.getReason()));
-                    recordPassed = false;
+            for (int i = 0; i < rawData.size(); i++) {
+                Map<String, Object> record = rawData.get(i);
+                boolean recordPassed = true;
+
+                // 规则链顺序执行
+                for (QualityRule rule : rules) {
+                    RuleResult result = rule.evaluate(record);
+                    if (!result.isPassed()) {
+                        allFailures.add(new QualityFailure(rule.getName(), i, result.getReason()));
+                        recordPassed = false;
+                    }
+                }
+
+                if (recordPassed) {
+                    passCount++;
+                } else {
+                    failCount++;
+                    failedRecordIndices.add(i);
                 }
             }
 
-            if (recordPassed) {
-                passCount++;
+            // 跨记录 MD5 去重失败项
+            List<QualityFailure> dedupedFailures = deduplicateFailures(allFailures);
+
+            int total = rawData.size();
+            double passRate = (double) passCount / total;
+            boolean blocked = passRate < blockThreshold;
+
+            if (blocked) {
+                log.warn("数据质量检查阻断: batchId={}, passRate={}/{}={}, threshold={}",
+                        batchId, passCount, total, String.format("%.2f", passRate), blockThreshold);
             } else {
-                failCount++;
-                failedRecordIndices.add(i);
+                log.info("数据质量检查通过: batchId={}, passRate={}/{}={}",
+                        batchId, passCount, total, String.format("%.2f", passRate));
+            }
+
+            QualityReport report = new QualityReport(batchId, total, passCount, failCount,
+                    passRate, blocked, dedupedFailures);
+            report.setDatasourceId(datasourceId);
+            report.setSourceName(sourceName);
+            report.setFailedIndices(failedRecordIndices);
+            return report;
+        } finally {
+            // 清理去重规则的 ThreadLocal，防止内存泄漏
+            for (QualityRule rule : rules) {
+                if (rule instanceof DeduplicationRule dedup) {
+                    dedup.clear();
+                }
             }
         }
-
-        // 跨记录 MD5 去重失败项
-        List<QualityFailure> dedupedFailures = deduplicateFailures(allFailures);
-
-        int total = rawData.size();
-        double passRate = (double) passCount / total;
-        boolean blocked = passRate < blockThreshold;
-
-        if (blocked) {
-            log.warn("数据质量检查阻断: batchId={}, passRate={}/{}={}, threshold={}",
-                    batchId, passCount, total, String.format("%.2f", passRate), blockThreshold);
-        } else {
-            log.info("数据质量检查通过: batchId={}, passRate={}/{}={}",
-                    batchId, passCount, total, String.format("%.2f", passRate));
-        }
-
-        QualityReport report = new QualityReport(batchId, total, passCount, failCount,
-                passRate, blocked, dedupedFailures);
-        report.setDatasourceId(datasourceId);
-        report.setSourceName(sourceName);
-        report.setFailedIndices(failedRecordIndices);
-        return report;
     }
 
     /**

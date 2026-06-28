@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { ref, watch, computed, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import type { FormInstance, FormRules } from 'element-plus'
 import type { UserInfo } from '@/types'
 import { DEPARTMENTS, SENSITIVITY_LEVELS, DOMAINS } from '@/types'
 import { parseAllowedDomains, formatDomain } from '@/utils/format'
 import { userApi } from '@/api/user'
+
+const { t } = useI18n()
 
 const props = defineProps<{
   visible: boolean
@@ -38,18 +41,18 @@ const isCreate = computed(() => props.mode === 'create')
 
 const rules = computed<FormRules>(() => {
   const baseRules: FormRules = {
-    email: [{ type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur' }],
-    phone: [{ pattern: /^1[3-9]\d{9}$/, message: '请输入正确的手机号', trigger: 'blur' }],
-    department: [{ required: true, message: '请选择部门', trigger: 'change' }],
-    clearanceLevel: [{ required: true, message: '请选择数据密级', trigger: 'change' }],
-    title: [{ required: true, message: '请选择职级', trigger: 'change' }],
+    email: [{ type: 'email', message: () => t('user.invalidEmail'), trigger: 'blur' }],
+    phone: [{ pattern: /^1[3-9]\d{9}$/, message: () => t('user.invalidPhone'), trigger: 'blur' }],
+    department: [{ required: true, message: () => t('user.pleaseSelectDepartment'), trigger: 'change' }],
+    clearanceLevel: [{ required: true, message: () => t('user.pleaseSelectClearance'), trigger: 'change' }],
+    title: [{ required: true, message: () => t('user.pleaseSelectTitle'), trigger: 'change' }],
     allowedDomains: [
       {
         type: 'array',
         required: true,
         validator: (_rule, value, callback) => {
           if (!value || value.length === 0) {
-            callback(new Error('请至少选择一个允许访问域'))
+            callback(new Error(t('user.pleaseSelectDomain')))
           } else {
             callback()
           }
@@ -62,12 +65,12 @@ const rules = computed<FormRules>(() => {
     return {
       ...baseRules,
       username: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
-        { min: 2, max: 20, message: '用户名长度 2-20 个字符', trigger: 'blur' },
+        { required: true, message: () => t('user.pleaseInputUsername'), trigger: 'blur' },
+        { min: 2, max: 20, message: () => t('user.usernameLength'), trigger: 'blur' },
       ],
       password: [
-        { required: true, message: '请输入密码', trigger: 'blur' },
-        { min: 6, max: 30, message: '密码长度 6-30 个字符', trigger: 'blur' },
+        { required: true, message: () => t('user.pleaseInputPassword'), trigger: 'blur' },
+        { min: 6, max: 30, message: () => t('user.passwordLength'), trigger: 'blur' },
       ],
     }
   }
@@ -133,7 +136,7 @@ async function handleSubmit() {
         allowedDomains: form.allowedDomains.join(','),
         title: form.title,
       })
-      ElMessage.success('创建用户成功')
+      ElMessage.success(t('user.createSuccess'))
     } else if (props.userData) {
       await userApi.updateUser(props.userData.id, {
         realName: form.realName || undefined,
@@ -145,12 +148,12 @@ async function handleSubmit() {
         allowedDomains: form.allowedDomains.join(','),
         title: form.title,
       })
-      ElMessage.success('更新用户成功')
+      ElMessage.success(t('user.updateSuccess'))
     }
     emit('success')
     handleClose()
   } catch (err: any) {
-    ElMessage.error(err?.message || '操作失败')
+    ElMessage.error(err?.message || t('common.operationFailed'))
   } finally {
     submitting.value = false
   }
@@ -160,7 +163,7 @@ async function handleSubmit() {
 <template>
   <el-dialog
     :model-value="visible"
-    :title="isCreate ? '新增用户' : '编辑用户'"
+    :title="isCreate ? $t('user.createUser') : $t('user.editUser')"
     width="520px"
     :close-on-click-modal="false"
     @update:model-value="emit('update:visible', $event)"
@@ -173,32 +176,32 @@ async function handleSubmit() {
       @submit.prevent
     >
       <template v-if="isCreate">
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" placeholder="请输入用户名" maxlength="20" />
+        <el-form-item :label="$t('user.username')" prop="username">
+          <el-input v-model="form.username" :placeholder="$t('user.pleaseInputUsername')" maxlength="20" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="form.password" type="password" placeholder="请输入密码" maxlength="30" show-password />
+        <el-form-item :label="$t('user.password')" prop="password">
+          <el-input v-model="form.password" type="password" :placeholder="$t('user.pleaseInputPassword')" maxlength="30" show-password />
         </el-form-item>
       </template>
-      <el-form-item label="真实姓名" prop="realName">
-        <el-input v-model="form.realName" placeholder="请输入真实姓名" />
+      <el-form-item :label="$t('user.realName')" prop="realName">
+        <el-input v-model="form.realName" :placeholder="$t('user.pleaseInputRealName')" />
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email" placeholder="请输入邮箱" />
+      <el-form-item :label="$t('user.email')" prop="email">
+        <el-input v-model="form.email" :placeholder="$t('user.pleaseInputEmail')" />
       </el-form-item>
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="form.phone" placeholder="请输入手机号" />
+      <el-form-item :label="$t('user.phone')" prop="phone">
+        <el-input v-model="form.phone" :placeholder="$t('user.pleaseInputPhone')" />
       </el-form-item>
-      <el-form-item label="角色" prop="role">
+      <el-form-item :label="$t('user.role')" prop="role">
         <el-select v-model="form.role" style="width: 100%">
-          <el-option label="管理员" value="admin" />
-          <el-option label="普通用户" value="user" />
+          <el-option :label="$t('user.roleAdmin')" value="admin" />
+          <el-option :label="$t('user.roleUser')" value="user" />
         </el-select>
       </el-form-item>
 
-      <el-divider content-position="left">ABAC 属性</el-divider>
+      <el-divider content-position="left">{{ $t('user.abacAttributes') }}</el-divider>
 
-      <el-form-item label="部门" prop="department">
+      <el-form-item :label="$t('user.department')" prop="department">
         <el-select v-model="form.department" style="width: 100%">
           <el-option
             v-for="item in DEPARTMENTS"
@@ -208,7 +211,7 @@ async function handleSubmit() {
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="数据密级" prop="clearanceLevel">
+      <el-form-item :label="$t('user.dataClearance')" prop="clearanceLevel">
         <el-select v-model="form.clearanceLevel" style="width: 100%">
           <el-option
             v-for="item in SENSITIVITY_LEVELS"
@@ -218,7 +221,7 @@ async function handleSubmit() {
           />
         </el-select>
       </el-form-item>
-      <el-form-item label="允许访问域" prop="allowedDomains">
+      <el-form-item :label="$t('user.allowedDomains')" prop="allowedDomains">
         <el-checkbox-group v-model="form.allowedDomains">
           <el-checkbox
             v-for="domain in DOMAINS"
@@ -230,17 +233,17 @@ async function handleSubmit() {
           </el-checkbox>
         </el-checkbox-group>
       </el-form-item>
-      <el-form-item label="职级" prop="title">
+      <el-form-item :label="$t('user.title')" prop="title">
         <el-select v-model="form.title" style="width: 100%">
-          <el-option label="员工" value="employee" />
-          <el-option label="经理" value="manager" />
-          <el-option label="总监" value="director" />
+          <el-option :label="$t('user.titleEmployee')" value="employee" />
+          <el-option :label="$t('user.titleManager')" value="manager" />
+          <el-option :label="$t('user.titleDirector')" value="director" />
         </el-select>
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="handleClose">取消</el-button>
-      <el-button type="primary" :loading="submitting" @click="handleSubmit">确认</el-button>
+      <el-button @click="handleClose">{{ $t('common.cancel') }}</el-button>
+      <el-button type="primary" :loading="submitting" @click="handleSubmit">{{ $t('common.confirm') }}</el-button>
     </template>
   </el-dialog>
 </template>

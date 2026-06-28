@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.common.BusinessException;
+import org.example.agent_qr.common.event.DataSourceDeletedEvent;
 import org.example.agent_qr.common.event.DataSyncCompletedEvent;
 import org.example.agent_qr.datasource.connector.DataSourceConnector;
 import org.example.agent_qr.datasource.dto.ConnectionTestResult;
@@ -94,9 +95,20 @@ public class DataSourceService {
     }
 
     /**
-     * 删除数据源配置。
+     * 删除数据源配置，并发布事件触发级联清理。
+     * <p>
+     * 级联清理（由 knowledge 模块监听 {@code DataSourceDeletedEvent} 异步执行）：
+     * <ol>
+     *   <li>软删除关联切片（kb_chunk.deleted = 1）</li>
+     *   <li>移除 ChromaDB 向量</li>
+     *   <li>移除 BM25 索引</li>
+     *   <li>清理 kb_chunk_structured 元数据</li>
+     * </ol>
+     * </p>
      */
     public void delete(Long id) {
+        // 先发布事件，再物理删除（listener 通过 datasourceId 查询关联切片）
+        eventPublisher.publishEvent(new DataSourceDeletedEvent(id));
         dataSourceMapper.deleteById(id);
         log.info("数据源配置已删除: id={}", id);
     }
@@ -156,12 +168,21 @@ public class DataSourceService {
             throw new BusinessException("连接配置 JSON 解析失败: " + e.getMessage());
         }
 
+        // 将 entity 级别的 cursorField/lastCursor 注入 connConfig，供 Connector 使用
+        if (config.getCursorField() != null && !config.getCursorField().isBlank()) {
+            connConfig.put("cursorField", config.getCursorField());
+        }
+        if (config.getLastCursor() != null && !config.getLastCursor().isBlank()) {
+            connConfig.put("lastCursor", config.getLastCursor());
+        }
+
         SyncContext context = new SyncContext(config.getId(), connConfig);
 
         try {
             SyncResult result;
             if (DataSourceConfig.SYNC_INCREMENTAL.equals(config.getSyncStrategy())
-                    && config.getLastCursor() != null) {
+                    && config.getLastCursor() != null
+                    && !config.getLastCursor().isBlank()) {
                 result = connector.incrementalSync(context, config.getLastCursor());
             } else {
                 result = connector.fullSync(context);

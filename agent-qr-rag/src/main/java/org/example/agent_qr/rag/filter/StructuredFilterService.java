@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,8 @@ import java.util.Set;
  * <p>
  * 在向量检索前，先通过结构化字段条件在 MySQL 中过滤候选切片 ID，
  * 将结果集截断至 500 条，大幅减少后续向量检索的计算量。
+ * 域过滤覆盖两条管线：数据同步管线（kb_chunk_structured）和
+ * 文档上传管线（kb_chunk JOIN kb_document）。
  * </p>
  *
  * @author agent-qr
@@ -31,6 +34,11 @@ public class StructuredFilterService {
     /**
      * 根据域和过滤条件获取候选切片 ID 列表。
      * <p>
+     * 域过滤覆盖两条管线：
+     * <ul>
+     *   <li>数据同步管线：kb_chunk_structured.domain</li>
+     *   <li>文档上传管线：kb_chunk JOIN kb_document.domain</li>
+     * </ul>
      * 多条件取交集（AND），结果集上限 500 条。
      * </p>
      *
@@ -41,7 +49,18 @@ public class StructuredFilterService {
     public List<Long> filterChunkIds(String domain, List<FilterCondition> conditions) {
         if (conditions == null || conditions.isEmpty()) {
             if (domain != null && !domain.isBlank()) {
-                return chunkStructuredFilterMapper.selectChunkIdsByDomain(domain);
+                Set<Long> domainIds = new HashSet<>();
+                // 数据同步管线
+                domainIds.addAll(chunkStructuredFilterMapper.selectChunkIdsByDomain(domain));
+                // 文档上传管线
+                domainIds.addAll(chunkStructuredFilterMapper.selectChunkIdsByDocumentDomain(domain));
+                List<Long> result = new ArrayList<>(domainIds);
+                result.sort(Comparator.naturalOrder());
+                if (result.size() > 500) {
+                    result = result.subList(0, 500);
+                }
+                log.debug("域过滤(无结构化条件): domain={}, resultSize={}", domain, result.size());
+                return result;
             }
             return List.of();
         }
@@ -53,26 +72,27 @@ public class StructuredFilterService {
             if (resultSet == null) {
                 resultSet = new HashSet<>(ids);
             } else {
-                resultSet.retainAll(ids); // 多条件交集
+                resultSet.retainAll(ids); // 多条件交集（AND）
             }
-
-            // 提前截断
-            if (resultSet.size() >= 500) {
-                break;
-            }
+            // 不再提前 break — 每个条件都必须参与交集计算，确保 AND 语义完整
         }
 
         if (resultSet == null || resultSet.isEmpty()) {
             return List.of();
         }
 
-        // 域过滤
+        // 域过滤：覆盖两条管线
         if (domain != null && !domain.isBlank()) {
-            List<Long> domainIds = chunkStructuredFilterMapper.selectChunkIdsByDomain(domain);
+            Set<Long> domainIds = new HashSet<>();
+            // 数据同步管线
+            domainIds.addAll(chunkStructuredFilterMapper.selectChunkIdsByDomain(domain));
+            // 文档上传管线
+            domainIds.addAll(chunkStructuredFilterMapper.selectChunkIdsByDocumentDomain(domain));
             resultSet.retainAll(domainIds);
         }
 
         List<Long> result = new ArrayList<>(resultSet);
+        result.sort(Comparator.naturalOrder());
         if (result.size() > 500) {
             result = result.subList(0, 500);
         }

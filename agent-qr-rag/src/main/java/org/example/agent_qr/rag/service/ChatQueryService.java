@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.catalog.dto.DomainRoutingResult;
 import org.example.agent_qr.catalog.router.DomainRouter;
+import org.example.agent_qr.rag.router.DomainRouterV2;
 import org.example.agent_qr.common.event.AnswerGeneratedEvent;
 import org.example.agent_qr.rag.circuitbreaker.LLMCircuitBreaker;
 import org.example.agent_qr.rag.entity.Message;
@@ -21,6 +22,7 @@ import org.example.agent_qr.rag.provider.EmbeddingProvider;
 import org.example.agent_qr.rag.provider.LLMProvider;
 import org.example.agent_qr.rag.provider.ProviderFactory;
 import org.example.agent_qr.rag.retriever.HybridRetriever;
+import org.example.agent_qr.rag.util.ContextTokenManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -31,13 +33,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * 问答核心服务。
  * <p>
  * P1 原有：同步 RAG 问答（ask 方法）。
  * P2 扩展：SSE 流式输出（askStream 方法），集成混合检索、熔断器和域路由。
+ * P3 扩展：集成 DomainRouterV2 语义路由，降级链 P3语义 → P2关键词 → 全局检索。
  * </p>
  *
  * @author agent-qr
@@ -53,10 +55,15 @@ public class ChatQueryService {
     private final MessageMapper messageMapper;
     private final ApplicationEventPublisher eventPublisher;
     private final LLMCircuitBreaker circuitBreaker;
+    private final ContextTokenManager contextTokenManager;
 
     /** P2 域路由器 — 可选注入，避免与 catalog 模块的硬循环依赖 */
     @Autowired(required = false)
     private DomainRouter domainRouter;
+
+    /** P3 语义域路由器 — 可选注入，优先于 P2 关键词路由 */
+    @Autowired(required = false)
+    private DomainRouterV2 domainRouterV2;
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -66,7 +73,8 @@ public class ChatQueryService {
                             ConversationService conversationService,
                             MessageMapper messageMapper,
                             ApplicationEventPublisher eventPublisher,
-                            LLMCircuitBreaker circuitBreaker) {
+                            LLMCircuitBreaker circuitBreaker,
+                            ContextTokenManager contextTokenManager) {
         this.providerFactory = providerFactory;
         this.hybridRetriever = hybridRetriever;
         this.promptTemplate = promptTemplate;
@@ -74,6 +82,7 @@ public class ChatQueryService {
         this.messageMapper = messageMapper;
         this.eventPublisher = eventPublisher;
         this.circuitBreaker = circuitBreaker;
+        this.contextTokenManager = contextTokenManager;
     }
 
     /**
@@ -113,10 +122,9 @@ public class ChatQueryService {
             answer = "知识库中暂无相关信息";
             log.info("混合检索无结果，conversationId={}", conversationId);
         } else {
-            String contextText = retrievedDocs.stream()
-                    .map(doc -> String.format("【%s】\n%s", doc.getDocumentTitle(), doc.getContent()))
-                    .collect(Collectors.joining("\n\n"));
-
+            String systemPromptBase = promptTemplate.getSystemPromptBase();
+            String contextText = contextTokenManager.buildContextWithBudget(
+                    retrievedDocs, systemPromptBase, query);
             String systemPrompt = promptTemplate.buildSystemPrompt(contextText);
 
             List<ChatMessage> messages = new ArrayList<>();
@@ -217,9 +225,9 @@ public class ChatQueryService {
                 return;
             }
 
-            String contextText = retrievedDocs.stream()
-                    .map(doc -> String.format("【%s】\n%s", doc.getDocumentTitle(), doc.getContent()))
-                    .collect(Collectors.joining("\n\n"));
+            String systemPromptBase = promptTemplate.getSystemPromptBase();
+            String contextText = contextTokenManager.buildContextWithBudget(
+                    retrievedDocs, systemPromptBase, query);
             String systemPrompt = promptTemplate.buildSystemPrompt(contextText);
 
             List<ChatMessage> messages = new ArrayList<>();
@@ -311,9 +319,26 @@ public class ChatQueryService {
     }
 
     /**
-     * 解析域路由（DomainRouter 可选，不可用时降级到全局检索）。
+     * 解析域路由（P3 增强：三级降级链）。
+     * <p>
+     * 降级顺序：P3 语义路由 → P2 关键词路由 → 全局检索。
+     * 任何环节异常均自动降级，不影响问答主流程。
+     * </p>
      */
     private DomainRoutingResult resolveRouting(String query) {
+        // 1. 优先使用 P3 语义路由
+        if (domainRouterV2 != null) {
+            try {
+                DomainRoutingResult result = domainRouterV2.route(query);
+                if (!result.isFallbackToGlobal()) {
+                    return result;
+                }
+                log.debug("DomainRouterV2 未匹配到域，降级到关键词路由");
+            } catch (Exception e) {
+                log.warn("DomainRouterV2 语义路由异常，降级到关键词路由", e);
+            }
+        }
+        // 2. 降级到 P2 关键词路由
         if (domainRouter != null) {
             try {
                 return domainRouter.route(query);
@@ -321,6 +346,7 @@ public class ChatQueryService {
                 log.warn("域路由失败，降级到全局检索: {}", e.getMessage());
             }
         }
+        // 3. 最终降级：全局检索
         return DomainRoutingResult.fallback();
     }
 

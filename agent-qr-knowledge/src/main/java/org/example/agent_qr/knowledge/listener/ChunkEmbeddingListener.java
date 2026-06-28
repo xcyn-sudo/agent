@@ -17,8 +17,6 @@ import org.example.agent_qr.knowledge.mapper.ChunkMapper;
 import org.example.agent_qr.knowledge.mapper.DocumentMapper;
 import org.example.agent_qr.knowledge.splitter.TextSplitter;
 import org.example.agent_qr.rag.embedding.BatchEmbeddingService;
-import org.example.agent_qr.rag.provider.EmbeddingProvider;
-import org.example.agent_qr.rag.provider.ProviderFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -44,7 +42,6 @@ public class ChunkEmbeddingListener {
     private final DocumentMapper documentMapper;
     private final ChunkMapper chunkMapper;
     private final TextSplitter textSplitter;
-    private final ProviderFactory providerFactory;
     private final ApplicationEventPublisher eventPublisher;
     private final DeadLetterQueue deadLetterQueue;
     private final BatchEmbeddingService batchEmbeddingService;

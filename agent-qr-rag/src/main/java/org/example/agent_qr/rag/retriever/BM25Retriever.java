@@ -95,6 +95,14 @@ public class BM25Retriever {
                 Document doc = searcher.doc(scoreDoc.doc);
                 RetrievedDocument rd = new RetrievedDocument();
                 rd.setDocumentId(doc.get("chunkId"));
+                String chunkIdStr = doc.get("chunkId");
+                if (chunkIdStr != null) {
+                    try {
+                        rd.setChunkId(Long.valueOf(chunkIdStr));
+                    } catch (NumberFormatException e) {
+                        log.debug("BM25 chunkId 解析失败: {}", chunkIdStr);
+                    }
+                }
                 rd.setContent(doc.get("content"));
                 rd.setDocumentTitle(doc.get("title"));
                 rd.setSimilarity((double) scoreDoc.score);

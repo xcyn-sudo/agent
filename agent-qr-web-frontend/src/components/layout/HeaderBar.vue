@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { getTokenExpiresAt } from '@/utils/token'
 
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const appStore = useAppStore()
 
@@ -52,6 +54,12 @@ function handleLogout() {
   authStore.logout()
 }
 
+// P3 新增：语言切换
+function switchLanguage(lang: string) {
+  locale.value = lang
+  localStorage.setItem('locale', lang)
+}
+
 onMounted(() => {
   startCountdown()
 })
@@ -70,7 +78,7 @@ onUnmounted(() => {
       <el-icon class="collapse-btn" @click="appStore.toggleSidebar()">
         <Fold />
       </el-icon>
-      <span class="system-name">Agent-QR 企业知识库</span>
+      <span class="system-name">{{ $t('sidebar.subtitle') }}</span>
     </div>
     <div class="header-bar__right">
       <!-- ★ P2 Token 过期倒计时 -->
@@ -84,7 +92,20 @@ onUnmounted(() => {
       <!-- ★ 静默刷新中提示 -->
       <span v-if="isRefreshingToken" class="refreshing-hint">正在刷新凭证...</span>
       <span class="username">{{ user }}</span>
-      <el-button type="danger" text @click="handleLogout">退出</el-button>
+      <!-- P3 新增：语言切换 -->
+      <el-dropdown @command="switchLanguage" trigger="click">
+        <el-button text size="small">
+          {{ locale === 'zh-CN' ? '中文' : 'English' }}
+          <el-icon><ArrowDown /></el-icon>
+        </el-button>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="zh-CN">中文</el-dropdown-item>
+            <el-dropdown-item command="en-US">English</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+      <el-button type="danger" text @click="handleLogout">{{ $t('auth.logout') }}</el-button>
     </div>
   </header>
 </template>

@@ -1,7 +1,10 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 import type { UserInfo } from '@/types'
 import { DEPARTMENTS } from '@/types'
 import { formatDateTime, formatSensitivityLevel } from '@/utils/format'
+
+const { t } = useI18n()
 
 defineProps<{
   users: UserInfo[]
@@ -20,9 +23,9 @@ function getDepartmentLabel(department: string): string {
 
 function getTitleLabel(title: string): string {
   const map: Record<string, string> = {
-    employee: '员工',
-    manager: '经理',
-    director: '总监',
+    employee: t('user.titleEmployee'),
+    manager: t('user.titleManager'),
+    director: t('user.titleDirector'),
   }
   return map[title] || title
 }
@@ -36,31 +39,31 @@ function parseDomains(raw: string): string[] {
 <template>
   <el-table :data="users" v-loading="loading" stripe border style="width: 100%">
     <template #empty>
-      <el-empty description="暂无用户" />
+      <el-empty :description="$t('user.noUser')" />
     </template>
 
     <el-table-column prop="id" label="ID" width="60" align="center" />
-    <el-table-column prop="username" label="用户名" width="120" />
-    <el-table-column prop="realName" label="姓名" width="100" />
-    <el-table-column prop="role" label="角色" width="100" align="center">
+    <el-table-column prop="username" :label="$t('user.username')" width="120" />
+    <el-table-column prop="realName" :label="$t('user.realName')" width="100" />
+    <el-table-column prop="role" :label="$t('user.role')" width="100" align="center">
       <template #default="{ row }">
         <el-tag v-if="row.role === 'admin'" type="danger">admin</el-tag>
         <el-tag v-else type="info">user</el-tag>
       </template>
     </el-table-column>
-    <el-table-column prop="department" label="部门" width="110" align="center">
+    <el-table-column prop="department" :label="$t('user.department')" width="110" align="center">
       <template #default="{ row }">
         {{ getDepartmentLabel(row.department) }}
       </template>
     </el-table-column>
-    <el-table-column prop="clearanceLevel" label="密级" width="80" align="center">
+    <el-table-column prop="clearanceLevel" :label="$t('user.clearance')" width="80" align="center">
       <template #default="{ row }">
         <span :class="`sensitivity-tag sensitivity-tag--${row.clearanceLevel}`">
           {{ formatSensitivityLevel(row.clearanceLevel) }}
         </span>
       </template>
     </el-table-column>
-    <el-table-column prop="allowedDomains" label="允许域" width="200">
+    <el-table-column prop="allowedDomains" :label="$t('user.allowedDomains')" width="200">
       <template #default="{ row }">
         <span
           v-for="domain in parseDomains(row.allowedDomains)"
@@ -71,27 +74,37 @@ function parseDomains(raw: string): string[] {
         </span>
       </template>
     </el-table-column>
-    <el-table-column prop="title" label="职级" width="80" align="center">
+    <el-table-column prop="title" :label="$t('user.title')" width="80" align="center">
       <template #default="{ row }">
         {{ getTitleLabel(row.title) }}
       </template>
     </el-table-column>
-    <el-table-column prop="status" label="状态" width="80" align="center">
+    <el-table-column :label="$t('user.fieldSalary')" width="100" align="center">
       <template #default="{ row }">
-        <el-tag v-if="row.status === 1" type="success">启用</el-tag>
-        <el-tag v-else type="danger">禁用</el-tag>
+        <span v-permission="'fieldLevel.salary'">{{ row.salary ?? '-' }}</span>
       </template>
     </el-table-column>
-    <el-table-column label="创建时间" width="160" align="center">
+    <el-table-column :label="$t('user.fieldPerformance')" width="100" align="center">
+      <template #default="{ row }">
+        <span v-permission="'fieldLevel.performance'">{{ row.performance ?? '-' }}</span>
+      </template>
+    </el-table-column>
+    <el-table-column prop="status" :label="$t('user.status')" width="80" align="center">
+      <template #default="{ row }">
+        <el-tag v-if="row.status === 1" type="success">{{ $t('common.enable') }}</el-tag>
+        <el-tag v-else type="danger">{{ $t('common.disable') }}</el-tag>
+      </template>
+    </el-table-column>
+    <el-table-column :label="$t('user.createTime')" width="160" align="center">
       <template #default="{ row }">
         {{ formatDateTime(row.createTime) }}
       </template>
     </el-table-column>
-    <el-table-column label="操作" width="140" fixed="right" align="center">
+    <el-table-column :label="$t('common.operation')" width="140" fixed="right" align="center">
       <template #default="{ row }">
-        <el-button type="primary" link @click="emit('edit', row)">编辑</el-button>
-        <el-button v-if="row.status === 1" link @click="emit('toggleStatus', row)">禁用</el-button>
-        <el-button v-else link @click="emit('toggleStatus', row)">启用</el-button>
+        <el-button type="primary" link @click="emit('edit', row)">{{ $t('common.edit') }}</el-button>
+        <el-button v-if="row.status === 1" link @click="emit('toggleStatus', row)">{{ $t('common.disable') }}</el-button>
+        <el-button v-else link @click="emit('toggleStatus', row)">{{ $t('common.enable') }}</el-button>
       </template>
     </el-table-column>
   </el-table>

@@ -107,11 +107,21 @@ public class SyncScheduler {
             return;
         }
 
+        // 将 entity 级别的 cursorField/lastCursor 注入 connConfig，供 Connector 使用
+        if (config.getCursorField() != null && !config.getCursorField().isBlank()) {
+            connConfig.put("cursorField", config.getCursorField());
+        }
+        if (config.getLastCursor() != null && !config.getLastCursor().isBlank()) {
+            connConfig.put("lastCursor", config.getLastCursor());
+        }
+
         // 执行同步
         SyncContext context = new SyncContext(config.getId(), connConfig);
         SyncResult result;
         try {
-            if (DataSourceConfig.SYNC_INCREMENTAL.equals(config.getSyncStrategy())) {
+            if (DataSourceConfig.SYNC_INCREMENTAL.equals(config.getSyncStrategy())
+                    && config.getLastCursor() != null
+                    && !config.getLastCursor().isBlank()) {
                 result = connector.incrementalSync(context, config.getLastCursor());
             } else {
                 result = connector.fullSync(context);

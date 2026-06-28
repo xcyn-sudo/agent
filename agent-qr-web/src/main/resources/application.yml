@@ -2,7 +2,9 @@ spring:
   application:
     name: agent-qr
   profiles:
-    active: p1, p2
+    active: p1, p2, p3
+  main:
+    allow-circular-references: true
   datasource:
     url: jdbc:mysql://localhost:3308/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: ${MYSQL_USERNAME:root}

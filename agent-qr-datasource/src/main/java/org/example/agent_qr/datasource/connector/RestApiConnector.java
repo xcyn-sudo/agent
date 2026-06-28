@@ -103,7 +103,9 @@ public class RestApiConnector implements DataSourceConnector {
             log.error("REST API 全量同步失败: {}", e.getMessage(), e);
         }
 
-        return new SyncResult(allRows.size(), allRows, cursor);
+        // 全量同步完成后，nextCursor 设为 null 表示已读到最新
+        // （下次增量同步从当前时间点开始，由 REST API 自身的增量机制决定）
+        return new SyncResult(allRows.size(), allRows, null);
     }
 
     @Override

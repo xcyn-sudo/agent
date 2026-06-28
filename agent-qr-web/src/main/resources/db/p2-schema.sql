@@ -200,6 +200,11 @@ DEALLOCATE PREPARE stmt;
 CALL p2_add_column('data_source_config', 'content_fields',
     "VARCHAR(512) COMMENT '完整性检查字段列表（逗号分隔），为空则使用全局默认值 content,text,_content'");
 
+-- kb_chunk: record_hash（幂等，列存在时跳过）— 用于跨批次去重
+CALL p2_add_column('kb_chunk', 'record_hash',
+    "VARCHAR(64) COMMENT '原始记录的MD5指纹，用于跨批次去重'");
+CALL p2_add_index('kb_chunk',  'idx_datasource_hash', '(datasource_id, record_hash)');
+
 -- ── 6. 质检报告表（方案 B：failures 使用 JSON 列）★ ──
 CREATE TABLE IF NOT EXISTS quality_report (
     id BIGINT AUTO_INCREMENT PRIMARY KEY COMMENT '主键',

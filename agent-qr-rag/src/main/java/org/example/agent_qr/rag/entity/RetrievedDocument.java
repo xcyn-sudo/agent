@@ -16,6 +16,11 @@ public class RetrievedDocument {
     private String documentId;
 
     /**
+     * 切片 ID（对应 kb_chunk 表主键，用于域过滤和数据源状态校验）。
+     */
+    private Long chunkId;
+
+    /**
      * 文档标题。
      */
     private String documentTitle;

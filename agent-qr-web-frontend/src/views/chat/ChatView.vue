@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, nextTick, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { chatApi } from '@/api/chat'
 import { useAuthStore } from '@/stores/auth'
 import { formatDomain } from '@/utils/format'
+import { useWebSocket } from '@/composables/useWebSocket'
+import { useSpeechRecognition } from '@/composables/useSpeechRecognition'
 import type { Conversation, Message, SourceVO } from '@/types'
 import ConversationList from '@/components/chat/ConversationList.vue'
 import MessageBubble from '@/components/chat/MessageBubble.vue'
 import ChatInput from '@/components/chat/ChatInput.vue'
+
+const { t } = useI18n()
 
 // ========== 本地消息类型 ==========
 interface LocalMessage {
@@ -32,6 +37,14 @@ const deletingId = ref<number | null>(null)
 const sidebarCollapsed = ref(false)
 const messagesContainerRef = ref<HTMLElement | null>(null)
 const abortController = ref<AbortController | null>(null)
+
+// ========== P3 WebSocket 连接 ==========
+const ws = useWebSocket()
+const wsAvailable = ref(false)
+
+// ========== P3 语音识别 ==========
+const speech = useSpeechRecognition()
+const voiceInputText = ref('')
 
 // ========== 域选择器选项 ==========
 const availableDomains = computed(() => {
@@ -270,24 +283,24 @@ async function handleFeedback(messageId: number | string, type: 'positive' | 'ne
     try {
       await chatApi.submitFeedback(msg.id, 'positive')
       msg.feedback = 'positive'
-      ElMessage.success('感谢反馈')
+      ElMessage.success(t('chat.feedback.thanks'))
     } catch {
       // 错误已在拦截器中处理
     }
   } else {
     try {
       const { value: reason } = await ElMessageBox.prompt(
-        '请选择或输入不满意的原因，帮助我们改进：',
-        '反馈原因',
+        t('chat.feedback.reason'),
+        t('chat.feedback.title'),
         {
-          confirmButtonText: '提交',
-          cancelButtonText: '取消',
-          inputPlaceholder: '请输入原因（可选）',
+          confirmButtonText: t('common.submit'),
+          cancelButtonText: t('common.cancel'),
+          inputPlaceholder: t('common.optional'),
         },
       )
       await chatApi.submitFeedback(msg.id, 'negative', reason || undefined)
       msg.feedback = 'negative'
-      ElMessage.success('感谢反馈，我们会持续改进')
+      ElMessage.success(t('chat.feedback.thanks'))
     } catch {
       // 用户取消操作
     }
@@ -312,14 +325,24 @@ watch(activeConversationId, () => {
 })
 
 // ========== 初始化 ==========
-onMounted(() => {
+onMounted(async () => {
   loadConversations()
-  // 不再自动选中历史会话，用户看到欢迎页后自主选择
+  // P3: 尝试建立 WebSocket 连接
+  if (authStore.accessToken) {
+    try {
+      await ws.connect(authStore.accessToken)
+      wsAvailable.value = ws.isAvailable()
+    } catch {
+      console.log('[ChatView] WebSocket 不可用，降级使用 SSE')
+    }
+  }
 })
 
 // ========== 销毁时中止未完成的请求 ==========
 onUnmounted(() => {
   abortController.value?.abort()
+  // P3: 断开 WebSocket
+  ws.disconnect()
 })
 </script>
 
@@ -353,8 +376,24 @@ onUnmounted(() => {
       <!-- 欢迎语（无会话且无消息时显示） -->
       <div v-if="activeConversationId === null && messages.length === 0" class="chat-view__welcome">
         <div class="chat-view__welcome-icon">🤖</div>
-        <h2 class="chat-view__welcome-title">您好！我是企业知识库助手</h2>
-        <p class="chat-view__welcome-desc">请问有什么可以帮助您的？</p>
+        <h2 class="chat-view__welcome-title">{{ $t('auth.welcomeSubtitle') }}</h2>
+        <p class="chat-view__welcome-desc">{{ $t('chat.emptyMessage') }}</p>
+        <!-- P3 连接状态指示器 -->
+        <div class="chat-view__connection-status">
+          <span
+            class="connection-dot"
+            :class="{
+              'connection-dot--connected': ws.connectionState.value === 'connected',
+              'connection-dot--connecting': ws.connectionState.value === 'connecting',
+              'connection-dot--disconnected': ws.connectionState.value === 'disconnected'
+            }"
+          />
+          <span class="connection-text">
+            {{ ws.connectionState.value === 'connected' ? $t('chat.connectionStatus.connected') :
+               ws.connectionState.value === 'connecting' ? $t('chat.connectionStatus.reconnecting') :
+               $t('chat.connectionStatus.disconnected') }}
+          </span>
+        </div>
       </div>
 
       <!-- 聊天消息区 -->
@@ -365,7 +404,7 @@ onUnmounted(() => {
           </div>
           <template v-else>
             <div v-if="messages.length === 0" class="chat-view__messages-empty">
-              <el-empty description="暂无消息，开始提问吧" />
+              <el-empty :description="$t('chat.emptyMessage')" />
             </div>
             <MessageBubble
               v-for="msg in messages"
@@ -483,6 +522,76 @@ onUnmounted(() => {
     align-items: center;
     justify-content: center;
     height: 100%;
+  }
+
+  // P3 连接状态指示器
+  &__connection-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: $text-secondary;
+  }
+}
+
+// P3 连接状态点
+.connection-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+
+  &--connected {
+    background-color: #67c23a;
+    box-shadow: 0 0 4px #67c23a;
+  }
+
+  &--connecting {
+    background-color: #e6a23c;
+    animation: pulse 1.5s infinite;
+  }
+
+  &--disconnected {
+    background-color: #f56c6c;
+  }
+}
+
+.connection-text {
+  color: $text-secondary;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+// P3 移动端适配
+@media (max-width: 767px) {
+  .chat-view {
+    &__sidebar {
+      width: 0;
+    }
+
+    &__toggle {
+      left: 12px;
+    }
+
+    &__welcome {
+      padding: 20px 16px;
+    }
+
+    &__welcome-icon {
+      font-size: 48px;
+    }
+
+    &__welcome-title {
+      font-size: 18px;
+    }
+
+    &__messages {
+      padding: 12px;
+    }
   }
 }
 </style>

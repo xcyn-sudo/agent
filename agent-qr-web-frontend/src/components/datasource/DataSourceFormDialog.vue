@@ -43,6 +43,7 @@ const form = reactive({
   sourceName: '',
   domain: '',
   syncStrategy: 'FULL' as 'FULL' | 'INCREMENTAL',
+  cursorField: '',
   cronExpression: '',
 })
 
@@ -52,6 +53,7 @@ function initForm() {
     sourceType.value = props.editData.sourceType
     form.domain = props.editData.domain
     form.syncStrategy = props.editData.syncStrategy
+    form.cursorField = props.editData.cursorField || ''
     form.cronExpression = props.editData.cronExpression || ''
     const rawConfig = props.editData.connectionConfig
     const parsedConfig = typeof rawConfig === 'string' ? JSON.parse(rawConfig) : (rawConfig || {})
@@ -89,6 +91,7 @@ function initForm() {
     sourceType.value = 'JDBC'
     form.domain = ''
     form.syncStrategy = 'FULL'
+    form.cursorField = ''
     form.cronExpression = ''
     clearConnectionConfig()
   }
@@ -275,6 +278,7 @@ function buildFormData(): DataSourceForm {
     sourceType: sourceType.value,
     domain: form.domain,
     syncStrategy: form.syncStrategy,
+    cursorField: form.cursorField || undefined,
     cronExpression: form.cronExpression || undefined,
     connectionConfig: Object.keys(config).length > 0 ? JSON.stringify(config) : undefined,
     contentFields: selectedFields.length > 0 ? selectedFields.join(',') : undefined,
@@ -336,6 +340,29 @@ function handleTestConnection() {
           <el-radio value="FULL">全量 (FULL)</el-radio>
           <el-radio value="INCREMENTAL">增量 (INCREMENTAL)</el-radio>
         </el-radio-group>
+      </el-form-item>
+
+      <!-- 增量同步时显示游标字段选择（仅 JDBC） -->
+      <el-form-item
+        v-if="form.syncStrategy === 'INCREMENTAL' && sourceType === 'JDBC'"
+        label="游标字段"
+      >
+        <el-select
+          v-model="form.cursorField"
+          placeholder="请选择增量游标字段（如 id、update_time）"
+          clearable
+          style="width: 100%"
+        >
+          <el-option
+            v-for="field in allDetectedFields"
+            :key="'cursor-' + field"
+            :label="field"
+            :value="field"
+          />
+        </el-select>
+        <div class="cursor-field-hint">
+          游标字段用于判断增量数据，通常选择自增主键或更新时间字段
+        </div>
       </el-form-item>
 
       <el-form-item label="定时表达式">
@@ -569,6 +596,12 @@ function handleTestConnection() {
       flex: 1;
     }
   }
+}
+
+.cursor-field-hint {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #909399;
 }
 
 .content-fields-area {

@@ -2,8 +2,10 @@
 import { reactive, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 
+const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
@@ -16,8 +18,8 @@ const form = reactive({
 })
 
 const rules: FormRules = {
-  username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  username: [{ required: true, message: () => t('auth.pleaseInputUsername'), trigger: 'blur' }],
+  password: [{ required: true, message: () => t('auth.pleaseInputPassword'), trigger: 'blur' }],
 }
 
 const loading = ref(false)
@@ -30,10 +32,11 @@ async function handleLogin() {
   loading.value = true
   try {
     await authStore.login(form.username, form.password)
+    ElMessage.success(t('auth.loginSuccess'))
     const redirect = (route.query.redirect as string) || '/chat'
     router.push(redirect)
   } catch (e: any) {
-    ElMessage.error(e?.message || '登录失败')
+    ElMessage.error(e?.message || t('auth.loginFailed'))
   } finally {
     loading.value = false
   }
@@ -42,7 +45,7 @@ async function handleLogin() {
 
 <template>
   <div class="login-page">
-    <h1 class="login-page__title">Agent-QR 企业知识库问答系统</h1>
+    <h1 class="login-page__title">{{ $t('auth.welcomeTitle') }}</h1>
     <div class="login-page__card">
       <el-form
         ref="formRef"
@@ -51,17 +54,17 @@ async function handleLogin() {
         label-position="top"
         @keyup.enter="handleLogin"
       >
-        <el-form-item label="用户名" prop="username">
+        <el-form-item :label="$t('auth.username')" prop="username">
           <el-input
             v-model="form.username"
-            placeholder="请输入用户名"
+            :placeholder="$t('auth.pleaseInputUsername')"
           />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
+        <el-form-item :label="$t('auth.password')" prop="password">
           <el-input
             v-model="form.password"
             type="password"
-            placeholder="请输入密码"
+            :placeholder="$t('auth.pleaseInputPassword')"
             show-password
           />
         </el-form-item>
@@ -72,12 +75,13 @@ async function handleLogin() {
             class="login-page__btn"
             @click="handleLogin"
           >
-            登录
+            {{ $t('auth.login') }}
           </el-button>
         </el-form-item>
       </el-form>
       <div class="login-page__link">
-        <router-link to="/register">立即注册</router-link>
+        {{ $t('auth.noAccount') }}
+        <router-link to="/register">{{ $t('auth.goRegister') }}</router-link>
       </div>
     </div>
   </div>
@@ -113,6 +117,23 @@ async function handleLogin() {
     text-align: center;
     a {
       font-size: $font-size-small;
+    }
+  }
+}
+
+// P3 移动端适配
+@media (max-width: 767px) {
+  .login-page {
+    padding: 16px;
+
+    &__title {
+      font-size: 20px;
+    }
+
+    &__card {
+      width: 100%;
+      max-width: 400px;
+      padding: 24px;
     }
   }
 }

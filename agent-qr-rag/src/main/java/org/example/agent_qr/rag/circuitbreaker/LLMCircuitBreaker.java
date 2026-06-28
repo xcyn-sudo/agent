@@ -5,6 +5,7 @@ import org.example.agent_qr.rag.provider.LLMProvider;
 import org.example.agent_qr.rag.provider.ProviderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,6 +32,7 @@ public class LLMCircuitBreaker {
     /** 熔断器状态枚举 */
     public enum State { CLOSED, OPEN, HALF_OPEN }
 
+    @Lazy
     @Autowired
     private ProviderFactory providerFactory;
 

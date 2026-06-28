@@ -60,6 +60,65 @@ export const useAuthStore = defineStore('auth', () => {
     return user.value?.title === 'director'
   }
 
+  /** ★ P2: 能否查看数据仪表盘 — 仅总监 + 绝密 */
+  const canViewDashboard = computed(() =>
+    user.value?.title === 'director' && user.value?.clearanceLevel === 3
+  )
+
+  /** ★ P2: 能否进入用户管理 — 职级>=经理 且 密级>=机密 */
+  const canManageUsers = computed(() => {
+    if (!user.value) return false
+    const titleLevel = { employee: 1, manager: 2, director: 3 }[user.value.title] || 0
+    return titleLevel >= 2 && (user.value.clearanceLevel ?? 0) >= 2
+  })
+
+  // ★ P3 ABAC 细粒度权限
+  /** P3: 知识库编辑权限 — 管理员 或 经理+机密 */
+  const canEditKnowledge = computed(() => {
+    if (!user.value) return false
+    if (user.value.role === 'admin') return true
+    const titleLevel = { employee: 1, manager: 2, director: 3 }[user.value.title] || 0
+    return titleLevel >= 2 && (user.value.clearanceLevel ?? 0) >= 2
+  })
+
+  /** P3: 知识库删除权限 — 仅管理员 或 总监+绝密 */
+  const canDeleteKnowledge = computed(() => {
+    if (!user.value) return false
+    if (user.value.role === 'admin') return true
+    return user.value.title === 'director' && (user.value.clearanceLevel ?? 0) >= 3
+  })
+
+  /** P3: 数据源配置权限 — 管理员 或 经理+机密 */
+  const canConfigureDatasource = computed(() => {
+    if (!user.value) return false
+    if (user.value.role === 'admin') return true
+    const titleLevel = { employee: 1, manager: 2, director: 3 }[user.value.title] || 0
+    return titleLevel >= 2 && (user.value.clearanceLevel ?? 0) >= 2
+  })
+
+  /** P3: 报表导出权限 — 经理+机密 或 总监 */
+  const canExportReport = computed(() => {
+    if (!user.value) return false
+    const titleLevel = { employee: 1, manager: 2, director: 3 }[user.value.title] || 0
+    return titleLevel >= 2 && (user.value.clearanceLevel ?? 0) >= 2
+  })
+
+  /** P3: 字段级权限 */
+  const fieldLevel = {
+    /** 薪资字段可见性 — 职级>=3(总监) 且 密级>=3(绝密) */
+    salary: computed(() => {
+      if (!user.value) return false
+      const titleLevel = { employee: 1, manager: 2, director: 3 }[user.value.title] || 0
+      return titleLevel >= 3 && (user.value.clearanceLevel ?? 0) >= 3
+    }),
+    /** 绩效字段可见性 — 职级>=2(经理) 且 密级>=2(机密) */
+    performance: computed(() => {
+      if (!user.value) return false
+      const titleLevel = { employee: 1, manager: 2, director: 3 }[user.value.title] || 0
+      return titleLevel >= 2 && (user.value.clearanceLevel ?? 0) >= 2
+    })
+  }
+
   // Actions
   async function login(username: string, password: string) {
     const res = await authApi.login({ username, password })
@@ -158,5 +217,13 @@ export const useAuthStore = defineStore('auth', () => {
     hasClearance,
     isManager,
     isDirector,
+    canViewDashboard,
+    canManageUsers,
+    // P3 ABAC 细粒度权限
+    canEditKnowledge,
+    canDeleteKnowledge,
+    canConfigureDatasource,
+    canExportReport,
+    fieldLevel,
   }
 })

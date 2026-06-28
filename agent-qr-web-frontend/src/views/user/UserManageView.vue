@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useI18n } from 'vue-i18n'
 import type { UserInfo } from '@/types'
 import { DEPARTMENTS } from '@/types'
 import { userApi } from '@/api/user'
 import UserTable from '@/components/user/UserTable.vue'
 import UserFormDialog from '@/components/user/UserFormDialog.vue'
 import Pagination from '@/components/common/Pagination.vue'
+
+const { t } = useI18n()
 
 // --- 列表数据 ---
 const users = ref<UserInfo[]>([])
@@ -67,19 +70,19 @@ function handleEdit(user: UserInfo) {
 
 async function handleToggleStatus(user: UserInfo) {
   const newStatus = user.status === 1 ? 0 : 1
-  const actionText = newStatus === 0 ? '禁用' : '启用'
+  const actionText = newStatus === 0 ? t('common.disable') : t('common.enable')
   try {
     await ElMessageBox.confirm(
-      `确定要${actionText}用户「${user.username}」吗？`,
-      '操作确认',
+      t('user.confirmToggleStatus', { action: actionText, username: user.username }),
+      t('common.confirmAction'),
       {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+        confirmButtonText: t('common.confirm'),
+        cancelButtonText: t('common.cancel'),
         type: 'warning',
       },
     )
     await userApi.toggleStatus(user.id, newStatus)
-    ElMessage.success(`${actionText}成功`)
+    ElMessage.success(t('user.toggleStatusSuccess', { action: actionText }))
     fetchUsers()
   } catch {
     // 取消操作或接口失败
@@ -97,20 +100,20 @@ onMounted(() => {
 
 <template>
   <div class="user-manage">
-    <h2 class="user-manage__title">用户管理</h2>
+    <h2 class="user-manage__title">{{ $t('user.title') }}</h2>
 
     <!-- 操作栏 -->
     <div class="user-manage__toolbar">
-      <el-button type="primary" @click="handleCreate">+ 新增用户</el-button>
+      <el-button type="primary" v-permission="'canManageUsers'" @click="handleCreate">+ {{ $t('user.createUser') }}</el-button>
       <div class="user-manage__filters">
         <el-select
           v-model="filterDepartment"
-          placeholder="部门筛选"
+          :placeholder="$t('user.filterDepartment')"
           clearable
           style="width: 140px"
           @change="handleSearch"
         >
-          <el-option label="全部" value="" />
+          <el-option :label="$t('common.all')" value="" />
           <el-option
             v-for="item in DEPARTMENTS"
             :key="item.value"
@@ -120,19 +123,19 @@ onMounted(() => {
         </el-select>
         <el-select
           v-model="filterTitle"
-          placeholder="职级筛选"
+          :placeholder="$t('user.filterTitle')"
           clearable
           style="width: 120px"
           @change="handleSearch"
         >
-          <el-option label="全部" value="" />
-          <el-option label="员工" value="employee" />
-          <el-option label="经理" value="manager" />
-          <el-option label="总监" value="director" />
+          <el-option :label="$t('common.all')" value="" />
+          <el-option :label="$t('user.titleEmployee')" value="employee" />
+          <el-option :label="$t('user.titleManager')" value="manager" />
+          <el-option :label="$t('user.titleDirector')" value="director" />
         </el-select>
         <el-input
           v-model="searchKeyword"
-          placeholder="搜索用户名/姓名..."
+          :placeholder="$t('user.searchPlaceholder')"
           clearable
           style="width: 240px"
           @keyup.enter="handleSearch"

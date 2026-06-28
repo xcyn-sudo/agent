@@ -71,6 +71,15 @@ public class Chunk implements IndexableText {
     // ==================== P2 新增字段 ====================
 
     /**
+     * 原始记录的 MD5 指纹，用于跨批次去重。
+     * <p>
+     * 在 ETL 管线创建 Chunk 时计算并写入（FingerprintUtils.computeRecordFingerprint），
+     * 供 DeduplicationRule 在后续同步时进行跨批次去重比对。
+     * </p>
+     */
+    private String recordHash;
+
+    /**
      * 软删除标记：0=未删除 / 1=已删除。
      * MyBatis-Plus @TableLogic 自动在所有查询中追加 WHERE deleted = 0。
      */

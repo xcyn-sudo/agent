@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { use } from 'echarts/core'
 import { PieChart, LineChart } from 'echarts/charts'
@@ -11,6 +12,8 @@ import type { DashboardVO, DailyStats } from '@/types'
 
 // 注册 ECharts 组件
 use([CanvasRenderer, PieChart, LineChart, TooltipComponent, GridComponent, LegendComponent])
+
+const { t } = useI18n()
 
 // ---------- 状态 ----------
 const loading = ref(false)
@@ -26,6 +29,11 @@ const dashboard = ref<DashboardVO>({
   weeklyTrend: [],
   docTypeDistribution: {},
 })
+
+const dateRange = ref<[Date, Date] | null>(null)
+const trendChartRef = ref<any>(null)
+const feedbackChartRef = ref<any>(null)
+const docTypeChartRef = ref<any>(null)
 
 // ---------- 计算属性 ----------
 
@@ -58,7 +66,7 @@ const lineChartOption = computed(() => {
       formatter: (params: any[]) => {
         let result = params[0]?.axisValue || ''
         params.forEach((p: any) => {
-          if (p.seriesName === '满意度') {
+          if (p.seriesName === t('dashboard.satisfaction')) {
             result += `<br/>${p.marker} ${p.seriesName}: ${p.value != null ? p.value + '%' : '-'}`
           } else {
             result += `<br/>${p.marker} ${p.seriesName}: ${p.value ?? '-'}`
@@ -68,7 +76,7 @@ const lineChartOption = computed(() => {
       },
     },
     legend: {
-      data: ['问答数量', '满意度'],
+      data: [t('dashboard.qaCount'), t('dashboard.satisfaction')],
       bottom: 0,
     },
     grid: {
@@ -85,19 +93,19 @@ const lineChartOption = computed(() => {
     yAxis: [
       {
         type: 'value' as const,
-        name: '数量',
+        name: t('dashboard.qaAxisName'),
         minInterval: 1,
       },
       {
         type: 'value' as const,
-        name: '满意度 (%)',
+        name: t('dashboard.satisfactionAxis'),
         min: 0,
         max: 100,
       },
     ],
     series: [
       {
-        name: '问答数量',
+        name: t('dashboard.qaCount'),
         type: 'line' as const,
         smooth: true,
         data: qaCounts,
@@ -118,7 +126,7 @@ const lineChartOption = computed(() => {
         },
       },
       {
-        name: '满意度',
+        name: t('dashboard.satisfaction'),
         type: 'line' as const,
         yAxisIndex: 1,
         smooth: true,
@@ -152,7 +160,7 @@ const pieChartOption = computed(() => {
     color: colorPalette,
     series: [
       {
-        name: '文档类型',
+        name: t('dashboard.chartDocType'),
         type: 'pie' as const,
         radius: ['40%', '70%'],
         center: ['40%', '50%'],
@@ -183,8 +191,8 @@ const feedbackPieOption = computed(() => {
   const positive = dashboard.value.todayPositive ?? 0
   const negative = dashboard.value.todayNegative ?? 0
   const data = [
-    { name: '正面', value: positive, itemStyle: { color: '#67c23a' } },
-    { name: '负面', value: negative, itemStyle: { color: '#f56c6c' } },
+    { name: t('dashboard.feedbackPositive'), value: positive, itemStyle: { color: '#67c23a' } },
+    { name: t('dashboard.feedbackNegative'), value: negative, itemStyle: { color: '#f56c6c' } },
   ]
 
   return {
@@ -199,7 +207,7 @@ const feedbackPieOption = computed(() => {
     },
     series: [
       {
-        name: '反馈分布',
+        name: t('dashboard.feedbackDistribution'),
         type: 'pie' as const,
         radius: ['40%', '70%'],
         center: ['40%', '50%'],
@@ -241,6 +249,23 @@ function formatDate(dateStr: string): string {
   return dateStr
 }
 
+function exportChart(chartInstance: any) {
+  if (!chartInstance) return
+  const url = chartInstance.getDataURL({ type: 'png', pixelRatio: 2, backgroundColor: '#fff' })
+  const link = document.createElement('a')
+  link.download = 'chart.png'
+  link.href = url
+  link.click()
+}
+
+function handleChartClick(params: any) {
+  console.log('Chart drill-down:', params)
+}
+
+function handleDateRangeChange() {
+  fetchDashboard()
+}
+
 // ---------- 数据加载 ----------
 async function fetchDashboard() {
   loading.value = true
@@ -250,7 +275,7 @@ async function fetchDashboard() {
       dashboard.value = res.data
     }
   } catch {
-    ElMessage.error('数据加载失败')
+    ElMessage.error(t('dashboard.loadError'))
   } finally {
     loading.value = false
   }
@@ -263,32 +288,32 @@ onMounted(() => {
 
 <template>
   <div class="dashboard-view" v-loading="loading">
-    <h2 class="dashboard-title">数据仪表盘</h2>
+    <h2 class="dashboard-title">{{ $t('dashboard.title') }}</h2>
 
     <!-- 统计卡片区 - 第一行 -->
     <el-row :gutter="20" class="stat-cards">
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number">{{ dashboard.todayQA }}</div>
-          <div class="stat-label">今日问答</div>
+          <div class="stat-label">{{ $t('dashboard.todayQA') }}</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number">{{ dashboard.todayNewUsers }}</div>
-          <div class="stat-label">今日新增用户</div>
+          <div class="stat-label">{{ $t('dashboard.todayNewUsers') }}</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number">{{ dashboard.totalDocuments }}</div>
-          <div class="stat-label">文档总数</div>
+          <div class="stat-label">{{ $t('dashboard.totalDocuments') }}</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number">{{ dashboard.totalUsers }}</div>
-          <div class="stat-label">用户总数</div>
+          <div class="stat-label">{{ $t('dashboard.totalUsers') }}</div>
         </el-card>
       </el-col>
     </el-row>
@@ -298,19 +323,40 @@ onMounted(() => {
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number">{{ dashboard.todayPositive }}</div>
-          <div class="stat-label">👍 今日点赞</div>
+          <div class="stat-label">👍 {{ $t('dashboard.likes') }}</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number">{{ dashboard.todayNegative }}</div>
-          <div class="stat-label">👎 今日点踩</div>
+          <div class="stat-label">👎 {{ $t('dashboard.dislikes') }}</div>
         </el-card>
       </el-col>
       <el-col :span="6">
         <el-card shadow="hover" class="stat-card">
           <div class="stat-number" :style="{ color: satisfactionColor }">{{ satisfactionPercent }}</div>
-          <div class="stat-label">满意度</div>
+          <div class="stat-label">{{ $t('dashboard.satisfaction') }}</div>
+        </el-card>
+      </el-col>
+    </el-row>
+
+    <!-- 日期范围选择 -->
+    <el-row :gutter="20" class="chart-section">
+      <el-col :span="24">
+        <el-card shadow="hover">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span>{{ $t('dashboard.dateRange') }}:</span>
+            <el-date-picker
+              v-model="dateRange"
+              type="daterange"
+              range-separator="-"
+              :start-placeholder="$t('common.all')"
+              :end-placeholder="$t('common.all')"
+              format="YYYY-MM-DD"
+              value-format="YYYY-MM-DD"
+              @change="handleDateRangeChange"
+            />
+          </div>
         </el-card>
       </el-col>
     </el-row>
@@ -321,14 +367,23 @@ onMounted(() => {
       <el-col :span="24">
         <el-card shadow="hover" class="chart-card">
           <template #header>
-            <span class="chart-card-title">近7天问答趋势与满意度</span>
+            <div class="chart-card-header">
+              <span class="chart-card-title">{{ $t('dashboard.qaTrend') }}</span>
+              <el-button
+                v-permission="'canExportReport'"
+                size="small"
+                @click="exportChart(trendChartRef?.chart || trendChartRef)"
+              >{{ $t('dashboard.exportChart') }}</el-button>
+            </div>
           </template>
           <v-chart
+            ref="trendChartRef"
             v-if="dashboard.weeklyTrend.length > 0"
             :option="lineChartOption"
             style="height: 350px"
+            @click="handleChartClick"
           />
-          <el-empty v-else description="暂无趋势数据" />
+          <el-empty v-else :description="$t('dashboard.noTrendData')" />
         </el-card>
       </el-col>
     </el-row>
@@ -338,27 +393,45 @@ onMounted(() => {
       <el-col :span="12">
         <el-card shadow="hover" class="chart-card">
           <template #header>
-            <span class="chart-card-title">反馈分布</span>
+            <div class="chart-card-header">
+              <span class="chart-card-title">{{ $t('dashboard.feedbackDistribution') }}</span>
+              <el-button
+                v-permission="'canExportReport'"
+                size="small"
+                @click="exportChart(feedbackChartRef?.chart || feedbackChartRef)"
+              >{{ $t('dashboard.exportChart') }}</el-button>
+            </div>
           </template>
           <v-chart
+            ref="feedbackChartRef"
             v-if="hasFeedbackData"
             :option="feedbackPieOption"
             style="height: 350px"
+            @click="handleChartClick"
           />
-          <el-empty v-else description="暂无反馈数据" />
+          <el-empty v-else :description="$t('dashboard.noFeedbackData')" />
         </el-card>
       </el-col>
       <el-col :span="12">
         <el-card shadow="hover" class="chart-card">
           <template #header>
-            <span class="chart-card-title">文档类型分布</span>
+            <div class="chart-card-header">
+              <span class="chart-card-title">{{ $t('dashboard.documentTypeDistribution') }}</span>
+              <el-button
+                v-permission="'canExportReport'"
+                size="small"
+                @click="exportChart(docTypeChartRef?.chart || docTypeChartRef)"
+              >{{ $t('dashboard.exportChart') }}</el-button>
+            </div>
           </template>
           <v-chart
+            ref="docTypeChartRef"
             v-if="Object.keys(dashboard.docTypeDistribution).length > 0"
             :option="pieChartOption"
             style="height: 350px"
+            @click="handleChartClick"
           />
-          <el-empty v-else description="暂无文档数据" />
+          <el-empty v-else :description="$t('dashboard.noDocData')" />
         </el-card>
       </el-col>
     </el-row>
@@ -405,6 +478,12 @@ onMounted(() => {
 }
 
 .chart-card {
+  .chart-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
   .chart-card-title {
     font-size: 16px;
     font-weight: 600;

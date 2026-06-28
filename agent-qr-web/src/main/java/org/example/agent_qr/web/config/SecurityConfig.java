@@ -22,10 +22,13 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Spring Security 安全配置（P2 扩展）。
+ * Spring Security 安全配置（P3 扩展）。
  * <p>
  * P2 新增：@EnableMethodSecurity(prePostEnabled = true) 启用 ABAC 注解、
  * 更新路由表添加 /api/auth/refresh 和 /api/catalog/**。
+ * </p>
+ * <p>
+ * P3 新增：WebSocket 端点放行（/ws/**）以支持前端 STOMP over WebSocket 通信。
  * </p>
  */
 @Configuration
@@ -45,7 +48,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
                         .requestMatchers("/api/auth/login", "/api/auth/register", "/api/auth/refresh").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/ws/**", "/ws/info").permitAll()
+                        .requestMatchers("/api/admin/**").authenticated()
                         .requestMatchers("/api/knowledge/**").authenticated()
                         .requestMatchers("/api/chat/**").authenticated()
                         .requestMatchers("/api/catalog/**").authenticated()

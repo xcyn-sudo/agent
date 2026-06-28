@@ -71,7 +71,7 @@ services:
     restart: unless-stopped
     environment:
       # Spring 配置
-      SPRING_PROFILES_ACTIVE: p1
+      SPRING_PROFILES_ACTIVE: p1, p2, p3
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-agent_qr}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}

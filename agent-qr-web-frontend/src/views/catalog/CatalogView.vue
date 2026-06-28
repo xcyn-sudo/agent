@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { ElMessage } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import { catalogApi } from '@/api/catalog'
 import type { CatalogTree, EntityNode, SourceNode, DomainNode } from '@/types'
 import { formatDateTime } from '@/utils/format'
 import CatalogTreeComponent from '@/components/catalog/CatalogTree.vue'
+import KnowledgeGraph from '@/components/charts/KnowledgeGraph.vue'
+
+const { t } = useI18n()
 
 // ==================== 状态管理 ====================
 const catalogData = ref<CatalogTree | null>(null)
 const loading = ref(false)
 const searchKeyword = ref('')
 const debouncedKeyword = ref('')
+const activeTab = ref('tree')
 
 // 实体详情弹窗
 const entityDialogVisible = ref(false)
@@ -46,7 +51,7 @@ async function fetchCatalog() {
       catalogData.value = res.data
     }
   } catch {
-    ElMessage.error('知识目录加载失败')
+    ElMessage.error(t('catalog.loadError'))
   } finally {
     loading.value = false
   }
@@ -69,13 +74,13 @@ onMounted(() => {
 <template>
   <div class="catalog-view">
     <!-- 页面标题 -->
-    <h2 class="catalog-title">知识目录</h2>
+    <h2 class="catalog-title">{{ $t('catalog.title') }}</h2>
 
     <!-- 顶部搜索栏 -->
     <div class="catalog-search">
       <el-input
         v-model="searchKeyword"
-        placeholder="搜索域/数据源/实体..."
+        :placeholder="$t('catalog.searchPlaceholder')"
         clearable
         @input="onSearchInput"
       >
@@ -85,53 +90,63 @@ onMounted(() => {
       </el-input>
     </div>
 
-    <!-- 目录树 -->
-    <el-card shadow="hover" class="catalog-content">
-      <template v-if="!loading && catalogData && catalogData.domains && catalogData.domains.length > 0">
-        <CatalogTreeComponent
-          :data="catalogData"
-          :loading="loading"
-          :search-keyword="debouncedKeyword"
-          @entity-click="onEntityClick"
-        />
-      </template>
+    <!-- 标签页切换 -->
+    <el-tabs v-model="activeTab" class="catalog-tabs">
+      <el-tab-pane :label="$t('catalog.treeView')" name="tree">
+        <!-- 目录树 -->
+        <el-card shadow="hover" class="catalog-content">
+          <template v-if="!loading && catalogData && catalogData.domains && catalogData.domains.length > 0">
+            <CatalogTreeComponent
+              :data="catalogData"
+              :loading="loading"
+              :search-keyword="debouncedKeyword"
+              @entity-click="onEntityClick"
+            />
+          </template>
 
-      <!-- 加载中 / 空数据 -->
-      <el-empty
-        v-if="!loading && (!catalogData || !catalogData.domains || catalogData.domains.length === 0)"
-        description="暂无知识目录数据"
-      />
-    </el-card>
+          <!-- 加载中 / 空数据 -->
+          <el-empty
+            v-if="!loading && (!catalogData || !catalogData.domains || catalogData.domains.length === 0)"
+            :description="$t('catalog.noCatalogData')"
+          />
+        </el-card>
+      </el-tab-pane>
+
+      <el-tab-pane :label="$t('catalog.graphView')" name="graph">
+        <KnowledgeGraph v-if="catalogData" :catalog-tree="catalogData" />
+        <el-empty v-else :description="$t('common.noData')" />
+      </el-tab-pane>
+    </el-tabs>
 
     <!-- 实体详情弹窗 -->
     <el-dialog
       v-model="entityDialogVisible"
-      :title="selectedEntity?.entityName ?? '实体详情'"
+      :title="selectedEntity?.entityName ?? $t('catalog.entityDetail')"
       width="520px"
       destroy-on-close
     >
       <template v-if="selectedEntity && selectedSource && selectedDomain">
         <el-descriptions :column="1" border>
-          <el-descriptions-item label="实体名称">
+          <el-descriptions-item :label="$t('catalog.entityName')">
             {{ selectedEntity.entityName }}
           </el-descriptions-item>
-          <el-descriptions-item label="所属域">
+          <el-descriptions-item :label="$t('catalog.belongDomain')">
             {{ selectedDomain.domainName }}
           </el-descriptions-item>
-          <el-descriptions-item label="所属数据源">
+          <el-descriptions-item :label="$t('catalog.belongSource')">
             {{ selectedSource.sourceName }}
           </el-descriptions-item>
-          <el-descriptions-item label="记录数量">
-            {{ selectedEntity.recordCount }} 条
+          <el-descriptions-item :label="$t('catalog.recordCount')">
+            {{ selectedEntity.recordCount }} {{ t('catalog.recordCountUnit') }}
           </el-descriptions-item>
-          <el-descriptions-item label="最后更新时间">
+          <el-descriptions-item :label="$t('catalog.lastUpdated')">
             {{ formatDateTime(selectedEntity.lastUpdated) || '—' }}
           </el-descriptions-item>
         </el-descriptions>
       </template>
 
       <template #footer>
-        <el-button @click="entityDialogVisible = false">关闭</el-button>
+        <el-button @click="entityDialogVisible = false">{{ $t('common.close') }}</el-button>
       </template>
     </el-dialog>
   </div>
@@ -154,6 +169,10 @@ onMounted(() => {
 .catalog-search {
   margin-bottom: 20px;
   max-width: 480px;
+}
+
+.catalog-tabs {
+  margin-bottom: 20px;
 }
 
 .catalog-content {

@@ -24,6 +24,10 @@ import java.util.concurrent.TimeUnit;
  * 将单个切片向量化请求攒批处理，批量调用 Embedding API，
  * 吞吐量可达逐条调用的 100 倍提升。批量失败时降级逐条重试。
  * </p>
+ * <p>
+ * P3 扩展：集成 {@link EmbeddingDimensionManager}，动态获取 ChromaDB Collection 名称，
+ * 确保向量写入与 Embedding 模型维度匹配的 Collection。
+ * </p>
  *
  * @author agent-qr
  */
@@ -33,6 +37,10 @@ public class BatchEmbeddingService {
 
     @Autowired
     private ProviderFactory providerFactory;
+
+    /** P3 新增：向量维度管理器，用于动态获取 Collection 名称 */
+    @Autowired
+    private EmbeddingDimensionManager dimensionManager;
 
     /** 攒批队列，容量 2000 */
     private final BlockingQueue<EmbedTask> taskQueue = new LinkedBlockingQueue<>(2000);
@@ -167,6 +175,23 @@ public class BatchEmbeddingService {
     public void shutdown() {
         running = false;
         log.info("批量向量化攒批服务已关闭");
+    }
+
+    /**
+     * 获取当前 Embedding 模型对应的 ChromaDB Collection 名称（P3 新增）。
+     * <p>优先使用 {@link EmbeddingDimensionManager} 动态生成，不可用时返回 {@code null}。</p>
+     *
+     * @return Collection 名称，不可用时返回 {@code null}
+     */
+    public String getEffectiveCollectionName() {
+        if (dimensionManager != null) {
+            try {
+                return dimensionManager.getCollectionName();
+            } catch (Exception e) {
+                log.warn("获取动态 Collection 名称失败，降级使用 P2 配置", e);
+            }
+        }
+        return null;
     }
 
     /**

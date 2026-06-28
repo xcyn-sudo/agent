@@ -64,4 +64,65 @@ public interface ChunkMapper extends BaseMapper<Chunk> {
      */
     @Select("SELECT * FROM kb_chunk WHERE status = 'READY' AND deleted = 0 LIMIT #{limit} OFFSET #{offset}")
     List<Chunk> selectReadyChunksPaged(@Param("offset") int offset, @Param("limit") int limit);
+
+    /**
+     * 按数据源 ID 查询所有未删除的切片。
+     */
+    @Select("SELECT * FROM kb_chunk WHERE datasource_id = #{datasourceId} AND deleted = 0")
+    List<Chunk> selectByDatasourceId(@Param("datasourceId") Long datasourceId);
+
+    /**
+     * 软删除指定数据源的所有切片。
+     */
+    @Update("UPDATE kb_chunk SET deleted = 1 WHERE datasource_id = #{datasourceId}")
+    int softDeleteByDatasourceId(@Param("datasourceId") Long datasourceId);
+
+    /**
+     * 按文档 domain 查询切片 ID 列表（用于域过滤，覆盖文档上传管线）。
+     * JOIN kb_document 表按 domain 过滤，仅返回未删除的切片。
+     */
+    @Select("SELECT c.id FROM kb_chunk c INNER JOIN kb_document d ON c.document_id = d.id " +
+            "WHERE d.domain = #{domain} AND c.deleted = 0 AND d.deleted = 0 LIMIT 500")
+    List<Long> selectChunkIdsByDocumentDomain(@Param("domain") String domain);
+
+    /**
+     * 按数据源 ID 查询所有未删除切片的 record_hash（用于跨批次去重）。
+     * 仅返回非空且非空字符串的哈希值。
+     *
+     * @param datasourceId 数据源 ID
+     * @return 该数据源所有历史记录的 MD5 指纹列表
+     */
+    @Select("SELECT record_hash FROM kb_chunk WHERE datasource_id = #{datasourceId} " +
+            "AND deleted = 0 AND record_hash IS NOT NULL AND record_hash != ''")
+    List<String> selectRecordHashesByDatasourceId(@Param("datasourceId") Long datasourceId);
+
+    /**
+     * 查找有 record_hash 的重复切片 ID（保留每组中 id 最小的，返回其余）。
+     * 用于定时去重清理 — 精确匹配 record_hash。
+     *
+     * @return 待删除的重复切片 ID 列表
+     */
+    @Select("SELECT c2.id FROM kb_chunk c2 " +
+            "INNER JOIN (SELECT datasource_id, record_hash, MIN(id) as keep_id " +
+            "           FROM kb_chunk WHERE deleted = 0 AND record_hash IS NOT NULL AND record_hash != '' " +
+            "           GROUP BY datasource_id, record_hash HAVING COUNT(*) > 1) c1 " +
+            "ON c2.datasource_id = c1.datasource_id AND c2.record_hash = c1.record_hash " +
+            "AND c2.id != c1.keep_id AND c2.deleted = 0")
+    List<Long> selectDuplicateChunkIdsByHash();
+
+    /**
+     * 查找历史数据（无 record_hash）中按 MD5(content) 分组重复的切片 ID。
+     * 保留每组中 id 最小的，返回其余。用于定时去重清理 — 内容近似匹配。
+     *
+     * @return 待删除的重复切片 ID 列表
+     */
+    @Select("SELECT c2.id FROM kb_chunk c2 " +
+            "INNER JOIN (SELECT datasource_id, MD5(content) as content_md5, MIN(id) as keep_id " +
+            "           FROM kb_chunk WHERE deleted = 0 " +
+            "           AND (record_hash IS NULL OR record_hash = '') " +
+            "           AND datasource_id IS NOT NULL " +
+            "           GROUP BY datasource_id, MD5(content) HAVING COUNT(*) > 1) c1 " +
+            "ON c2.datasource_id = c1.datasource_id AND MD5(c2.content) = c1.content_md5 " +
+            "AND c2.id != c1.keep_id AND c2.deleted = 0")
+    List<Long> selectDuplicateChunkIdsByContent();
 }

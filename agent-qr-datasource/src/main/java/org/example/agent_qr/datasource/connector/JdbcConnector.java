@@ -129,7 +129,23 @@ public class JdbcConnector implements DataSourceConnector {
             log.error("JDBC 全量同步失败: {}", e.getMessage(), e);
         }
 
-        return new SyncResult(allRows.size(), allRows, null);
+        // 全量同步完成后，计算游标（供后续增量同步使用）
+        String nextCursor = null;
+        if (config.containsKey("cursorField")) {
+            String cf = (String) config.get("cursorField");
+            for (Map<String, Object> row : allRows) {
+                Object val = row.get(cf);
+                if (val != null) {
+                    String s = val.toString();
+                    if (nextCursor == null || s.compareTo(nextCursor) > 0) {
+                        nextCursor = s;
+                    }
+                }
+            }
+            log.info("JDBC 全量同步: 游标字段={}, 最大游标值={}", cf, nextCursor);
+        }
+
+        return new SyncResult(allRows.size(), allRows, nextCursor);
     }
 
     @Override

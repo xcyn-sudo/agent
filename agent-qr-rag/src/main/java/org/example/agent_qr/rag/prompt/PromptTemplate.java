@@ -14,15 +14,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class PromptTemplate {
 
-    /** 系统提示词模板：设定角色 + 检索上下文 */
-    private static final String SYSTEM_TEMPLATE = """
+    /** 系统提示词前缀：角色设定 + 参考资料引导 */
+    private static final String SYSTEM_PROMPT_PREFIX = """
             你是一个企业知识库助手，请根据以下参考资料回答用户问题。
             如果参考资料中没有相关信息，请如实告知用户"知识库中暂无相关信息"，不要编造答案。
 
             参考资料：
-            %s
+            """;
+
+    /** 系统提示词后缀：回答指令 */
+    private static final String SYSTEM_PROMPT_SUFFIX = """
 
             请基于以上参考资料给出准确、简洁的回答：""";
+
+    /**
+     * 返回不含文档内容的系统提示词基础文本。
+     * <p>
+     * 供 {@link ContextTokenManager} 进行 token 预算估算使用。
+     * </p>
+     *
+     * @return 系统提示词前缀 + 后缀的拼接
+     */
+    public String getSystemPromptBase() {
+        return SYSTEM_PROMPT_PREFIX + SYSTEM_PROMPT_SUFFIX;
+    }
 
     /**
      * 构建系统消息（角色指令 + 检索上下文）。
@@ -31,7 +46,7 @@ public class PromptTemplate {
      * @return 系统 Prompt 文本
      */
     public String buildSystemPrompt(String context) {
-        return String.format(SYSTEM_TEMPLATE, context);
+        return SYSTEM_PROMPT_PREFIX + context + SYSTEM_PROMPT_SUFFIX;
     }
 
     /**

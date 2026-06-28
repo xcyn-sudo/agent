@@ -5,7 +5,6 @@ import org.example.agent_qr.common.dlq.DeadLetterQueue;
 import org.example.agent_qr.common.dlq.DlqMessageMapper;
 import org.example.agent_qr.common.dlq.entity.DlqMessage;
 import org.example.agent_qr.compensation.service.DocumentDeleteServiceV2;
-import org.example.agent_qr.knowledge.listener.ChunkEmbeddingListener;
 import org.example.agent_qr.knowledge.parser.DocumentParserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,9 +34,6 @@ public class DlqRetryScheduler {
 
     @Autowired(required = false)
     private DocumentParserService parserService;
-
-    @Autowired(required = false)
-    private ChunkEmbeddingListener chunkEmbeddingListener;
 
     @Autowired(required = false)
     private DocumentDeleteServiceV2 documentDeleteServiceV2;

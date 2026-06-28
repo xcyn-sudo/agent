@@ -1,9 +1,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import type { QualityReport, QualityFailure } from '@/types'
 import { dataqualityApi } from '@/api/dataquality'
 import { formatPassRate, formatDateTime } from '@/utils/format'
 import Pagination from '@/components/common/Pagination.vue'
+
+const { t } = useI18n()
+const router = useRouter()
 
 // --- 状态 ---
 const reports = ref<QualityReport[]>([])
@@ -110,22 +115,27 @@ onMounted(() => {
 
 <template>
   <div class="quality-report">
-    <h2 class="quality-report__title">数据质量报告</h2>
+    <div class="quality-report__header">
+      <h2 class="quality-report__title">{{ $t('quality.title') }}</h2>
+      <el-button type="primary" @click="router.push('/admin/quality/rules')">
+        {{ $t('quality.ruleManager') }}
+      </el-button>
+    </div>
 
     <!-- 筛选栏 -->
     <div class="quality-report__toolbar">
       <div class="quality-report__filter">
-        <span class="filter-label">阻断筛选：</span>
+        <span class="filter-label">{{ $t('quality.blockingFilter') }}</span>
         <el-select
           v-model="filterBlocked"
-          placeholder="全部"
+          :placeholder="$t('common.all')"
           style="width: 140px"
           clearable
           @change="handleFilterChange"
         >
-          <el-option label="全部" value="" />
-          <el-option label="仅阻断" value="blocked" />
-          <el-option label="仅通过" value="passed" />
+          <el-option :label="$t('common.all')" value="" />
+          <el-option :label="$t('quality.onlyBlocked')" value="blocked" />
+          <el-option :label="$t('quality.onlyPassed')" value="passed" />
         </el-select>
       </div>
     </div>
@@ -146,28 +156,28 @@ onMounted(() => {
           <div class="expand-content">
             <!-- 空失败列表提示 -->
             <template v-if="!scope.row.failures || scope.row.failures.length === 0">
-              <el-empty description="该批次无不合格记录" :image-size="80" />
+              <el-empty :description="$t('quality.noFailures')" :image-size="80" />
             </template>
 
             <!-- 不合格明细表 -->
             <template v-else>
               <div class="expand-section">
-                <h4 class="expand-section__title">不合格明细</h4>
+                <h4 class="expand-section__title">{{ $t('quality.detail') }}</h4>
                 <el-table
                   :data="scope.row.failures"
                   size="small"
                   border
                   style="width: 100%"
                 >
-                  <el-table-column prop="ruleName" label="规则名称" min-width="150" />
-                  <el-table-column prop="recordIndex" label="记录索引" width="100" align="center" />
-                  <el-table-column prop="reason" label="原因说明" min-width="250" show-overflow-tooltip />
+                  <el-table-column prop="ruleName" :label="$t('quality.ruleName')" min-width="150" />
+                  <el-table-column prop="recordIndex" :label="$t('quality.recordIndex')" width="100" align="center" />
+                  <el-table-column prop="reason" :label="$t('quality.reason')" min-width="250" show-overflow-tooltip />
                 </el-table>
               </div>
 
               <!-- 按规则分布（进度条） -->
               <div class="expand-section">
-                <h4 class="expand-section__title">按规则分布</h4>
+                <h4 class="expand-section__title">{{ $t('quality.ruleDistribution') }}</h4>
                 <div
                   v-for="item in calcRuleDistribution(scope.row.failures, scope.row.failCount)"
                   :key="item.ruleName"
@@ -192,24 +202,24 @@ onMounted(() => {
       </el-table-column>
 
       <!-- 批次号 -->
-      <el-table-column prop="batchId" label="批次号" min-width="180" show-overflow-tooltip />
+      <el-table-column prop="batchId" :label="$t('quality.batchId')" min-width="180" show-overflow-tooltip />
 
       <!-- 数据源 -->
-      <el-table-column prop="sourceName" label="数据源" min-width="140" show-overflow-tooltip />
+      <el-table-column prop="sourceName" :label="$t('quality.sourceName')" min-width="140" show-overflow-tooltip />
 
       <!-- 总数 -->
-      <el-table-column prop="totalCount" label="总数" width="90" align="center" />
+      <el-table-column prop="totalCount" :label="$t('quality.totalCount')" width="90" align="center" />
 
       <!-- 合格 -->
-      <el-table-column prop="passCount" label="合格" width="90" align="center" />
+      <el-table-column prop="passCount" :label="$t('quality.passCount')" width="90" align="center" />
 
       <!-- 不合格 -->
-      <el-table-column prop="failCount" label="不合格" width="90" align="center" />
+      <el-table-column prop="failCount" :label="$t('quality.failCount')" width="90" align="center" />
 
       <!-- 合格率 ★ 条件颜色 + sortable -->
       <el-table-column
         prop="passRate"
-        label="合格率"
+        :label="$t('quality.passRate')"
         width="100"
         align="center"
         sortable="custom"
@@ -222,17 +232,17 @@ onMounted(() => {
       </el-table-column>
 
       <!-- 是否阻断 -->
-      <el-table-column label="是否阻断" width="100" align="center">
+      <el-table-column :label="$t('quality.isBlocked')" width="100" align="center">
         <template #default="scope">
-          <el-tag v-if="scope.row.blocked" type="danger" size="small">阻断</el-tag>
-          <el-tag v-else type="success" size="small">通过</el-tag>
+          <el-tag v-if="scope.row.blocked" type="danger" size="small">{{ $t('quality.blocked') }}</el-tag>
+          <el-tag v-else type="success" size="small">{{ $t('quality.passed') }}</el-tag>
         </template>
       </el-table-column>
 
       <!-- 检查时间 ★ sortable 默认降序 -->
       <el-table-column
         prop="checkTime"
-        label="检查时间"
+        :label="$t('quality.checkTime')"
         width="170"
         align="center"
         sortable="custom"
@@ -244,7 +254,7 @@ onMounted(() => {
     </el-table>
 
     <!-- 空数据 -->
-    <el-empty v-if="!loading && reports.length === 0" description="暂无质量报告数据" />
+    <el-empty v-if="!loading && reports.length === 0" :description="$t('quality.noReportData')" />
 
     <!-- 分页 -->
     <Pagination
@@ -263,11 +273,18 @@ onMounted(() => {
 .quality-report {
   padding: 20px;
 
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
   &__title {
     font-size: 20px;
     font-weight: 600;
     color: $text-primary;
-    margin-bottom: 20px;
+    margin: 0;
   }
 
   &__toolbar {

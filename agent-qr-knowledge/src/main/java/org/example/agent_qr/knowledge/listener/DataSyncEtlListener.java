@@ -8,6 +8,7 @@ import dev.langchain4j.data.segment.TextSegment;
 import dev.langchain4j.store.embedding.chroma.ChromaEmbeddingStore;
 import org.example.agent_qr.common.dlq.DeadLetterQueue;
 import org.example.agent_qr.common.event.DataQualityPassedEvent;
+import org.example.agent_qr.common.util.FingerprintUtils;
 import org.example.agent_qr.datasource.entity.DataSourceConfig;
 import org.example.agent_qr.datasource.mapper.DataSourceMapper;
 import org.example.agent_qr.etl.entity.CanonicalRecord;
@@ -107,6 +108,11 @@ public class DataSyncEtlListener {
                             ? record.getCanonicalText().length() : 0);
                     chunk.setChromaId("pending");
                     chunk.setDeleted(0);
+                    // 写入原始记录的 MD5 指纹（供后续跨批次去重使用）
+                    if (i < passedData.size()) {
+                        chunk.setRecordHash(
+                                FingerprintUtils.computeRecordFingerprint(passedData.get(i)));
+                    }
                     chunkMapper.insert(chunk);
 
                     // 3b. 提交批量向量化（异步完成，回调写入 ChromaDB 并更新 chromaId）

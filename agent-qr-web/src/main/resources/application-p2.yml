@@ -20,10 +20,12 @@ ollama:
 agent-qr:
   # 混合检索
   retrieval:
-    semantic-weight: 0.6        # 语义检索权重
-    keyword-weight: 0.4         # 关键词检索权重
-    wide-top-k: 20              # 宽召回 TopK
-    final-top-k: 5              # 最终返回 TopK
+    semantic-weight: 0.55       # 语义检索权重（从 0.6 下调，提升 BM25 关键词匹配地位）
+    keyword-weight: 0.45        # 关键词检索权重（从 0.4 上调）
+    wide-top-k: 30              # 宽召回 TopK（每次从 ChromaDB/BM25 各拉取 30 条候选）
+    final-top-k: 15             # Reranker 精排后的候选数（由 token 预算层进一步裁剪）
+    rrf-k: 15                   # RRF 融合常数 k（越小排名区分度越大，原值 60）
+    max-context-tokens: 8000    # 文档上下文 token 预算上限（含 LLM 回复预留 2048）
 
   # Reranker
   reranker:

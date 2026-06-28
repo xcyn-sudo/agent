@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.auth.principal.UserPrincipal;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 /**
  * ABAC（基于属性的访问控制）评估器。
  * <p>
@@ -21,6 +23,25 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component("abac")
 public class AbacEvaluator {
+
+    /**
+     * 职级 → 数字级别映射，用于大小比较。
+     */
+    private static final Map<String, Integer> TITLE_ORDER = Map.of(
+            "employee", 1,
+            "manager", 2,
+            "director", 3
+    );
+
+    /**
+     * 将职级字符串转为数字级别，未知职级返回 0。
+     */
+    private int getTitleLevel(String title) {
+        if (title == null) {
+            return 0;
+        }
+        return TITLE_ORDER.getOrDefault(title, 0);
+    }
 
     /**
      * 判断用户是否可以查询指定业务域。
@@ -141,21 +162,95 @@ public class AbacEvaluator {
 
     /**
      * 判断用户是否可以修改指定用户的信息。
+     * <p>
+     * 规则（admin 不豁免）：
+     * - 编辑自身：允许（字段级限制由 Controller 处理）
+     * - 编辑他人：当前用户的职级和密级必须<b>都严格高于</b>目标用户
+     * </p>
      *
-     * @param user         当前用户主体
-     * @param targetUserId 目标用户 ID
+     * @param user                  当前用户主体
+     * @param targetUserId          目标用户 ID
+     * @param targetTitle           目标用户职级
+     * @param targetClearanceLevel  目标用户密级
      * @return true 表示有权限
      */
-    public boolean canModifyUser(UserPrincipal user, Long targetUserId) {
-        if (user.isAdmin()) {
+    public boolean canModifyUser(UserPrincipal user, Long targetUserId,
+                                 String targetTitle, Integer targetClearanceLevel) {
+        // 自身 → 允许
+        if (user.getUserId().equals(targetUserId)) {
             return true;
         }
-        boolean isSelf = user.getUserId().equals(targetUserId);
-        if (!isSelf) {
-            log.warn("ABAC 拒绝 - canModifyUser: userId={}, username={}, targetUserId={}",
-                    user.getUserId(), user.getUsername(), targetUserId);
+
+        int userTitleLevel = getTitleLevel(user.getTitle());
+        int targetTitleLevel = getTitleLevel(targetTitle);
+        int userClearance = user.getClearanceLevel() != null ? user.getClearanceLevel() : 0;
+        int targetClearance = targetClearanceLevel != null ? targetClearanceLevel : 0;
+
+        boolean titleOk = userTitleLevel > targetTitleLevel;
+        boolean clearanceOk = userClearance > targetClearance;
+
+        if (!titleOk || !clearanceOk) {
+            log.warn("ABAC 拒绝 - canModifyUser(职级/密级不足): userId={}, username={}, " +
+                            "userTitle={}({}), targetTitle={}({}), " +
+                            "userClearance={}, targetClearance={}",
+                    user.getUserId(), user.getUsername(),
+                    user.getTitle(), userTitleLevel, targetTitle, targetTitleLevel,
+                    userClearance, targetClearance);
+            return false;
         }
-        return isSelf;
+
+        return true;
+    }
+
+    /**
+     * 判断用户是否可以创建新用户。
+     * <p>
+     * 规则（admin 不豁免）：职级 >= 经理(manager) 且 密级 >= 机密(2)。
+     * </p>
+     *
+     * @param user 当前用户主体
+     * @return true 表示有权限
+     */
+    public boolean canCreateUser(UserPrincipal user) {
+        int titleLevel = getTitleLevel(user.getTitle());
+        int clearanceLevel = user.getClearanceLevel() != null ? user.getClearanceLevel() : 0;
+
+        boolean titleOk = titleLevel >= 2; // manager 及以上
+        boolean clearanceOk = clearanceLevel >= 2; // 机密及以上
+
+        if (!titleOk || !clearanceOk) {
+            log.warn("ABAC 拒绝 - canCreateUser(条件不足): userId={}, username={}, " +
+                            "title={}({}), clearanceLevel={}",
+                    user.getUserId(), user.getUsername(),
+                    user.getTitle(), titleLevel, clearanceLevel);
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 判断用户是否可以查看数据仪表盘。
+     * <p>
+     * 规则（admin 不豁免）：职级 == 总监(director) 且 密级 == 绝密(3)。
+     * </p>
+     *
+     * @param user 当前用户主体
+     * @return true 表示有权限
+     */
+    public boolean canViewDashboard(UserPrincipal user) {
+        boolean titleOk = "director".equals(user.getTitle());
+        boolean clearanceOk = user.getClearanceLevel() != null && user.getClearanceLevel() == 3;
+
+        if (!titleOk || !clearanceOk) {
+            log.warn("ABAC 拒绝 - canViewDashboard(条件不足): userId={}, username={}, " +
+                            "title={}, clearanceLevel={}",
+                    user.getUserId(), user.getUsername(),
+                    user.getTitle(), user.getClearanceLevel());
+            return false;
+        }
+
+        return true;
     }
 
     /**

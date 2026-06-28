@@ -66,8 +66,16 @@ public class ChromaRetriever {
                 doc.setContent(match.embedded().text());
                 doc.setSimilarity(match.score());
 
-                // 从元数据中提取文档标题
+                // 从元数据中提取切片ID和文档标题
                 if (match.embedded().metadata() != null) {
+                    String chunkIdStr = match.embedded().metadata().getString("chunk_id");
+                    if (chunkIdStr != null) {
+                        try {
+                            doc.setChunkId(Long.valueOf(chunkIdStr));
+                        } catch (NumberFormatException e) {
+                            log.debug("chunk_id 元数据解析失败: {}", chunkIdStr);
+                        }
+                    }
                     String title = match.embedded().metadata().getString("document_title");
                     doc.setDocumentTitle(title != null ? title : "未命名文档");
                 } else {

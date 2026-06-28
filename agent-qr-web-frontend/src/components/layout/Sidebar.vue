@@ -2,15 +2,14 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAppStore } from '@/stores/app'
-import { getUserFromStorage, getUserRoleFromLocalStorage } from '@/utils/token'
-import type { UserPrincipal } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const appStore = useAppStore()
-
-const userRole = computed(() => getUserRoleFromLocalStorage())
-const userInfo = computed(() => getUserFromStorage() as UserPrincipal | null)
+const authStore = useAuthStore()
 
 const defaultActive = computed(() => {
   const path = route.path
@@ -25,30 +24,33 @@ const defaultActive = computed(() => {
 
 const menuItems = computed(() => {
   const items = [
-    { path: '/chat', title: '问答', icon: 'ChatDotRound' },
+    { path: '/chat', title: t('sidebar.chat'), icon: 'ChatDotRound' }
   ]
 
-  // ★ admin 用户额外菜单
-  if (userRole.value === 'admin') {
+  if (authStore.isAdmin) {
     items.push(
-      { path: '/admin/knowledge', title: '知识库管理', icon: 'Document' },
-      { path: '/admin/users', title: '用户管理', icon: 'User' },
-      { path: '/admin/dashboard', title: '数据仪表盘', icon: 'DataAnalysis' },
-      // ★ P2 新增菜单页
-      { path: '/admin/datasource', title: '数据接入', icon: 'Connection' },
-      { path: '/admin/catalog', title: '知识目录', icon: 'FolderOpened' },
-      { path: '/admin/quality', title: '质量报告', icon: 'Warning' },
+      { path: '/admin/knowledge', title: t('sidebar.knowledge'), icon: 'Document' },
+      { path: '/admin/datasource', title: t('sidebar.datasource'), icon: 'Connection' },
+      { path: '/admin/quality', title: t('sidebar.quality'), icon: 'Warning' }
     )
   }
 
-  // ★ 非 admin 用户如果有特定职级也可以访问部分页面
-  if (userRole.value !== 'admin' && userInfo.value) {
-    const { title } = userInfo.value
-    if (title === 'manager' || title === 'director') {
-      items.push(
-        { path: '/admin/catalog', title: '知识目录', icon: 'FolderOpened' },
-      )
-    }
+  if (authStore.canManageUsers) {
+    items.push(
+      { path: '/admin/users', title: t('sidebar.users'), icon: 'User' }
+    )
+  }
+
+  if (authStore.canViewDashboard) {
+    items.push(
+      { path: '/admin/dashboard', title: t('sidebar.dashboard'), icon: 'DataAnalysis' }
+    )
+  }
+
+  if (authStore.isAdmin || authStore.isManager() || authStore.isDirector()) {
+    items.push(
+      { path: '/admin/catalog', title: t('sidebar.catalog'), icon: 'FolderOpened' }
+    )
   }
 
   return items
@@ -56,14 +58,31 @@ const menuItems = computed(() => {
 
 function handleSelect(path: string) {
   router.push(path)
+  // 移动端点击菜单项后关闭抽屉
+  if (appStore.mobileDrawerOpen) {
+    appStore.closeMobileDrawer()
+  }
 }
 </script>
 
 <template>
-  <div class="sidebar">
+  <!-- 移动端 overlay -->
+  <div
+    v-if="appStore.mobileDrawerOpen"
+    class="sidebar-overlay"
+    @click="appStore.closeMobileDrawer()"
+  />
+
+  <div
+    class="sidebar"
+    :class="{
+      'sidebar--mobile-open': appStore.mobileDrawerOpen,
+      'sidebar--collapsed': appStore.sidebarCollapsed
+    }"
+  >
     <el-menu
       :default-active="defaultActive"
-      :collapse="appStore.sidebarCollapsed"
+      :collapse="appStore.sidebarCollapsed && !appStore.isMobile"
       :router="false"
       background-color="#304156"
       text-color="#bfcbd9"
@@ -87,10 +106,39 @@ function handleSelect(path: string) {
   height: 100%;
   background-color: $sidebar-bg;
   overflow-y: auto;
+  transition: transform 0.3s ease;
 
   .el-menu {
     border-right: none;
     height: 100%;
+  }
+
+  // 移动端：默认隐藏在左侧外
+  @media (max-width: 767px) {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    width: 220px;
+    transform: translateX(-100%);
+
+    &--mobile-open {
+      transform: translateX(0);
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
+// 移动端 overlay
+.sidebar-overlay {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background-color: rgba(0, 0, 0, 0.3);
   }
 }
 </style>
