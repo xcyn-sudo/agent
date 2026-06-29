@@ -11,6 +11,7 @@ import type { Conversation, Message, SourceVO } from '@/types'
 import ConversationList from '@/components/chat/ConversationList.vue'
 import MessageBubble from '@/components/chat/MessageBubble.vue'
 import ChatInput from '@/components/chat/ChatInput.vue'
+import FlatIllustration from '@/components/common/FlatIllustration.vue'
 
 const { t } = useI18n()
 
@@ -375,7 +376,9 @@ onUnmounted(() => {
     <div class="chat-view__main">
       <!-- 欢迎语（无会话且无消息时显示） -->
       <div v-if="activeConversationId === null && messages.length === 0" class="chat-view__welcome">
-        <div class="chat-view__welcome-icon">🤖</div>
+        <div class="chat-view__welcome-icon">
+          <FlatIllustration name="empty-chat" />
+        </div>
         <h2 class="chat-view__welcome-title">{{ $t('auth.welcomeSubtitle') }}</h2>
         <p class="chat-view__welcome-desc">{{ $t('chat.emptyMessage') }}</p>
         <!-- P3 连接状态指示器 -->
@@ -455,7 +458,7 @@ onUnmounted(() => {
     cursor: pointer;
     font-size: 14px;
     color: $text-regular;
-    transition: left 0.3s;
+    transition: left var(--transition-base);
 
     &--collapsed {
       left: 12px;
@@ -467,7 +470,7 @@ onUnmounted(() => {
     flex-shrink: 0;
     height: 100%;
     overflow: hidden;
-    transition: width 0.3s;
+    transition: width var(--transition-base);
 
     &--collapsed {
       width: 0;
@@ -497,9 +500,9 @@ onUnmounted(() => {
   }
 
   &__welcome-title {
-    font-size: 22px;
+    font-size: var(--font-size-2xl);
     color: $text-primary;
-    margin-bottom: 8px;
+    margin-bottom: var(--space-2);
   }
 
   &__welcome-desc {
@@ -586,7 +589,7 @@ onUnmounted(() => {
     }
 
     &__welcome-title {
-      font-size: 18px;
+      font-size: var(--font-size-lg);
     }
 
     &__messages {

@@ -39,6 +39,23 @@ Dockerfile*
 docker-compose*
 .dockerignore
 
+# CI/CD & 部署脚本（仅用于云部署，不进入后端镜像）
+.github/
+nginx/
+scripts/
+.claude/
+.codegraph/
+
+# 前端（独立构建和部署）
+agent-qr-web-frontend/
+
+# 文档 & PPT
+doc/
+ppt/
+
+# 杂项
+*.zip
+
 # OS
 Thumbs.db
 .DS_Store

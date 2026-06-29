@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117" />
+  <rect width="1280" height="720" fill="url(#grid)" />
+  
+  <path fill="#1A73E8" d="M62,40 H62 A2,2 0 0 1 64,42 V94 A2,2 0 0 1 62,96 H62 A2,2 0 0 1 60,94 V42 A2,2 0 0 1 62,40 Z" />
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">降本增效：ROI投资回报全景</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">三阶段投入产出 · 第10个月回本</text>
+  
+  
+  <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M64,150 H426 A4,4 0 0 1 430,154 V446 A4,4 0 0 1 426,450 H64 A4,4 0 0 1 60,446 V154 A4,4 0 0 1 64,150 Z" />
+  <path fill="#1A73E8" fill-opacity="0.12" d="M64,150 H426 A4,4 0 0 1 430,154 V190 A4,4 0 0 1 426,194 H64 A4,4 0 0 1 60,190 V154 A4,4 0 0 1 64,150 Z" />
+  <text x="245" y="178" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#1A73E8">第一阶段 MVP</text>
+  <text x="120" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">时间</text>
+  <text x="120" y="260" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#E8ECF0">第1-3月</text>
+  <text x="120" y="300" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">投入</text>
+  <text x="120" y="330" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#FF1744">33.5万</text>
+  <text x="120" y="370" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">年化收益</text>
+  <text x="120" y="400" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#00C853">27.2万</text>
+  <text x="120" y="435" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">2个域 / 50人</text>
+  
+  <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M459,150 H821 A4,4 0 0 1 825,154 V446 A4,4 0 0 1 821,450 H459 A4,4 0 0 1 455,446 V154 A4,4 0 0 1 459,150 Z" />
+  <path fill="#7C4DFF" fill-opacity="0.12" d="M459,150 H821 A4,4 0 0 1 825,154 V190 A4,4 0 0 1 821,194 H459 A4,4 0 0 1 455,190 V154 A4,4 0 0 1 459,150 Z" />
+  <text x="640" y="178" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#7C4DFF">第二阶段 增强</text>
+  <text x="515" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">时间</text>
+  <text x="515" y="260" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#E8ECF0">第4-5月</text>
+  <text x="515" y="300" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">投入</text>
+  <text x="515" y="330" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#FF1744">+13万</text>
+  <text x="515" y="370" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">年化收益</text>
+  <text x="515" y="400" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#00C853">60.5万</text>
+  <text x="515" y="435" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">4个域 / 200人</text>
+  
+  <path fill="#151B28" stroke="#00C853" stroke-width="1" d="M854,150 H1216 A4,4 0 0 1 1220,154 V446 A4,4 0 0 1 1216,450 H854 A4,4 0 0 1 850,446 V154 A4,4 0 0 1 854,150 Z" />
+  <path fill="#00C853" fill-opacity="0.12" d="M854,150 H1216 A4,4 0 0 1 1220,154 V190 A4,4 0 0 1 1216,194 H854 A4,4 0 0 1 850,190 V154 A4,4 0 0 1 854,150 Z" />
+  <text x="1035" y="178" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#00C853">第三阶段 全面</text>
+  <text x="910" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">时间</text>
+  <text x="910" y="260" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#E8ECF0">第6-8月</text>
+  <text x="910" y="300" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">投入</text>
+  <text x="910" y="330" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#FF1744">+15万</text>
+  <text x="910" y="370" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">年化收益</text>
+  <text x="910" y="400" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#00C853">≥115万</text>
+  <text x="910" y="435" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">全员覆盖</text>
+  
+  <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M64,490 H1216 A4,4 0 0 1 1220,494 V566 A4,4 0 0 1 1216,570 H64 A4,4 0 0 1 60,566 V494 A4,4 0 0 1 64,490 Z" />
+  <text x="100" y="520" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#9CA3AF">累计投入 56万</text>
+  <path fill="#FF1744" fill-opacity="0.5" d="M104,535 H616 A4,4 0 0 1 620,539 V547 A4,4 0 0 1 616,551 H104 A4,4 0 0 1 100,547 V539 A4,4 0 0 1 104,535 Z" />
+  <text x="380" y="548" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#FF1744">投资回收期 第10个月</text>
+  <text x="680" y="520" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">3年累计收益 ≥ 180万</text>
+  <path fill="#00C853" fill-opacity="0.3" d="M684,535 H1156 A4,4 0 0 1 1160,539 V547 A4,4 0 0 1 1156,551 H684 A4,4 0 0 1 680,547 V539 A4,4 0 0 1 684,535 Z" />
+  
+  <text x="640" y="620" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" fill="#9CA3AF">第10个月回本 · 3年ROI = 221% · 5年ROI = 733%</text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">数据来源：《软件需求规格说明书 v2.0》第8章</text>
+</svg>

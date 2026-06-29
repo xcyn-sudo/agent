@@ -46,7 +46,7 @@ agent-qr:
   provider:
     auto-failover: true                    # 熔断时自动切换备用 Provider
     preferred-llm: deepseek                # 首选 LLM Provider
-    preferred-embedding: ollama            # 首选 Embedding Provider（仅 Ollama 可用）
+    preferred-embedding: dashscope         # 首选 Embedding Provider（云部署默认 DashScope）
 
   embedding:
     collection-prefix: kb                  # ChromaDB Collection 前缀（暂未使用）

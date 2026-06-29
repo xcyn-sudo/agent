@@ -1,0 +1,1 @@
+下面进入技术篇。我们的技术架构分为五层。最上面是前端展示层，Vue3加TypeScript加Pinia，Vite构建，支持SSE流式接收。第二层是API网关层，基于Spring Boot 3，统一鉴权和流量管控。第三层是业务服务层，八大核心模块全部采用事件驱动加CQRS架构。第四层是AI引擎层，这是整个系统的智能核心——LangChain框架，本地Ollama跑qwen3模型，DeepSeek做熔断降级，加上混合检索和Rerank精排。最底层是数据存储，MySQL管元数据，ChromaDB做向量检索，Lucene做BM25关键词索引。五层全栈，每一层都有明确的架构理由。

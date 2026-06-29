@@ -116,35 +116,53 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 var(--space-5);
   background-color: #fff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
-  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  z-index: var(--z-sticky);
+  position: relative;
+
+  // 底部渐变装饰线
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+      $login-purple 0%,
+      $login-orange 33%,
+      $login-yellow 66%,
+      $login-purple 100%
+    );
+  }
 
   &__left {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
   }
 
   &__right {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--space-3);
   }
 }
 
 .collapse-btn {
-  font-size: 20px;
+  font-size: var(--font-size-xl);
   cursor: pointer;
+  transition: color var(--transition-fast);
   &:hover {
-    color: $primary-color;
+    color: $login-purple;
   }
 }
 
 .system-name {
   font-size: $font-size-large;
-  font-weight: 600;
+  font-weight: var(--font-weight-semibold);
   color: $text-primary;
 }
 
@@ -153,18 +171,18 @@ onUnmounted(() => {
 }
 
 .token-countdown {
-  font-size: 12px;
-  color: #909399;
-  margin-right: 8px;
+  font-size: $font-size-small;
+  color: $text-secondary;
+  margin-right: var(--space-2);
 
   &--warning {
-    color: #f56c6c;
+    color: $danger-color;
     font-weight: 600;
   }
 }
 
 .refreshing-hint {
-  font-size: 12px;
-  color: #409eff;
+  font-size: $font-size-small;
+  color: $primary-color;
 }
 </style>

@@ -182,8 +182,8 @@ const showFeedback = computed(() => {
       background: rgba(0, 0, 0, 0.06);
       padding: 2px 6px;
       border-radius: 3px;
-      font-family: 'Consolas', 'Monaco', monospace;
-      font-size: 13px;
+      font-family: var(--font-family-mono);
+      font-size: var(--font-size-sm);
     }
 
     :deep(pre) {
@@ -284,12 +284,12 @@ const showFeedback = computed(() => {
   gap: 4px;
   padding: 4px 12px;
   border: 1px solid $border-color-light;
-  border-radius: 4px;
+  border-radius: var(--radius-xs);
   background: #fff;
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: $text-secondary;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
 
   &:hover:not(:disabled) {
     background: $bg-color;

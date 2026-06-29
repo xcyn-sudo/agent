@@ -2,6 +2,7 @@ package org.example.agent_qr.rag.provider;
 
 import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.common.BusinessException;
+import org.example.agent_qr.rag.provider.dashscope.DashScopeEmbeddingProvider;
 import org.example.agent_qr.rag.provider.deepseek.DeepSeekLLMProvider;
 import org.example.agent_qr.rag.provider.ollama.OllamaEmbeddingProvider;
 import org.example.agent_qr.rag.provider.ollama.OllamaLLMProvider;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Component;
  * P1 原有：支持 DeepSeek 和 Ollama Embedding。
  * P2 扩展：新增 Ollama LLM 支持、getFallbackLLMProvider 降级链路。
  * P3 扩展：集成 {@link ProviderDecisionEngine}，根据熔断器状态自动切换 Provider。
+ * 云部署扩展：新增 DashScope (千问) Embedding Provider。
  * </p>
  *
  * @author agent-qr
@@ -41,6 +43,9 @@ public class ProviderFactory {
 
     @Autowired(required = false)
     private OllamaEmbeddingProvider ollamaEmbeddingProvider;
+
+    @Autowired(required = false)
+    private DashScopeEmbeddingProvider dashScopeEmbeddingProvider;
 
     /**
      * 根据配置获取 LLM 提供商实例（P2 扩展：支持 ollama；P3：集成决策引擎）。
@@ -79,9 +84,10 @@ public class ProviderFactory {
         }
         EmbeddingProvider embeddingProvider = switch (provider) {
             case "ollama" -> ollamaEmbeddingProvider;
+            case "dashscope" -> dashScopeEmbeddingProvider;
             default -> {
-                log.warn("未知的 Embedding Provider 配置: {}，回退到 Ollama", provider);
-                yield ollamaEmbeddingProvider;
+                log.warn("未知的 Embedding Provider 配置: {}，回退到 DashScope", provider);
+                yield dashScopeEmbeddingProvider;
             }
         };
         if (embeddingProvider == null) {

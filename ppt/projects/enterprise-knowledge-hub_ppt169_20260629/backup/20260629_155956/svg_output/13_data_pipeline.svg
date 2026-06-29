@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern>
+    <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#1A73E8"/></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <image x="0" y="0" width="1280" height="720" href="../images/pipeline_schematic.png" preserveAspectRatio="xMidYMid slice"/>
+  <rect width="1280" height="720" fill="#0D1117" fill-opacity="0.55"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <rect x="60" y="32" width="4" height="48" rx="2" fill="#1A73E8"/>
+  <text x="78" y="58" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">亮点深挖：数据全链路入库管道</text>
+  <text x="78" y="84" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">从数据源到三大存储 · 八步标准化管道</text>
+  <!-- Data sources (left) -->
+  <text x="60" y="130" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="#6B7280" letter-spacing="1">数据从哪来？</text>
+  <g font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13">
+    <rect x="60" y="145" width="140" height="42" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="130" y="165" text-anchor="middle" fill="#9CA3AF">ERP系统 (MySQL)</text>
+    <text x="130" y="182" text-anchor="middle" fill="#6B7280">JDBC连接器</text>
+    <rect x="60" y="200" width="140" height="42" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="130" y="220" text-anchor="middle" fill="#9CA3AF">CRM系统 (Oracle)</text>
+    <text x="130" y="237" text-anchor="middle" fill="#6B7280">JDBC连接器</text>
+    <rect x="60" y="255" width="140" height="42" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="130" y="275" text-anchor="middle" fill="#9CA3AF">OA系统 (REST)</text>
+    <text x="130" y="292" text-anchor="middle" fill="#6B7280">HTTP连接器</text>
+    <rect x="60" y="310" width="140" height="42" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="130" y="330" text-anchor="middle" fill="#9CA3AF">文件服务器</text>
+    <text x="130" y="347" text-anchor="middle" fill="#6B7280">S3/NFS连接器</text>
+    <rect x="60" y="365" width="140" height="42" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="130" y="385" text-anchor="middle" fill="#9CA3AF">手动上传</text>
+    <text x="130" y="402" text-anchor="middle" fill="#6B7280">PDF/DOCX</text>
+  </g>
+  <!-- Pipeline stages -->
+  <text x="250" y="130" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="#6B7280" letter-spacing="1">数据怎么加工？</text>
+  <g>
+    <!-- Stage 1 -->
+    <rect x="230" y="150" width="160" height="50" rx="4" fill="#1A73E8" fill-opacity="0.08" stroke="#1A73E8" stroke-width="1"/>
+    <text x="310" y="173" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">1 接入网关</text>
+    <text x="310" y="192" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">Connector策略+CDC</text>
+    <line x1="390" y1="175" x2="415" y2="175" stroke="#1A73E8" stroke-width="1" marker-end="url(#arrow)"/>
+    <!-- Stage 2: Quality Gate (accent) -->
+    <rect x="420" y="150" width="160" height="50" rx="4" fill="#00C853" fill-opacity="0.06" stroke="#00C853" stroke-width="1.5"/>
+    <text x="500" y="173" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">2 质量检查</text>
+    <text x="500" y="192" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#9CA3AF">合格≥50%放行 ↓</text>
+    <line x1="580" y1="175" x2="605" y2="175" stroke="#1A73E8" stroke-width="1" marker-end="url(#arrow)"/>
+    <!-- Stage 3 -->
+    <rect x="610" y="150" width="160" height="50" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="690" y="173" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">3 ETL标准化</text>
+    <text x="690" y="192" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">UTF-8·字典翻译</text>
+    <line x1="770" y1="175" x2="795" y2="175" stroke="#1A73E8" stroke-width="1" marker-end="url(#arrow)"/>
+    <!-- Stage 4 -->
+    <rect x="800" y="150" width="160" height="50" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="880" y="173" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">4 目录索引</text>
+    <text x="880" y="192" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">域→数据源→实体</text>
+    <line x1="960" y1="175" x2="985" y2="175" stroke="#1A73E8" stroke-width="1" marker-end="url(#arrow)"/>
+    <!-- Stage 5 -->
+    <rect x="990" y="150" width="180" height="50" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="1080" y="173" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">5 切片+向量化</text>
+    <text x="1080" y="192" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">500字/块·32条批</text>
+  </g>
+  <!-- Storage destinations -->
+  <text x="60" y="470" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="#6B7280" letter-spacing="1">数据到哪去？</text>
+  <rect x="60" y="490" width="300" height="80" rx="4" fill="#151B28" stroke="#1A73E8" stroke-width="1"/>
+  <text x="210" y="525" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">MySQL</text>
+  <text x="210" y="550" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">元数据·文档/切片·结构化</text>
+  <rect x="400" y="490" width="300" height="80" rx="4" fill="#151B28" stroke="#7C4DFF" stroke-width="1"/>
+  <text x="550" y="525" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#7C4DFF">ChromaDB</text>
+  <text x="550" y="550" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">向量检索·语义Top-K</text>
+  <rect x="740" y="490" width="300" height="80" rx="4" fill="#151B28" stroke="#00C853" stroke-width="1"/>
+  <text x="890" y="525" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">Lucene</text>
+  <text x="890" y="550" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">BM25检索·精确匹配</text>
+  <!-- Bottom callouts -->
+  <g transform="translate(60, 610)">
+    <rect x="0" y="0" width="360" height="55" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="180" y="22" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#1A73E8">增量同步</text>
+    <text x="180" y="42" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">时间戳/CDC捕获变更</text>
+  </g>
+  <g transform="translate(460, 610)">
+    <rect x="0" y="0" width="360" height="55" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="180" y="22" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#00C853">质量兜底</text>
+    <text x="180" y="42" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">不合格自动阻断+告警</text>
+  </g>
+  <g transform="translate(860, 610)">
+    <rect x="0" y="0" width="360" height="55" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <text x="180" y="22" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#7C4DFF">异步解耦</text>
+    <text x="180" y="42" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">Spring Event·上传即返回</text>
+  </g>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">《软件需求规格说明书 v2.0》第4.2节</text>
+</svg>

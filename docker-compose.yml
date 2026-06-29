@@ -1,9 +1,13 @@
 # ============================================
 # Agent-QR Docker Compose 编排文件
-# P1 阶段组件:
-#   - MySQL 8.0        (数据库)
-#   - ChromaDB         (向量数据库)
-#   - agent-qr-backend (Spring Boot 后端)
+# 用于本地开发 + 云部署通用
+#
+# 服务清单:
+#   - mysql      (关系型数据库)
+#   - chromadb   (向量数据库)
+#   - backend    (Spring Boot 后端)
+#
+# 生产环境请使用 docker-compose.prod.yml（额外包含 nginx + frontend）
 # ============================================
 
 services:
@@ -11,7 +15,7 @@ services:
   # MySQL 8.0 - 关系型数据库
   # ==========================================
   mysql:
-    image: mysql
+    image: mysql:8.0
     container_name: agent-qr-mysql
     restart: unless-stopped
     environment:
@@ -30,6 +34,10 @@ services:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
       - --default-time-zone=+08:00
+      # 内存优化（适用于 2C4G 环境）
+      - --innodb-buffer-pool-size=256M
+      - --max-connections=50
+      - --performance-schema=OFF
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
       interval: 10s
@@ -80,12 +88,14 @@ services:
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
       # DeepSeek API
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      # DashScope Embedding API
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
       # ChromaDB
       LANGCHAIN4J_CHROMA_BASE_URL: http://chromadb:8000
       # 文件上传
       FILE_UPLOAD_DIR: /app/uploads
-      # Java 内存配置
-      JAVA_OPTS: "-Xms256m -Xmx512m"
+      # Java 内存配置（2C4G 优化：可使用 G1GC）
+      JAVA_OPTS: "-Xms192m -Xmx384m -XX:MaxMetaspaceSize=128m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
     ports:
       - "${BACKEND_PORT:-9090}:9090"
     volumes:

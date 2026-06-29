@@ -84,9 +84,9 @@ function handleSelect(path: string) {
       :default-active="defaultActive"
       :collapse="appStore.sidebarCollapsed && !appStore.isMobile"
       :router="false"
-      background-color="#304156"
-      text-color="#bfcbd9"
-      active-text-color="#409eff"
+      background-color="#1E293B"
+      text-color="#A0AEC0"
+      active-text-color="#6C3FF5"
       @select="handleSelect"
     >
       <template v-for="item in menuItems" :key="item.path">
@@ -106,11 +106,28 @@ function handleSelect(path: string) {
   height: 100%;
   background-color: $sidebar-bg;
   overflow-y: auto;
-  transition: transform 0.3s ease;
+  transition: transform var(--transition-base);
 
   .el-menu {
     border-right: none;
     height: 100%;
+  }
+
+  // 激活项左侧紫色竖条指示器
+  :deep(.el-menu-item.is-active) {
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 24px;
+      border-radius: 0 2px 2px 0;
+      background: $login-purple;
+    }
   }
 
   // 移动端：默认隐藏在左侧外
@@ -118,7 +135,7 @@ function handleSelect(path: string) {
     position: fixed;
     left: 0;
     top: 0;
-    z-index: 1000;
+    z-index: var(--z-drawer);
     width: 220px;
     transform: translateX(-100%);
 
@@ -137,7 +154,7 @@ function handleSelect(path: string) {
     display: block;
     position: fixed;
     inset: 0;
-    z-index: 999;
+    z-index: var(--z-overlay);
     background-color: rgba(0, 0, 0, 0.3);
   }
 }

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <!-- Header -->
+  <rect x="60" y="32" width="4" height="48" rx="2" fill="#1A73E8"/>
+  <text x="78" y="62" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">技术架构总览</text>
+  <text x="78" y="88" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">五层全栈架构 · 从前端展示到数据存储</text>
+  <!-- Layer 1: 前端展示层 -->
+  <rect x="60" y="115" width="28" height="95" rx="4" fill="#1A73E8"/>
+  <text x="74" y="168" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="16" font-weight="700" fill="#FFFFFF">01</text>
+  <rect x="100" y="115" width="1120" height="95" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="120" y="145" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">前端展示层</text>
+  <text x="120" y="170" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">Vue3 · TypeScript · Pinia · SCSS · Vite · Axios · SSE流式接收</text>
+  <text x="120" y="195" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">响应式SPA + 组件化架构 + 实时流式交互</text>
+  <!-- Layer 2: API网关层 -->
+  <rect x="60" y="222" width="28" height="95" rx="4" fill="#7C4DFF"/>
+  <text x="74" y="275" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="16" font-weight="700" fill="#FFFFFF">02</text>
+  <rect x="100" y="222" width="1120" height="95" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="120" y="252" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#7C4DFF">API网关层 (Spring Boot 3)</text>
+  <text x="120" y="277" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">REST API · SSE Streaming · JWT认证</text>
+  <text x="120" y="302" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">统一入口 + 安全鉴权 + 流量管控</text>
+  <!-- Layer 3: 业务服务层 -->
+  <rect x="60" y="329" width="28" height="95" rx="4" fill="#7C4DFF"/>
+  <text x="74" y="382" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="16" font-weight="700" fill="#FFFFFF">03</text>
+  <rect x="100" y="329" width="1120" height="95" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="120" y="359" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#7C4DFF">业务服务层 (事件驱动 + CQRS)</text>
+  <text x="120" y="384" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">智能问答 | 知识管理 | 权限管控 | 数据接入 | 统计仪表 | 知识目录 | 质量管控 | 反馈闭环</text>
+  <text x="120" y="409" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">Spring Event异步管道 + MyBatis-Plus + 策略模式Provider切换</text>
+  <!-- Layer 4: AI引擎层 -->
+  <rect x="60" y="436" width="28" height="95" rx="4" fill="#00C853"/>
+  <text x="74" y="489" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="16" font-weight="700" fill="#0D1117">04</text>
+  <rect x="100" y="436" width="1120" height="95" rx="4" fill="#151B28" stroke="#00C853" stroke-width="1"/>
+  <text x="120" y="466" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">AI引擎层</text>
+  <text x="120" y="491" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">LangChain · Ollama(qwen3) · DeepSeek · 混合检索(RRF) · Rerank · Embedding</text>
+  <text x="120" y="516" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">本地LLM推理 + Provider可切换 + 语义+关键词双路召回</text>
+  <!-- Layer 5: 数据存储层 -->
+  <rect x="60" y="543" width="28" height="95" rx="4" fill="#6B7280"/>
+  <text x="74" y="596" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="16" font-weight="700" fill="#E8ECF0">05</text>
+  <rect x="100" y="543" width="1120" height="95" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="120" y="573" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#9CA3AF">数据存储层</text>
+  <text x="120" y="598" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">MySQL 8.0 | ChromaDB | Lucene/BM25</text>
+  <text x="120" y="623" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">关系型元数据 + 向量语义检索 + 全文关键词索引</text>
+  <!-- Vertical connector dots between layers -->
+  <g fill="#1A73E8" fill-opacity="0.3"><circle cx="74" cy="210" r="3"/><circle cx="74" cy="317" r="3"/><circle cx="74" cy="424" r="3"/><circle cx="74" cy="531" r="3"/></g>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">数据来源：《系统概要设计说明书 v1.0》第2.2节</text>
+</svg>

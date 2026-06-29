@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117" /><rect width="1280" height="720" fill="url(#grid)" />
+  <path fill="#1A73E8" d="M62,32 H62 A2,2 0 0 1 64,34 V78 A2,2 0 0 1 62,80 H62 A2,2 0 0 1 60,78 V34 A2,2 0 0 1 62,32 Z" />
+  <text x="78" y="58" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">知识管理 + 多源接入</text>
+  <text x="78" y="84" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">上：知识全生命周期管理 · 下：四种数据源接入方式</text>
+  
+  <text x="80" y="130" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">知识管理全生命周期</text>
+  <g>
+    <path fill="#151B28" stroke="#1A73E8" stroke-width="1" d="M84,145 H206 A4,4 0 0 1 210,149 V189 A4,4 0 0 1 206,193 H84 A4,4 0 0 1 80,189 V149 A4,4 0 0 1 84,145 Z" />
+    <text x="145" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">上传</text>
+    <text x="145" y="188" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="11" fill="#6B7280">UPLOADED</text>
+    <line x1="210" y1="169" x2="235" y2="169" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.6" />
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M244,145 H366 A4,4 0 0 1 370,149 V189 A4,4 0 0 1 366,193 H244 A4,4 0 0 1 240,189 V149 A4,4 0 0 1 244,145 Z" />
+    <text x="305" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">解析</text>
+    <line x1="370" y1="169" x2="395" y2="169" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.6" />
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M404,145 H526 A4,4 0 0 1 530,149 V189 A4,4 0 0 1 526,193 H404 A4,4 0 0 1 400,189 V149 A4,4 0 0 1 404,145 Z" />
+    <text x="465" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">切片</text>
+    <line x1="530" y1="169" x2="555" y2="169" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.6" />
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M564,145 H686 A4,4 0 0 1 690,149 V189 A4,4 0 0 1 686,193 H564 A4,4 0 0 1 560,189 V149 A4,4 0 0 1 564,145 Z" />
+    <text x="625" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">向量化</text>
+    <line x1="690" y1="169" x2="715" y2="169" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.6" />
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M724,145 H846 A4,4 0 0 1 850,149 V189 A4,4 0 0 1 846,193 H724 A4,4 0 0 1 720,189 V149 A4,4 0 0 1 724,145 Z" />
+    <text x="785" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#E8ECF0">入库</text>
+    <line x1="850" y1="169" x2="875" y2="169" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.6" />
+    <path fill="#00C853" fill-opacity="0.08" stroke="#00C853" stroke-width="1" d="M884,145 H1006 A4,4 0 0 1 1010,149 V189 A4,4 0 0 1 1006,193 H884 A4,4 0 0 1 880,189 V149 A4,4 0 0 1 884,145 Z" />
+    <text x="945" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#00C853">可检索</text>
+  </g>
+  
+  <g font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13">
+    <text x="145" y="215" text-anchor="middle" fill="#6B7280">状态追踪</text>
+    <text x="305" y="215" text-anchor="middle" fill="#6B7280">失败重试</text>
+    <text x="625" y="215" text-anchor="middle" fill="#6B7280">500字/块</text>
+    <text x="945" y="215" text-anchor="middle" fill="#00C853">READY · 即搜即得</text>
+  </g>
+  
+  <line x1="80" y1="265" x2="1200" y2="265" stroke="#2A3040" stroke-width="1" />
+  <text x="80" y="300" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">多源数据接入能力</text>
+  <g>
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M84,320 H336 A4,4 0 0 1 340,324 V406 A4,4 0 0 1 336,410 H84 A4,4 0 0 1 80,406 V324 A4,4 0 0 1 84,320 Z" />
+    <text x="210" y="352" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#1A73E8">关系型数据库</text>
+    <text x="210" y="378" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">JDBC连接器</text>
+    <text x="210" y="398" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">ERP员工表 · CRM客户表</text>
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M364,320 H616 A4,4 0 0 1 620,324 V406 A4,4 0 0 1 616,410 H364 A4,4 0 0 1 360,406 V324 A4,4 0 0 1 364,320 Z" />
+    <text x="490" y="352" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#7C4DFF">REST API</text>
+    <text x="490" y="378" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">HTTP连接器</text>
+    <text x="490" y="398" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">OA审批流程 · 门户公告</text>
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M644,320 H896 A4,4 0 0 1 900,324 V406 A4,4 0 0 1 896,410 H644 A4,4 0 0 1 640,406 V324 A4,4 0 0 1 644,320 Z" />
+    <text x="770" y="352" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#00C853">文件系统</text>
+    <text x="770" y="378" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">S3/NFS连接器</text>
+    <text x="770" y="398" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">共享盘制度文件自动监听</text>
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M924,320 H1176 A4,4 0 0 1 1180,324 V406 A4,4 0 0 1 1176,410 H924 A4,4 0 0 1 920,406 V324 A4,4 0 0 1 924,320 Z" />
+    <text x="1050" y="352" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#FF1744">手动上传</text>
+    <text x="1050" y="378" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">Web界面</text>
+    <text x="1050" y="398" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">临时文件 · 制度更新</text>
+  </g>
+  
+  <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M84,450 H1196 A4,4 0 0 1 1200,454 V486 A4,4 0 0 1 1196,490 H84 A4,4 0 0 1 80,486 V454 A4,4 0 0 1 84,450 Z" />
+  <text x="640" y="475" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">全量同步初始化 + 增量CDC持续更新，延迟不超过30分钟</text>
+  
+  <g transform="translate(80, 520)">
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M4,0 H536 A4,4 0 0 1 540,4 V44 A4,4 0 0 1 536,48 H4 A4,4 0 0 1 0,44 V4 A4,4 0 0 1 4,0 Z" />
+    <text x="270" y="22" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="15" font-weight="700" fill="#FF1744">失败处理</text>
+    <text x="270" y="42" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">DLQ死信队列 + 3次退避重试 · 归档软删除即刻不可检索</text>
+  </g>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">《软件需求规格说明书 v2.0》第5.2-5.3节</text>
+</svg>

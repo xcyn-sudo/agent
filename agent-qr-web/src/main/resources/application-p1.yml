@@ -12,7 +12,20 @@ llm:
     max-tokens: 2048
 
 embedding:
-  provider: ollama                    # ★ 使用本地 Ollama qwen3-embedding:4b（P2 配置: ollama.embedding.*）
+  provider: ${EMBEDDING_PROVIDER:dashscope}   # 默认 DashScope (千问)，本地开发可改为 ollama
+
+# ── DashScope (千问) Embedding 配置 ──
+dashscope:
+  embedding:
+    api-key: ${DASHSCOPE_API_KEY:}
+    base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    model: text-embedding-v3
+
+# ── Ollama Embedding 配置（本地开发时使用）──
+ollama:
+  embedding:
+    base-url: http://localhost:11434
+    model: qwen3-embedding:4b
 
 langchain4j:
   chroma:

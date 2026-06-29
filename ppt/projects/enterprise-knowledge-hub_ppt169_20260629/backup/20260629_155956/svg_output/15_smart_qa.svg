@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117"/><rect width="1280" height="720" fill="url(#grid)"/>
+  <rect x="60" y="40" width="4" height="56" rx="2" fill="#1A73E8"/>
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">智能问答：不止是"聊天"</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">从关键词搜索到自然语言精准问答</text>
+  <!-- Left: Comparison table -->
+  <rect x="60" y="140" width="680" height="460" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="100" y="175" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">与传统企业搜索的差异</text>
+  <line x1="80" y1="195" x2="720" y2="195" stroke="#2A3040" stroke-width="1"/>
+  <g font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif">
+    <text x="90" y="225" font-size="14" fill="#6B7280">维度</text><text x="260" y="225" font-size="14" fill="#FF1744">传统关键词搜索</text><text x="520" y="225" font-size="14" fill="#00C853">企业知识中枢</text>
+    <line x1="80" y1="240" x2="720" y2="240" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="90" y="270" font-size="16" font-weight="700" fill="#E8ECF0">输入</text><text x="260" y="270" font-size="15" fill="#FF1744">"绩效考核 制度 2024"</text><text x="520" y="270" font-size="15" fill="#00C853">"研发部2024年绩效考核周期是多久？"</text>
+    <line x1="80" y1="290" x2="720" y2="290" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="90" y="320" font-size="16" font-weight="700" fill="#E8ECF0">返回</text><text x="260" y="320" font-size="15" fill="#FF1744">128个文件列表</text><text x="520" y="320" font-size="15" fill="#00C853">一个精准答案+引用来源</text>
+    <line x1="80" y1="340" x2="720" y2="340" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="90" y="370" font-size="16" font-weight="700" fill="#E8ECF0">理解</text><text x="260" y="370" font-size="15" fill="#FF1744">字面匹配</text><text x="520" y="370" font-size="15" fill="#00C853">薪酬=工资=薪水=报酬</text>
+    <line x1="80" y1="390" x2="720" y2="390" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="90" y="420" font-size="16" font-weight="700" fill="#E8ECF0">溯源</text><text x="260" y="420" font-size="15" fill="#FF1744">点开文件自己找</text><text x="520" y="420" font-size="15" fill="#00C853">直接标注文档名+章节</text>
+    <line x1="80" y1="440" x2="720" y2="440" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="90" y="470" font-size="16" font-weight="700" fill="#E8ECF0">学习成本</text><text x="260" y="470" font-size="15" fill="#FF1744">需要知道正确"关键词"</text><text x="520" y="470" font-size="15" fill="#00C853">日常语言即可</text>
+  </g>
+  <!-- Right: Four capabilities -->
+  <rect x="760" y="140" width="460" height="220" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="790" y="175" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">四种问答能力</text>
+  <g font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15">
+    <rect x="780" y="195" width="210" height="36" rx="4" fill="#1A73E8" fill-opacity="0.08"/>
+    <text x="885" y="218" text-anchor="middle" fill="#E8ECF0">语义问答："年假怎么算？"</text>
+    <rect x="1000" y="195" width="210" height="36" rx="4" fill="#7C4DFF" fill-opacity="0.08"/>
+    <text x="1105" y="218" text-anchor="middle" fill="#E8ECF0">结构化查询："月薪&gt;1万"</text>
+    <rect x="780" y="245" width="210" height="36" rx="4" fill="#00C853" fill-opacity="0.08"/>
+    <text x="885" y="268" text-anchor="middle" fill="#E8ECF0">日期范围："2024年入职"</text>
+    <rect x="1000" y="245" width="210" height="36" rx="4" fill="#1A73E8" fill-opacity="0.08"/>
+    <text x="1105" y="268" text-anchor="middle" fill="#E8ECF0">枚举匹配："已完成状态"</text>
+  </g>
+  <!-- Bottom: Scenario example -->
+  <rect x="760" y="380" width="460" height="220" rx="4" fill="#151B28" stroke="#00C853" stroke-width="1"/>
+  <text x="790" y="415" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">场景示例</text>
+  <text x="790" y="450" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">员工输入："出差报销需要什么材料？"</text>
+  <line x1="790" y1="465" x2="1190" y2="465" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="790" y="495" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#E8ECF0">→ 系统秒回："根据《财务报销制度》：</text>
+  <text x="790" y="520" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#E8ECF0">   出差申请单+发票原件+行程单，3个工作日内提交"</text>
+  <rect x="790" y="540" width="200" height="28" rx="4" fill="#00C853" fill-opacity="0.08"/>
+  <text x="890" y="560" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#00C853">来源：《财务报销制度 v3.1》第4章</text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">《软件需求规格说明书 v2.0》第5.1节</text>
+</svg>

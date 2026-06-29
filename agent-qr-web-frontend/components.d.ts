@@ -12,6 +12,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AnimatedCharacters: typeof import('./src/components/auth/AnimatedCharacters.vue')['default']
     CatalogTree: typeof import('./src/components/catalog/CatalogTree.vue')['default']
     ChatInput: typeof import('./src/components/chat/ChatInput.vue')['default']
     ConversationList: typeof import('./src/components/chat/ConversationList.vue')['default']
@@ -36,6 +37,7 @@ declare module 'vue' {
     ElFormItem: typeof import('element-plus/es')['ElFormItem']
     ElIcon: typeof import('element-plus/es')['ElIcon']
     ElInput: typeof import('element-plus/es')['ElInput']
+    ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
     ElMenu: typeof import('element-plus/es')['ElMenu']
     ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
     ElOption: typeof import('element-plus/es')['ElOption']
@@ -47,6 +49,7 @@ declare module 'vue' {
     ElRow: typeof import('element-plus/es')['ElRow']
     ElSelect: typeof import('element-plus/es')['ElSelect']
     ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
+    ElSwitch: typeof import('element-plus/es')['ElSwitch']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
@@ -55,8 +58,10 @@ declare module 'vue' {
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     ElTree: typeof import('element-plus/es')['ElTree']
     ElUpload: typeof import('element-plus/es')['ElUpload']
+    FlatIllustration: typeof import('./src/components/common/FlatIllustration.vue')['default']
     GuestLayout: typeof import('./src/components/layout/GuestLayout.vue')['default']
     HeaderBar: typeof import('./src/components/layout/HeaderBar.vue')['default']
+    InteractiveButton: typeof import('./src/components/auth/InteractiveButton.vue')['default']
     KnowledgeGraph: typeof import('./src/components/charts/KnowledgeGraph.vue')['default']
     MainLayout: typeof import('./src/components/layout/MainLayout.vue')['default']
     MessageBubble: typeof import('./src/components/chat/MessageBubble.vue')['default']
@@ -78,6 +83,7 @@ declare module 'vue' {
 
 // For TSX support
 declare global {
+  const AnimatedCharacters: typeof import('./src/components/auth/AnimatedCharacters.vue')['default']
   const CatalogTree: typeof import('./src/components/catalog/CatalogTree.vue')['default']
   const ChatInput: typeof import('./src/components/chat/ChatInput.vue')['default']
   const ConversationList: typeof import('./src/components/chat/ConversationList.vue')['default']
@@ -102,6 +108,7 @@ declare global {
   const ElFormItem: typeof import('element-plus/es')['ElFormItem']
   const ElIcon: typeof import('element-plus/es')['ElIcon']
   const ElInput: typeof import('element-plus/es')['ElInput']
+  const ElInputNumber: typeof import('element-plus/es')['ElInputNumber']
   const ElMenu: typeof import('element-plus/es')['ElMenu']
   const ElMenuItem: typeof import('element-plus/es')['ElMenuItem']
   const ElOption: typeof import('element-plus/es')['ElOption']
@@ -113,6 +120,7 @@ declare global {
   const ElRow: typeof import('element-plus/es')['ElRow']
   const ElSelect: typeof import('element-plus/es')['ElSelect']
   const ElSkeleton: typeof import('element-plus/es')['ElSkeleton']
+  const ElSwitch: typeof import('element-plus/es')['ElSwitch']
   const ElTable: typeof import('element-plus/es')['ElTable']
   const ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
   const ElTabPane: typeof import('element-plus/es')['ElTabPane']
@@ -121,8 +129,10 @@ declare global {
   const ElTooltip: typeof import('element-plus/es')['ElTooltip']
   const ElTree: typeof import('element-plus/es')['ElTree']
   const ElUpload: typeof import('element-plus/es')['ElUpload']
+  const FlatIllustration: typeof import('./src/components/common/FlatIllustration.vue')['default']
   const GuestLayout: typeof import('./src/components/layout/GuestLayout.vue')['default']
   const HeaderBar: typeof import('./src/components/layout/HeaderBar.vue')['default']
+  const InteractiveButton: typeof import('./src/components/auth/InteractiveButton.vue')['default']
   const KnowledgeGraph: typeof import('./src/components/charts/KnowledgeGraph.vue')['default']
   const MainLayout: typeof import('./src/components/layout/MainLayout.vue')['default']
   const MessageBubble: typeof import('./src/components/chat/MessageBubble.vue')['default']

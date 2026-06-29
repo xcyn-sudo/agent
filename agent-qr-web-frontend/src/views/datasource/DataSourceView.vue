@@ -8,6 +8,7 @@ import type { DataSourceConfig, DataSourceForm } from '@/types'
 import DataSourceTable from '@/components/datasource/DataSourceTable.vue'
 import DataSourceFormDialog from '@/components/datasource/DataSourceFormDialog.vue'
 import Pagination from '@/components/common/Pagination.vue'
+import FlatIllustration from '@/components/common/FlatIllustration.vue'
 
 const { t } = useI18n()
 
@@ -193,7 +194,8 @@ onMounted(() => {
     />
 
     <div v-if="!loading && dataSources.length === 0 && !filterDomain" class="empty-wrapper">
-      <el-empty :description="$t('datasource.noDataSource')" />
+      <FlatIllustration name="empty-data" />
+      <el-empty :description="$t('datasource.noDataSource')" :image="''" />
     </div>
 
     <DataSourceFormDialog
@@ -211,21 +213,21 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
 
     .page-title {
       margin: 0;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: $text-primary;
     }
   }
 
   .page-toolbar {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
   }
 
   .empty-wrapper {

@@ -38,7 +38,7 @@ public class ProviderDecisionEngine {
     private String preferredLLM;
 
     /** 首选 Embedding Provider */
-    @Value("${agent-qr.provider.preferred-embedding:ollama}")
+    @Value("${agent-qr.provider.preferred-embedding:dashscope}")
     private String preferredEmbedding;
 
     /** 是否启用自动故障切换 */
@@ -56,12 +56,12 @@ public class ProviderDecisionEngine {
 
     /**
      * 决策当前应使用的 Embedding Provider。
-     * <p>仅 Ollama Embedding 可用，直接返回固定值。</p>
+     * <p>支持 dashscope (千问) / ollama 自动切换。</p>
      *
-     * @return 固定返回 "ollama"
+     * @return Embedding Provider 类型标识
      */
     public String decideEmbeddingProvider() {
-        return "ollama";
+        return decideProvider(preferredEmbedding, "Embedding");
     }
 
     /**

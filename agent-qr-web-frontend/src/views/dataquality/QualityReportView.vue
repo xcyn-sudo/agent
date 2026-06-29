@@ -277,12 +277,12 @@ onMounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
   }
 
   &__title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
     color: $text-primary;
     margin: 0;
   }
@@ -291,16 +291,16 @@ onMounted(() => {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
 
   &__filter {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
 
     .filter-label {
-      font-size: 14px;
+      font-size: var(--font-size-base);
       color: $text-secondary;
       white-space: nowrap;
     }
@@ -347,7 +347,7 @@ onMounted(() => {
 
   &__name {
     min-width: 120px;
-    font-size: 13px;
+    font-size: var(--font-size-sm);
     color: $text-primary;
     flex-shrink: 0;
   }
@@ -357,7 +357,7 @@ onMounted(() => {
   }
 
   &__count {
-    font-size: 13px;
+    font-size: var(--font-size-sm);
     font-weight: 600;
     color: $text-primary;
     min-width: 36px;

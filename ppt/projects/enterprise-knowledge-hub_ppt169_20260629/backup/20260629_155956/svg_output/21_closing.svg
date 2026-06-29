@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.3"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.3"/></pattern>
+    <radialGradient id="endGlow" cx="50%" cy="40%" r="45%"><stop offset="0%" stop-color="#00C853" stop-opacity="0.08"/><stop offset="60%" stop-color="#1A73E8" stop-opacity="0.03"/><stop offset="100%" stop-color="#0D1117" stop-opacity="0"/></radialGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#1A73E8"/><stop offset="50%" stop-color="#7C4DFF"/><stop offset="100%" stop-color="#00C853"/></linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="#0D1117"/><rect width="1280" height="720" fill="url(#grid)"/>
+  <rect width="1280" height="720" fill="url(#endGlow)"/>
+  <!-- Circuit traces converging -->
+  <g stroke="#1A73E8" stroke-width="0.8" fill="none" stroke-opacity="0.3">
+    <path d="M 0 250 H 200 L 300 350"/>
+    <path d="M 0 450 H 150 L 250 350"/>
+    <path d="M 1280 200 H 1050 L 950 350"/>
+    <path d="M 1280 500 H 1100 L 1000 350"/>
+  </g>
+  <g fill="#00C853" fill-opacity="0.5">
+    <circle cx="300" cy="350" r="2.5"/><circle cx="250" cy="350" r="2.5"/>
+    <circle cx="950" cy="350" r="2.5"/><circle cx="1000" cy="350" r="2.5"/>
+  </g>
+  <!-- Central quote -->
+  <text x="640" y="180" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="url(#titleGrad)" letter-spacing="4">
+    乘政策东风，以AI Agent之力
+  </text>
+  <text x="640" y="245" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="url(#titleGrad)" letter-spacing="4">
+    让企业知识，触手可及
+  </text>
+  <line x1="440" y1="275" x2="840" y2="275" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.3"/>
+  <!-- Three key numbers -->
+  <g text-anchor="middle">
+    <!-- 10秒 -->
+    <text x="310" y="380" font-family="Consolas, 'Courier New', monospace" font-size="56" font-weight="700" fill="#00C853">10秒</text>
+    <text x="310" y="415" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" fill="#9CA3AF">从提问到答案</text>
+    <!-- 99.6% -->
+    <text x="640" y="380" font-family="Consolas, 'Courier New', monospace" font-size="56" font-weight="700" fill="#1A73E8">99.6%</text>
+    <text x="640" y="415" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" fill="#9CA3AF">单次信息获取成本降低</text>
+    <!-- 221% -->
+    <text x="970" y="380" font-family="Consolas, 'Courier New', monospace" font-size="56" font-weight="700" fill="#7C4DFF">221%</text>
+    <text x="970" y="415" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" fill="#9CA3AF">三年投资回报率</text>
+    <!-- Dividers -->
+    <line x1="450" y1="340" x2="450" y2="430" stroke="#2A3040" stroke-width="1"/>
+    <line x1="830" y1="340" x2="830" y2="430" stroke="#2A3040" stroke-width="1"/>
+  </g>
+  <!-- Bottom -->
+  <line x1="80" y1="520" x2="1200" y2="520" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="640" y="570" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="28" fill="#E8ECF0">感谢聆听</text>
+  <text x="640" y="620" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" fill="#6B7280">联系方式 / 二维码</text>
+  <text x="640" y="660" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">企业知识中枢团队 · 2026.06</text>
+</svg>

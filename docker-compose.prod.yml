@@ -1,0 +1,200 @@
+# ============================================
+# Agent-QR 生产环境 Docker Compose 编排
+# 适用于阿里云 ECS 2C4G 部署
+#
+# 服务清单:
+#   - nginx      :80   (统一入口，静态文件 + API 反代)
+#   - frontend         (Vue 3 前端构建 + Nginx)
+#   - backend    :9090 (Spring Boot 后端)
+#   - mysql      :3306 (内部，不暴露宿主机端口)
+#   - chromadb   :8000 (内部，不暴露宿主机端口)
+#
+# 注意: Ollama 不再部署，embedding 改用阿里云 DashScope API
+# ============================================
+
+services:
+  # ==========================================
+  # Nginx — 统一入口网关
+  # ==========================================
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: agent-qr-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - frontend-dist:/usr/share/nginx/html:ro
+    depends_on:
+      - frontend
+      - backend
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 32M
+    networks:
+      - agent-qr-network
+
+  # ==========================================
+  # 前端 — Vue 3 静态资源构建
+  # ==========================================
+  frontend:
+    build:
+      context: ./agent-qr-web-frontend
+      args:
+        VITE_API_BASE_URL: /api
+    image: ${ACR_REGISTRY:-agent-qr}/frontend:${IMAGE_TAG:-latest}
+    container_name: agent-qr-frontend
+    restart: unless-stopped
+    volumes:
+      - frontend-dist:/usr/share/nginx/html
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 16M
+    networks:
+      - agent-qr-network
+
+  # ==========================================
+  # Spring Boot 后端
+  # ==========================================
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ${ACR_REGISTRY:-agent-qr}/backend:${IMAGE_TAG:-latest}
+    container_name: agent-qr-backend
+    restart: unless-stopped
+    environment:
+      # Spring 配置
+      SPRING_PROFILES_ACTIVE: p1, p2, p3
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-agent_qr}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      MYSQL_USERNAME: root
+      MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      # JWT
+      JWT_SECRET: ${JWT_SECRET:-change-me-to-a-random-secret}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
+      # DeepSeek API (LLM)
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      # DashScope API (Embedding) — 替代本地 Ollama
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
+      # ChromaDB
+      LANGCHAIN4J_CHROMA_BASE_URL: http://chromadb:8000
+      # 文件上传
+      FILE_UPLOAD_DIR: /app/uploads
+      # Java 内存配置（2C4G 优化）
+      JAVA_OPTS: "-Xms192m -Xmx384m -XX:MaxMetaspaceSize=128m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
+    ports:
+      - "9090:9090"
+    volumes:
+      - ${UPLOAD_DIR:-./uploads}:/app/uploads
+    depends_on:
+      mysql:
+        condition: service_healthy
+      chromadb:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f -s -o /dev/null http://localhost:9090/api/auth/login || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 640M
+        reservations:
+          memory: 256M
+    networks:
+      - agent-qr-network
+
+  # ==========================================
+  # MySQL 8.0 — 关系型数据库
+  # 2C4G 优化：关闭 performance_schema，限制连接数
+  # ==========================================
+  mysql:
+    image: mysql:8.0
+    container_name: agent-qr-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-agent_qr}
+      TZ: Asia/Shanghai
+    expose:
+      - "3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./agent-qr-web/src/main/resources/db/p1-schema.sql:/docker-entrypoint-initdb.d/01-p1-schema.sql
+      - ./agent-qr-web/src/main/resources/db/p2-schema.sql:/docker-entrypoint-initdb.d/02-p2-schema.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+      # 2C4G 内存优化
+      - --innodb-buffer-pool-size=256M
+      - --max-connections=50
+      - --performance-schema=OFF
+      - --skip-log-bin
+      - --innodb-flush-log-at-trx-commit=2
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 800M
+        reservations:
+          memory: 400M
+    networks:
+      - agent-qr-network
+
+  # ==========================================
+  # ChromaDB — 向量数据库
+  # ==========================================
+  chromadb:
+    image: chromadb/chroma:latest
+    container_name: agent-qr-chromadb
+    restart: unless-stopped
+    environment:
+      IS_PERSISTENT: "TRUE"
+      PERSIST_DIRECTORY: /chroma/chroma
+      ANONYMIZED_TELEMETRY: "FALSE"
+    expose:
+      - "8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    networks:
+      - agent-qr-network
+
+# ==========================================
+# 数据卷（持久化存储）
+# ==========================================
+volumes:
+  mysql-data:
+    name: agent-qr-mysql-data
+  chroma-data:
+    name: agent-qr-chroma-data
+  frontend-dist:
+    name: agent-qr-frontend-dist
+
+# ==========================================
+# 网络
+# ==========================================
+networks:
+  agent-qr-network:
+    name: agent-qr-network
+    driver: bridge

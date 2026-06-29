@@ -7,7 +7,7 @@ jwt:
   access-expiration: 1800       # Access Token 30分钟
   refresh-expiration: 604800    # Refresh Token 7天
 
-# ── Ollama 本地 LLM Provider ──
+# ── Ollama 本地 LLM Provider（本地开发时使用，云部署不使用）──
 ollama:
   llm:
     base-url: http://localhost:11434
@@ -15,6 +15,13 @@ ollama:
   embedding:
     base-url: http://localhost:11434
     model: qwen3-embedding:4b
+
+# ── DashScope (千问) Embedding Provider（云部署默认）──
+dashscope:
+  embedding:
+    api-key: ${DASHSCOPE_API_KEY:}
+    base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    model: text-embedding-v3
 
 # ── Agent-QR P2 增强配置 ──
 agent-qr:

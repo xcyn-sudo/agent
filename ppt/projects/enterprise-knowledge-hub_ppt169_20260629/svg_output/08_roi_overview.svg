@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <!-- Header -->
+  <rect x="60" y="40" width="4" height="56" rx="2" fill="#1A73E8"/>
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">降本增效：ROI投资回报全景</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">三阶段投入产出 · 第10个月回本</text>
+  <!-- Three KPI Cards -->
+  <!-- Card 1: P1 MVP -->
+  <rect x="60" y="150" width="370" height="300" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <rect x="60" y="150" width="370" height="44" rx="4" fill="#1A73E8" fill-opacity="0.12"/>
+  <text x="245" y="178" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#1A73E8">第一阶段 MVP</text>
+  <text x="120" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">时间</text>
+  <text x="120" y="260" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#E8ECF0">第1-3月</text>
+  <text x="120" y="300" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">投入</text>
+  <text x="120" y="330" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#FF1744">33.5万</text>
+  <text x="120" y="370" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">年化收益</text>
+  <text x="120" y="400" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#00C853">27.2万</text>
+  <text x="120" y="435" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">2个域 / 50人</text>
+  <!-- Card 2: P2 -->
+  <rect x="455" y="150" width="370" height="300" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <rect x="455" y="150" width="370" height="44" rx="4" fill="#7C4DFF" fill-opacity="0.12"/>
+  <text x="640" y="178" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#7C4DFF">第二阶段 增强</text>
+  <text x="515" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">时间</text>
+  <text x="515" y="260" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#E8ECF0">第4-5月</text>
+  <text x="515" y="300" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">投入</text>
+  <text x="515" y="330" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#FF1744">+13万</text>
+  <text x="515" y="370" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">年化收益</text>
+  <text x="515" y="400" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#00C853">60.5万</text>
+  <text x="515" y="435" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">4个域 / 200人</text>
+  <!-- Card 3: P3 -->
+  <rect x="850" y="150" width="370" height="300" rx="4" fill="#151B28" stroke="#00C853" stroke-width="1"/>
+  <rect x="850" y="150" width="370" height="44" rx="4" fill="#00C853" fill-opacity="0.12"/>
+  <text x="1035" y="178" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#00C853">第三阶段 全面</text>
+  <text x="910" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">时间</text>
+  <text x="910" y="260" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#E8ECF0">第6-8月</text>
+  <text x="910" y="300" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">投入</text>
+  <text x="910" y="330" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#FF1744">+15万</text>
+  <text x="910" y="370" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">年化收益</text>
+  <text x="910" y="400" font-family="Consolas, 'Courier New', monospace" font-size="24" font-weight="700" fill="#00C853">≥115万</text>
+  <text x="910" y="435" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">全员覆盖</text>
+  <!-- Payback timeline -->
+  <rect x="60" y="490" width="1160" height="80" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="100" y="520" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#9CA3AF">累计投入 56万</text>
+  <rect x="100" y="535" width="520" height="16" rx="4" fill="#FF1744" fill-opacity="0.5"/>
+  <text x="380" y="548" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="12" fill="#FF1744">投资回收期 第10个月</text>
+  <text x="680" y="520" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">3年累计收益 ≥ 180万</text>
+  <rect x="680" y="535" width="480" height="16" rx="4" fill="#00C853" fill-opacity="0.3"/>
+  <!-- Key numbers -->
+  <text x="640" y="620" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" fill="#9CA3AF">第10个月回本 · 3年ROI = 221% · 5年ROI = 733%</text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">数据来源：《软件需求规格说明书 v2.0》第8章</text>
+</svg>

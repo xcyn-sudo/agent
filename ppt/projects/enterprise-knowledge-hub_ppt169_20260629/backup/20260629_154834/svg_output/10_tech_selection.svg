@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <rect x="60" y="40" width="4" height="56" rx="2" fill="#1A73E8"/>
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">技术栈选型详解</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">左：核心技术选型 · 右：关键设计决策</text>
+  <!-- Left: Tech selection table -->
+  <rect x="60" y="140" width="720" height="510" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <!-- Table rows -->
+  <g font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif">
+    <line x1="90" y1="210" x2="750" y2="210" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="100" y="185" font-size="16" fill="#9CA3AF">层级</text><text x="220" y="185" font-size="16" fill="#9CA3AF">选型</text><text x="440" y="185" font-size="16" fill="#9CA3AF">选型理由</text>
+    <text x="100" y="240" font-size="18" font-weight="700" fill="#E8ECF0">前端</text><text x="220" y="240" font-size="18" font-weight="700" fill="#1A73E8">Vue3 + Vite</text><text x="440" y="240" font-size="16" fill="#9CA3AF">生态成熟、SSE支持好、团队熟悉</text>
+    <line x1="90" y1="265" x2="750" y2="265" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="100" y="295" font-size="18" font-weight="700" fill="#E8ECF0">后端</text><text x="220" y="295" font-size="18" font-weight="700" fill="#7C4DFF">Spring Boot 3</text><text x="440" y="295" font-size="16" fill="#9CA3AF">企业级生态、MyBatis-Plus、安全框架完善</text>
+    <line x1="90" y1="320" x2="750" y2="320" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="100" y="350" font-size="18" font-weight="700" fill="#E8ECF0">LLM</text><text x="220" y="350" font-size="18" font-weight="700" fill="#00C853">Ollama+DeepSeek</text><text x="440" y="350" font-size="16" fill="#9CA3AF">数据不出企业，本地qwen3做主链路，DeepSeek熔断降级</text>
+    <line x1="90" y1="375" x2="750" y2="375" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="100" y="405" font-size="18" font-weight="700" fill="#E8ECF0">向量库</text><text x="220" y="405" font-size="18" font-weight="700" fill="#1A73E8">ChromaDB</text><text x="440" y="405" font-size="16" fill="#9CA3AF">轻量部署、HTTP API、适合企业内网</text>
+    <line x1="90" y1="430" x2="750" y2="430" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="100" y="460" font-size="18" font-weight="700" fill="#E8ECF0">检索</text><text x="220" y="460" font-size="18" font-weight="700" fill="#7C4DFF">语义+BM25混合</text><text x="440" y="460" font-size="16" fill="#9CA3AF">语义理解+关键词精确匹配互补</text>
+    <line x1="90" y1="485" x2="750" y2="485" stroke="#2A3040" stroke-width="0.5"/>
+    <text x="100" y="515" font-size="18" font-weight="700" fill="#E8ECF0">权限</text><text x="220" y="515" font-size="18" font-weight="700" fill="#00C853">ABAC五维度</text><text x="440" y="515" font-size="16" fill="#9CA3AF">角色+部门+密级+职级+时间，满足等保2.0</text>
+  </g>
+  <!-- Right: Design decisions -->
+  <rect x="800" y="140" width="420" height="510" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="840" y="180" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">关键设计决策</text>
+  <line x1="830" y1="200" x2="1190" y2="200" stroke="#2A3040" stroke-width="1"/>
+  <rect x="830" y="225" width="370" height="80" rx="4" fill="#1A73E8" fill-opacity="0.08"/>
+  <text x="850" y="255" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">数据不出企业</text>
+  <text x="850" y="280" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">全链路内网部署，LLM本地推理</text>
+  <rect x="830" y="320" width="370" height="80" rx="4" fill="#7C4DFF" fill-opacity="0.08"/>
+  <text x="850" y="350" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#7C4DFF">Provider可切换</text>
+  <text x="850" y="375" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">策略模式抽象LLM/Embedding，不绑定单一厂商</text>
+  <rect x="830" y="415" width="370" height="80" rx="4" fill="#00C853" fill-opacity="0.08"/>
+  <text x="850" y="445" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">全链路异步</text>
+  <text x="850" y="470" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">Spring Event异步管道，文档处理不阻塞用户操作</text>
+  <rect x="830" y="510" width="370" height="80" rx="4" fill="#FF1744" fill-opacity="0.08"/>
+  <text x="850" y="540" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#FF1744">断点续传</text>
+  <text x="850" y="565" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">DLQ死信队列+3次退避重试，数据同步不丢失</text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">《系统概要设计说明书 v1.0》第4章</text>
+</svg>

@@ -183,20 +183,20 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
 
     .page-title {
       margin: 0;
-      font-size: 20px;
-      font-weight: 600;
-      color: var(--el-text-color-primary);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-semibold);
+      color: $text-primary;
     }
   }
 
   .filter-bar {
     display: flex;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
 
     .el-select {
       width: 180px;

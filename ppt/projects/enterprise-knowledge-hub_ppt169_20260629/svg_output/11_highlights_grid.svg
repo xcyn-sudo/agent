@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <rect x="60" y="40" width="4" height="56" rx="2" fill="#1A73E8"/>
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">系统亮点六宫格</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">六大核心亮点 · 一页纵览技术竞争力</text>
+  <!-- 2x3 Grid -->
+  <!-- Card 1: 混合检索 -->
+  <rect x="60" y="140" width="370" height="260" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="400" y="190" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="52" font-weight="700" fill="#1A73E8" fill-opacity="0.08">01</text>
+  <rect x="85" y="165" width="48" height="48" rx="4" fill="#1A73E8" fill-opacity="0.12"/>
+  <use data-icon="phosphor-duotone/magnifying-glass" x="97" y="177" width="24" height="24" fill="#1A73E8"/>
+  <text x="150" y="200" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">混合检索</text>
+  <text x="85" y="240" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">语义+关键词双路召回</text>
+  <text x="85" y="265" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">RRF融合+重排精炼</text>
+  <text x="85" y="295" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">40→10→5条精准收束</text>
+  <!-- Card 2: ABAC权限 -->
+  <rect x="455" y="140" width="370" height="260" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="795" y="190" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="52" font-weight="700" fill="#7C4DFF" fill-opacity="0.08">02</text>
+  <rect x="480" y="165" width="48" height="48" rx="4" fill="#7C4DFF" fill-opacity="0.12"/>
+  <use data-icon="phosphor-duotone/lock-laminated" x="492" y="177" width="24" height="24" fill="#7C4DFF"/>
+  <text x="545" y="200" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">ABAC权限</text>
+  <text x="480" y="240" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">5维度细粒度访问控制</text>
+  <text x="480" y="265" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">属性级权限+审计日志</text>
+  <text x="480" y="295" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">等保2.0合规</text>
+  <!-- Card 3: 全链路溯源 -->
+  <rect x="850" y="140" width="370" height="260" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="1190" y="190" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="52" font-weight="700" fill="#00C853" fill-opacity="0.08">03</text>
+  <rect x="875" y="165" width="48" height="48" rx="4" fill="#00C853" fill-opacity="0.12"/>
+  <use data-icon="phosphor-duotone/link-simple" x="887" y="177" width="24" height="24" fill="#00C853"/>
+  <text x="940" y="200" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">全链路溯源</text>
+  <text x="875" y="240" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">每个答案都可追溯</text>
+  <text x="875" y="265" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">标注文档名+章节</text>
+  <text x="875" y="295" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">审计日志完整</text>
+  <!-- Card 4: 多源接入 -->
+  <rect x="60" y="420" width="370" height="260" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="400" y="470" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="52" font-weight="700" fill="#1A73E8" fill-opacity="0.08">04</text>
+  <rect x="85" y="445" width="48" height="48" rx="4" fill="#1A73E8" fill-opacity="0.12"/>
+  <use data-icon="phosphor-duotone/database" x="97" y="457" width="24" height="24" fill="#1A73E8"/>
+  <text x="150" y="480" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">多源接入</text>
+  <text x="85" y="520" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">JDBC/REST/S3统一网关</text>
+  <text x="85" y="545" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">ETL标准化管道</text>
+  <text x="85" y="575" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">CDC增量同步</text>
+  <!-- Card 5: 数据安全 -->
+  <rect x="455" y="420" width="370" height="260" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="795" y="470" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="52" font-weight="700" fill="#7C4DFF" fill-opacity="0.08">05</text>
+  <rect x="480" y="445" width="48" height="48" rx="4" fill="#7C4DFF" fill-opacity="0.12"/>
+  <use data-icon="phosphor-duotone/lock-key" x="492" y="457" width="24" height="24" fill="#7C4DFF"/>
+  <text x="545" y="480" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">数据安全</text>
+  <text x="480" y="520" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">全链路内网部署</text>
+  <text x="480" y="545" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">LLM本地推理</text>
+  <text x="480" y="575" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">可完全离线运行</text>
+  <!-- Card 6: 事件驱动 -->
+  <rect x="850" y="420" width="370" height="260" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="1190" y="470" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="52" font-weight="700" fill="#00C853" fill-opacity="0.08">06</text>
+  <rect x="875" y="445" width="48" height="48" rx="4" fill="#00C853" fill-opacity="0.12"/>
+  <use data-icon="phosphor-duotone/cloud-arrow-up" x="887" y="457" width="24" height="24" fill="#00C853"/>
+  <text x="940" y="480" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="20" font-weight="700" fill="#E8ECF0">事件驱动</text>
+  <text x="875" y="520" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">异步处理管道</text>
+  <text x="875" y="545" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">DLQ断点续传</text>
+  <text x="875" y="575" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#6B7280">质量实时监控</text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">11</text>
+</svg>

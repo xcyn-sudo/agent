@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117" /><rect width="1280" height="720" fill="url(#grid)" />
+  <path fill="#1A73E8" d="M62,32 H62 A2,2 0 0 1 64,34 V78 A2,2 0 0 1 62,80 H62 A2,2 0 0 1 60,78 V34 A2,2 0 0 1 62,32 Z" />
+  <text x="78" y="58" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">权限管控：五维度细粒度访问控制</text>
+  <text x="78" y="84" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">ABAC决策模型 · 从RBAC到全维度ABAC的三级演进</text>
+  
+  <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M64,115 H1216 A4,4 0 0 1 1220,119 V311 A4,4 0 0 1 1216,315 H64 A4,4 0 0 1 60,311 V119 A4,4 0 0 1 64,115 Z" />
+  <text x="90" y="145" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">ABAC权限决策示例</text>
+  
+  <path fill="#FF1744" fill-opacity="0.06" stroke="#FF1744" stroke-width="1" d="M84,165 H616 A4,4 0 0 1 620,169 V231 A4,4 0 0 1 616,235 H84 A4,4 0 0 1 80,231 V169 A4,4 0 0 1 84,165 Z" />
+  <text x="110" y="195" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#FF1744">张三 · HR专员 · 密级: 2</text>
+  <text x="380" y="195" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#FF1744">→</text>
+  <text x="430" y="195" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#FF1744">《2024年薪资方案》· 密级: 3</text>
+  <text x="110" y="220" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#FF1744">拒绝：密级不足（2 &lt; 3），记录审计日志</text>
+  
+  <path fill="#00C853" fill-opacity="0.06" stroke="#00C853" stroke-width="1" d="M644,165 H1196 A4,4 0 0 1 1200,169 V231 A4,4 0 0 1 1196,235 H644 A4,4 0 0 1 640,231 V169 A4,4 0 0 1 644,165 Z" />
+  <text x="670" y="195" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#00C853">李四 · HR总监 · 密级: 3</text>
+  <text x="940" y="195" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#00C853">→</text>
+  <text x="990" y="195" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#00C853">同一文档 · 密级: 3</text>
+  <text x="670" y="220" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#00C853">允许：密级满足（3 ≥ 3）、域匹配（HR）</text>
+  
+  <text x="80" y="350" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">五维度 + 三级演进</text>
+  <g transform="translate(60, 375)">
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M4,0 H1156 A4,4 0 0 1 1160,4 V42 A4,4 0 0 1 1156,46 H4 A4,4 0 0 1 0,42 V4 A4,4 0 0 1 4,0 Z" />
+    <text x="40" y="28" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">维度</text>
+    <text x="180" y="28" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">说明</text>
+    <text x="700" y="28" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">演进路径</text>
+    <rect x="0" y="50" width="1160" height="42" rx="0" fill="none" stroke="#2A3040" stroke-width="0.5" />
+    <text x="40" y="75" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">角色</text>
+    <text x="180" y="75" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">admin / user</text>
+    <text x="700" y="75" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#1A73E8">P1: RBAC基础</text>
+    <rect x="0" y="95" width="1160" height="42" rx="0" fill="none" stroke="#2A3040" stroke-width="0.5" />
+    <text x="40" y="120" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">部门</text>
+    <text x="180" y="120" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">HR / 财务 / 研发隔离</text>
+    <text x="700" y="120" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#7C4DFF">P2: +部门+密级+职级</text>
+    <rect x="0" y="140" width="1160" height="62" rx="0" fill="none" stroke="#2A3040" stroke-width="0.5" />
+    <text x="40" y="165" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">密级</text>
+    <text x="180" y="165" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">公开(0) → 内部(1) → 机密(2) → 绝密(3)</text>
+    <text x="700" y="165" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#00C853">P3: ABAC全维度启用</text>
+    <text x="180" y="188" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">薪资数据=机密 · 战略规划=绝密 · 员工手册=公开</text>
+    <rect x="0" y="205" width="1160" height="42" rx="0" fill="none" stroke="#2A3040" stroke-width="0.5" />
+    <text x="40" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">职级</text>
+    <text x="180" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">manager+ 可上传</text>
+    <text x="700" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#6B7280">满足等保2.0 / GDPR</text>
+  </g>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">《软件需求规格说明书 v2.0》第4.4节、第5.4节</text>
+</svg>

@@ -1,13 +1,14 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import ElementPlus from 'element-plus'
+import './styles/tokens.scss'
 import 'element-plus/dist/index.css'
+import './styles/global.scss'
 
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
 import permission from './directives/permission'
-import './styles/global.scss'
 
 const app = createApp(App)
 

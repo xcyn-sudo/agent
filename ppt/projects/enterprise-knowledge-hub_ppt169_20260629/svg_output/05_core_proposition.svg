@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.3"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.3"/></pattern>
+    <radialGradient id="glow" cx="50%" cy="45%" r="35%"><stop offset="0%" stop-color="#1A73E8" stop-opacity="0.08"/><stop offset="100%" stop-color="#0D1117" stop-opacity="0"/></radialGradient>
+  </defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <rect width="1280" height="720" fill="url(#glow)"/>
+  <!-- Central question -->
+  <text x="640" y="310" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="36" font-weight="700" fill="#E8ECF0" letter-spacing="2">
+    如何让企业知识
+  </text>
+  <text x="640" y="370" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="36" font-weight="700" fill="#E8ECF0" letter-spacing="2">
+    从"人脑记忆 + 散落文件"
+  </text>
+  <text x="640" y="430" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="36" font-weight="700" fill="url(#glow)" letter-spacing="2">
+    变成"一个框、10秒钟、精准答案"？
+  </text>
+  <!-- Decorative sweep line -->
+  <line x1="200" y1="480" x2="1080" y2="480" stroke="#1A73E8" stroke-width="1.5" stroke-opacity="0.5"/>
+  <circle cx="1080" cy="480" r="4" fill="#00C853" fill-opacity="0.8"/>
+  <!-- Bottom answer -->
+  <text x="640" y="540" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="22" fill="#6B7280">
+    这就是企业知识中枢要解决的问题
+  </text>
+  <!-- Footer -->
+  <text x="640" y="695" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">05</text>
+</svg>

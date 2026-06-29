@@ -1,0 +1,4 @@
+No,Filename,Width,Height,AspectRatio,PixelAspectRatio,RatioSource,UsageCount,DisplayRatioVariants,AssetKind,SvgRenderable,PptxNativeSupported,SizeKB,Category,ImageArea_SxS,TextArea_SxS
+1,arch_isometric.png,2732,1534,1.78,1.78,pixel,1,,bitmap,True,True,1836.4,Wide landscape,812x456,328x600
+2,cover_bg.png,2732,1534,1.78,1.78,pixel,1,,bitmap,True,True,3055.2,Wide landscape,812x456,328x600
+3,pipeline_schematic.png,2732,1534,1.78,1.78,pixel,1,,bitmap,True,True,2835.8,Wide landscape,812x456,328x600

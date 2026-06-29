@@ -3,22 +3,14 @@
 
 <template>
   <div class="guest-layout">
-    <div class="guest-layout__content">
-      <router-view />
-    </div>
+    <router-view />
   </div>
 </template>
 
 <style scoped lang="scss">
 .guest-layout {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: $bg-color;
-
-  &__content {
-    width: 100%;
-  }
+  width: 100%;
+  overflow: hidden;
 }
 </style>

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/>
+      <line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/>
+    </pattern>
+    <linearGradient id="trackGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1A73E8"/>
+      <stop offset="50%" stop-color="#7C4DFF"/>
+      <stop offset="100%" stop-color="#00C853"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <!-- Header -->
+  <rect x="60" y="40" width="4" height="56" rx="2" fill="#1A73E8"/>
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">时代背景：中国AI Agent政策十年跃迁</text>
+  <text x="78" y="94" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">2017-2026 · 从战略布局到规模部署</text>
+  <!-- Timeline track -->
+  <line x1="100" y1="340" x2="1180" y2="340" stroke="#1E2640" stroke-width="8" stroke-linecap="round"/>
+  <line x1="100" y1="340" x2="1180" y2="340" stroke="url(#trackGrad)" stroke-width="3" stroke-linecap="round"/>
+  <!-- Year bands -->
+  <rect x="100" y="314" width="270" height="52" rx="26" fill="#151B28" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="120" y="345" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#6B7280" letter-spacing="2">2017-2022</text>
+  <rect x="380" y="314" width="260" height="52" rx="26" fill="#151B28" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="400" y="345" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#6B7280" letter-spacing="2">2023-2024</text>
+  <rect x="650" y="314" width="250" height="52" rx="26" fill="#151B28" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="670" y="345" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#6B7280" letter-spacing="2">2025</text>
+  <rect x="910" y="314" width="270" height="52" rx="26" fill="#151B28" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="930" y="345" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#6B7280" letter-spacing="2">2026</text>
+  <!-- Node 1: 战略布局 (above) -->
+  <g>
+    <line x1="235" y1="280" x2="235" y2="330" stroke="#1A73E8" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.6"/>
+    <circle cx="235" cy="340" r="14" fill="#1A73E8" fill-opacity="0.15" stroke="#1A73E8" stroke-width="2"/>
+    <circle cx="235" cy="340" r="6" fill="#1A73E8"/>
+    <!-- Card above -->
+    <rect x="128" y="130" width="214" height="150" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <rect x="128" y="130" width="214" height="32" rx="4" fill="#1A73E8" fill-opacity="0.15"/>
+    <text x="235" y="151" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" font-weight="700" fill="#1A73E8">战略布局</text>
+    <text x="146" y="185" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">AI上升为国家战略</text>
+    <text x="146" y="210" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">《新一代人工智能</text>
+    <text x="146" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">发展规划》三步走</text>
+    <text x="146" y="258" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">顶层设计完成</text>
+  </g>
+  <!-- Node 2: 应用探索 (below) -->
+  <g>
+    <line x1="510" y1="350" x2="510" y2="400" stroke="#7C4DFF" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.6"/>
+    <circle cx="510" cy="340" r="14" fill="#7C4DFF" fill-opacity="0.15" stroke="#7C4DFF" stroke-width="2"/>
+    <circle cx="510" cy="340" r="6" fill="#7C4DFF"/>
+    <!-- Card below -->
+    <rect x="403" y="400" width="214" height="150" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <rect x="403" y="518" width="214" height="32" rx="4" fill="#7C4DFF" fill-opacity="0.15"/>
+    <text x="510" y="539" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" font-weight="700" fill="#7C4DFF">应用探索</text>
+    <text x="421" y="430" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">"人工智能+"元年</text>
+    <text x="421" y="455" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">政府工作报告首提</text>
+    <text x="421" y="475" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">"人工智能+"</text>
+    <text x="421" y="500" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280">大模型备案制度建立</text>
+  </g>
+  <!-- Node 3: 爆发规范 (above, focal) -->
+  <g>
+    <line x1="775" y1="270" x2="775" y2="330" stroke="#1A73E8" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.7"/>
+    <circle cx="775" cy="340" r="18" fill="#1A73E8" fill-opacity="0.12"/>
+    <circle cx="775" cy="340" r="10" fill="#151B28" stroke="#1A73E8" stroke-width="3"/>
+    <circle cx="775" cy="340" r="4" fill="#00C853"/>
+    <!-- Card above -->
+    <rect x="668" y="110" width="214" height="160" rx="4" fill="#151B28" stroke="#1A73E8" stroke-width="1.5"/>
+    <rect x="668" y="110" width="214" height="32" rx="4" fill="#00C853" fill-opacity="0.12"/>
+    <text x="775" y="131" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" font-weight="700" fill="#00C853">爆发规范</text>
+    <text x="686" y="165" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">AI Agent元年</text>
+    <text x="686" y="190" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">国发〔2025〕11号：</text>
+    <text x="686" y="210" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">十年规划，2027年</text>
+    <text x="686" y="230" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">智能体普及率&gt;70%</text>
+    <text x="686" y="256" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#00C853">核心转折点</text>
+  </g>
+  <!-- Node 4: 规模部署 (below) -->
+  <g>
+    <line x1="1045" y1="350" x2="1045" y2="410" stroke="#00C853" stroke-width="1" stroke-dasharray="3,3" stroke-opacity="0.6"/>
+    <circle cx="1045" cy="340" r="14" fill="#00C853" fill-opacity="0.15" stroke="#00C853" stroke-width="2"/>
+    <circle cx="1045" cy="340" r="6" fill="#00C853"/>
+    <!-- Card below -->
+    <rect x="938" y="410" width="214" height="150" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+    <rect x="938" y="528" width="214" height="32" rx="4" fill="#00C853" fill-opacity="0.15"/>
+    <text x="1045" y="549" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" font-weight="700" fill="#00C853">规模部署</text>
+    <text x="956" y="440" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="16" font-weight="700" fill="#E8ECF0">智能体写入政府</text>
+    <text x="956" y="463" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">工作报告</text>
+    <text x="956" y="488" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">三部门《实施意见》：</text>
+    <text x="956" y="508" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">19大应用场景落地</text>
+    <text x="956" y="528" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="13" fill="#6B7280"/>
+  </g>
+  <!-- Bottom takeaway -->
+  <rect x="80" y="610" width="1120" height="50" rx="4" fill="#151B28" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="640" y="641" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" fill="#9CA3AF">
+    从"发展规划"到"智能体立法"，中国用10年构建了全球最系统的AI治理与产业促进体系
+  </text>
+  <!-- Footer -->
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">数据来源：中国政府网、中国教育网络等</text>
+</svg>

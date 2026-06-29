@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.5"/>
+      <line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.5"/>
+    </pattern>
+    <radialGradient id="centerGlow" cx="50%" cy="45%" r="40%">
+      <stop offset="0%" stop-color="#1A73E8" stop-opacity="0.12"/>
+      <stop offset="60%" stop-color="#1A73E8" stop-opacity="0.03"/>
+      <stop offset="100%" stop-color="#0D1117" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="titleGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1A73E8"/>
+      <stop offset="50%" stop-color="#7C4DFF"/>
+      <stop offset="100%" stop-color="#1A73E8"/>
+    </linearGradient>
+  </defs>
+  <!-- Background image -->
+  <image x="0" y="0" width="1280" height="720" href="../images/cover_bg.png" preserveAspectRatio="xMidYMid slice"/>
+  <!-- Gradient overlay for depth -->
+  <rect width="1280" height="720" fill="#0D1117" fill-opacity="0.35"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <rect width="1280" height="720" fill="url(#centerGlow)"/>
+  <!-- Circuit traces - left -->
+  <g stroke="#1A73E8" stroke-width="1.2" fill="none" stroke-opacity="0.4">
+    <path d="M 0 200 H 120 L 160 160 V 80"/>
+    <path d="M 0 400 H 80 L 120 360 V 280 H 200"/>
+    <path d="M 0 550 H 100 L 150 500 V 420"/>
+  </g>
+  <!-- Circuit traces - right -->
+  <g stroke="#7C4DFF" stroke-width="1.2" fill="none" stroke-opacity="0.35">
+    <path d="M 1280 180 H 1120 L 1080 220 V 350"/>
+    <path d="M 1280 420 H 1160 L 1100 480 V 600"/>
+    <path d="M 1280 580 H 1180 L 1130 630 V 680"/>
+  </g>
+  <!-- Node dots -->
+  <g fill="#00C853" fill-opacity="0.8">
+    <circle cx="160" cy="80" r="3"/>
+    <circle cx="200" cy="280" r="3"/>
+    <circle cx="150" cy="420" r="3"/>
+    <circle cx="1080" cy="350" r="3"/>
+    <circle cx="1100" cy="600" r="3"/>
+    <circle cx="1130" cy="680" r="3"/>
+  </g>
+  <!-- Central icon (knowledge hub) -->
+  <g transform="translate(640, 200)">
+    <circle cx="0" cy="0" r="48" fill="none" stroke="#1A73E8" stroke-width="1.5" stroke-opacity="0.6"/>
+    <circle cx="0" cy="0" r="36" fill="none" stroke="#7C4DFF" stroke-width="1" stroke-opacity="0.4"/>
+    <circle cx="0" cy="0" r="8" fill="#00C853" fill-opacity="0.6"/>
+    <!-- Crosshair lines -->
+    <line x1="-56" y1="0" x2="-50" y2="0" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.5"/>
+    <line x1="50" y1="0" x2="56" y2="0" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.5"/>
+    <line x1="0" y1="-56" x2="0" y2="-50" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.5"/>
+    <line x1="0" y1="50" x2="0" y2="56" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.5"/>
+  </g>
+  <!-- Main title -->
+  <text x="640" y="340" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="url(#titleGrad)" letter-spacing="4">
+    企业知识中枢
+  </text>
+  <!-- Subtitle line 1 -->
+  <text x="640" y="395" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="400" fill="#9CA3AF" letter-spacing="3">
+    基于AI Agent的智能知识管理平台
+  </text>
+  <!-- Decorative rule -->
+  <line x1="440" y1="425" x2="840" y2="425" stroke="#1A73E8" stroke-width="1" stroke-opacity="0.4"/>
+  <!-- Tagline -->
+  <text x="640" y="470" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="20" fill="#6B7280" letter-spacing="1">
+    让每个员工像问资深同事一样，秒级获取企业知识
+  </text>
+  <!-- Bottom info bar -->
+  <line x1="80" y1="630" x2="1200" y2="630" stroke="#2A3040" stroke-width="0.5"/>
+  <text x="80" y="665" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">
+    汇报人 / 部门
+  </text>
+  <text x="640" y="665" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">
+    2026.06
+  </text>
+  <text x="1200" y="665" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">
+    企业知识中枢团队
+  </text>
+</svg>

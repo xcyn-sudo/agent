@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4"/></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117"/>
+  <rect width="1280" height="720" fill="url(#grid)"/>
+  <!-- Header -->
+  <rect x="60" y="40" width="4" height="56" rx="2" fill="#1A73E8"/>
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">降本增效：单次问答成本解剖</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">核心价值页 · 传统模式 vs AI知识中枢</text>
+  <!-- Left: Traditional mode -->
+  <rect x="60" y="140" width="560" height="480" rx="4" fill="#151B28" stroke="#2A3040" stroke-width="1"/>
+  <text x="340" y="185" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#FF1744">传统模式（加权平均）</text>
+  <!-- Bar 1 -->
+  <rect x="116" y="220" width="408" height="70" rx="4" fill="#FF1744" fill-opacity="0.12" stroke="#FF1744" stroke-width="1" stroke-opacity="0.3"/>
+  <text x="140" y="248" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="20" fill="#E8ECF0">60% 自己翻文件</text>
+  <text x="500" y="248" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="22" font-weight="700" fill="#FF1744">30.7 元/次</text>
+  <!-- Bar 2 -->
+  <rect x="134" y="300" width="390" height="70" rx="4" fill="#FF1744" fill-opacity="0.1" stroke="#FF1744" stroke-width="1" stroke-opacity="0.25"/>
+  <text x="158" y="328" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="20" fill="#E8ECF0">30% 钉钉问人</text>
+  <text x="500" y="328" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="22" font-weight="700" fill="#FF1744">50.8 元/次</text>
+  <!-- Bar 3 -->
+  <rect x="152" y="380" width="372" height="70" rx="4" fill="#FF1744" fill-opacity="0.08" stroke="#FF1744" stroke-width="1" stroke-opacity="0.2"/>
+  <text x="176" y="408" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="20" fill="#E8ECF0">10% 找不到→开会</text>
+  <text x="500" y="408" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="22" font-weight="700" fill="#FF1744">300 元/次</text>
+  <!-- Total -->
+  <line x1="100" y1="470" x2="540" y2="470" stroke="#FF1744" stroke-width="1.5" stroke-opacity="0.4"/>
+  <text x="140" y="505" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="22" font-weight="700" fill="#FF1744">综合成本</text>
+  <text x="500" y="505" text-anchor="end" font-family="Consolas, 'Courier New', monospace" font-size="36" font-weight="700" fill="#FF1744">63.6 元/次</text>
+  <!-- Arrow -->
+  <text x="620" y="380" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="48" fill="#00C853">→</text>
+  <!-- Right: AI Knowledge Hub -->
+  <rect x="660" y="140" width="560" height="480" rx="4" fill="#151B28" stroke="#00C853" stroke-width="1.5"/>
+  <text x="940" y="185" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#00C853">AI知识中枢</text>
+  <!-- Big number -->
+  <text x="940" y="310" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="72" font-weight="700" fill="#00C853">0.27</text>
+  <text x="940" y="360" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="28" fill="#00C853">元/次</text>
+  <text x="940" y="410" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" fill="#9CA3AF">10秒出答案 · 附来源引用</text>
+  <!-- Savings badge -->
+  <rect x="780" y="460" width="320" height="60" rx="4" fill="#00C853" fill-opacity="0.1" stroke="#00C853" stroke-width="1"/>
+  <text x="940" y="498" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#00C853">成本降低 99.6%</text>
+  <!-- Bottom: yearly savings -->
+  <text x="640" y="680" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" fill="#E8ECF0">每次问答节省 63.3 元 · 年化节约 49 万元（200人企业）</text>
+</svg>

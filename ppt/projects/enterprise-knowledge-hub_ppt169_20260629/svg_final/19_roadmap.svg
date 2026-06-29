@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /></pattern></defs>
+  <rect width="1280" height="720" fill="#0D1117" /><rect width="1280" height="720" fill="url(#grid)" />
+  <path fill="#1A73E8" d="M62,40 H62 A2,2 0 0 1 64,42 V94 A2,2 0 0 1 62,96 H62 A2,2 0 0 1 60,94 V42 A2,2 0 0 1 62,40 Z" />
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">分期落地路线图</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">三阶段8个月 · 从MVP到全员覆盖</text>
+  
+  
+  <path fill="#151B28" stroke="#1A73E8" stroke-width="1" d="M64,145 H426 A4,4 0 0 1 430,149 V561 A4,4 0 0 1 426,565 H64 A4,4 0 0 1 60,561 V149 A4,4 0 0 1 64,145 Z" />
+  <path fill="#1A73E8" fill-opacity="0.15" d="M64,145 H426 A4,4 0 0 1 430,149 V189 A4,4 0 0 1 426,193 H64 A4,4 0 0 1 60,189 V149 A4,4 0 0 1 64,145 Z" />
+  <text x="245" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#1A73E8">P1 MVP</text>
+  <text x="245" y="193" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">第1-3月</text>
+  <g transform="translate(80, 215)" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15">
+    <text x="0" y="22" fill="#00C853">✓</text><text x="24" y="22" fill="#E8ECF0">核心问答</text>
+    <text x="0" y="48" fill="#00C853">✓</text><text x="24" y="48" fill="#E8ECF0">基础RBAC权限</text>
+    <text x="0" y="74" fill="#00C853">✓</text><text x="24" y="74" fill="#E8ECF0">文档管理</text>
+    <text x="0" y="100" fill="#00C853">✓</text><text x="24" y="100" fill="#E8ECF0">Dashboard统计</text>
+    <text x="0" y="126" fill="#00C853">✓</text><text x="24" y="126" fill="#E8ECF0">用户管理</text>
+  </g>
+  <line x1="80" y1="360" x2="410" y2="360" stroke="#2A3040" stroke-width="0.5" />
+  <text x="90" y="390" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">人力：2-3人</text>
+  <text x="90" y="415" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">日活：30-50人</text>
+  <text x="90" y="440" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">覆盖：2域</text>
+  
+  <path fill="#151B28" stroke="#7C4DFF" stroke-width="1" d="M459,145 H821 A4,4 0 0 1 825,149 V561 A4,4 0 0 1 821,565 H459 A4,4 0 0 1 455,561 V149 A4,4 0 0 1 459,145 Z" />
+  <path fill="#7C4DFF" fill-opacity="0.15" d="M459,145 H821 A4,4 0 0 1 825,149 V189 A4,4 0 0 1 821,193 H459 A4,4 0 0 1 455,189 V149 A4,4 0 0 1 459,145 Z" />
+  <text x="640" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#7C4DFF">P2 增强</text>
+  <text x="640" y="193" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">第4-5月</text>
+  <g transform="translate(475, 215)" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15">
+    <text x="0" y="22" fill="#00C853">✓</text><text x="24" y="22" fill="#E8ECF0">多源数据接入</text>
+    <text x="0" y="48" fill="#00C853">✓</text><text x="24" y="48" fill="#E8ECF0">混合检索+Rerank</text>
+    <text x="0" y="74" fill="#00C853">✓</text><text x="24" y="74" fill="#E8ECF0">部门+密级权限</text>
+    <text x="0" y="100" fill="#00C853">✓</text><text x="24" y="100" fill="#E8ECF0">SSE流式输出</text>
+    <text x="0" y="126" fill="#00C853">✓</text><text x="24" y="126" fill="#E8ECF0">反馈闭环</text>
+    <text x="0" y="152" fill="#00C853">✓</text><text x="24" y="152" fill="#E8ECF0">ETL标准化</text>
+  </g>
+  <line x1="475" y1="390" x2="805" y2="390" stroke="#2A3040" stroke-width="0.5" />
+  <text x="485" y="415" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">人力：+2人</text>
+  <text x="485" y="440" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">日活：100-200人 · 4域</text>
+  
+  <path fill="#151B28" stroke="#00C853" stroke-width="1.5" d="M854,145 H1216 A4,4 0 0 1 1220,149 V561 A4,4 0 0 1 1216,565 H854 A4,4 0 0 1 850,561 V149 A4,4 0 0 1 854,145 Z" />
+  <path fill="#00C853" fill-opacity="0.15" d="M854,145 H1216 A4,4 0 0 1 1220,149 V189 A4,4 0 0 1 1216,193 H854 A4,4 0 0 1 850,189 V149 A4,4 0 0 1 854,145 Z" />
+  <text x="1035" y="170" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="24" font-weight="700" fill="#00C853">P3 全面</text>
+  <text x="1035" y="193" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">第6-8月</text>
+  <g transform="translate(870, 215)" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15">
+    <text x="0" y="22" fill="#00C853">✓</text><text x="24" y="22" fill="#E8ECF0">全业务域覆盖</text>
+    <text x="0" y="48" fill="#00C853">✓</text><text x="24" y="48" fill="#E8ECF0">ABAC全维度</text>
+    <text x="0" y="74" fill="#00C853">✓</text><text x="24" y="74" fill="#E8ECF0">知识目录全公司</text>
+    <text x="0" y="100" fill="#00C853">✓</text><text x="24" y="100" fill="#E8ECF0">模型微调</text>
+    <text x="0" y="126" fill="#00C853">✓</text><text x="24" y="126" fill="#E8ECF0">SLA监控告警</text>
+  </g>
+  <line x1="870" y1="360" x2="1200" y2="360" stroke="#2A3040" stroke-width="0.5" />
+  <text x="880" y="390" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#9CA3AF">人力：+2人</text>
+  <text x="880" y="415" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="15" fill="#00C853">日活：全员200+</text>
+  
+  <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M64,600 H1216 A4,4 0 0 1 1220,604 V644 A4,4 0 0 1 1216,648 H64 A4,4 0 0 1 60,644 V604 A4,4 0 0 1 64,600 Z" />
+  <line x1="250" y1="600" x2="250" y2="648" stroke="#1A73E8" stroke-width="1" stroke-dasharray="4,4" stroke-opacity="0.5" />
+  <line x1="600" y1="600" x2="600" y2="648" stroke="#7C4DFF" stroke-width="1" stroke-dasharray="4,4" stroke-opacity="0.5" />
+  <line x1="950" y1="600" x2="950" y2="648" stroke="#00C853" stroke-width="1" stroke-dasharray="4,4" stroke-opacity="0.5" />
+  <text x="120" y="630" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#1A73E8">第1月末</text>
+  <text x="120" y="645" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">内部Demo</text>
+  <text x="350" y="630" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#7C4DFF">第3月末</text>
+  <text x="350" y="645" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">P1上线</text>
+  <text x="700" y="630" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#00C853">第5月末</text>
+  <text x="700" y="645" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">P2上线</text>
+  <text x="1020" y="630" font-family="Consolas, 'Courier New', monospace" font-size="14" font-weight="700" fill="#00C853">第8月末</text>
+  <text x="1020" y="645" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="12" fill="#6B7280">全员覆盖</text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">《软件需求规格说明书 v2.0》第9章</text>
+</svg>

@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" />
+      <line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" />
+    </pattern>
+  </defs>
+  <rect width="1280" height="720" fill="#0D1117" />
+  <rect width="1280" height="720" fill="url(#grid)" />
+  
+  <path fill="#1A73E8" d="M62,40 H62 A2,2 0 0 1 64,42 V94 A2,2 0 0 1 62,96 H62 A2,2 0 0 1 60,94 V42 A2,2 0 0 1 62,40 Z" />
+  <text x="78" y="68" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">政策东风下的企业机遇</text>
+  <text x="78" y="98" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">三大层面协同发力 · 企业AI知识平台建设正当时</text>
+  
+  
+  <g transform="translate(80, 160)">
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M4,0 H356 A4,4 0 0 1 360,4 V436 A4,4 0 0 1 356,440 H4 A4,4 0 0 1 0,436 V4 A4,4 0 0 1 4,0 Z" />
+    
+    <path d="M 4 0 h 352 a 4 4 0 0 1 4 4 v 100 H 0 V 4 a 4 4 0 0 1 4 -4 Z" fill="#1A73E8" fill-opacity="0.12" />
+    <text x="180" y="55" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="36" font-weight="700" fill="#1A73E8">战略层面</text>
+    <text x="180" y="82" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="#6B7280" letter-spacing="2">POLICY FRAMEWORK</text>
+    <line x1="24" y1="104" x2="336" y2="104" stroke="#2A3040" stroke-width="1" />
+    
+    <circle cx="32" cy="148" r="4" fill="#1A73E8" />
+    <text x="50" y="153" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">国发〔2025〕11号</text>
+    <text x="50" y="175" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">十年规划顶层设计</text>
+    <circle cx="32" cy="218" r="4" fill="#1A73E8" />
+    <text x="50" y="223" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">2027普及率 &gt; 70%</text>
+    <text x="50" y="245" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">智能体覆盖主要行业</text>
+    <circle cx="32" cy="288" r="4" fill="#1A73E8" />
+    <text x="50" y="293" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">2035全面智能经济</text>
+    <text x="50" y="315" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">AI深度融合千行百业</text>
+  </g>
+  
+  <g transform="translate(460, 160)">
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M4,0 H356 A4,4 0 0 1 360,4 V436 A4,4 0 0 1 356,440 H4 A4,4 0 0 1 0,436 V4 A4,4 0 0 1 4,0 Z" />
+    <path d="M 4 0 h 352 a 4 4 0 0 1 4 4 v 100 H 0 V 4 a 4 4 0 0 1 4 -4 Z" fill="#7C4DFF" fill-opacity="0.12" />
+    <text x="180" y="55" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="36" font-weight="700" fill="#7C4DFF">产业层面</text>
+    <text x="180" y="82" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="#6B7280" letter-spacing="2">INDUSTRY ECOSYSTEM</text>
+    <line x1="24" y1="104" x2="336" y2="104" stroke="#2A3040" stroke-width="1" />
+    <circle cx="32" cy="148" r="4" fill="#7C4DFF" />
+    <text x="50" y="153" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">"模数共振"行动</text>
+    <text x="50" y="175" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">大模型+数据要素双轮驱动</text>
+    <circle cx="32" cy="218" r="4" fill="#7C4DFF" />
+    <text x="50" y="223" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">共建智能体工厂</text>
+    <text x="50" y="245" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">产业协作平台</text>
+    <circle cx="32" cy="288" r="4" fill="#7C4DFF" />
+    <text x="50" y="293" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">19大应用场景落地</text>
+    <text x="50" y="315" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">覆盖政务/医疗/教育/制造</text>
+  </g>
+  
+  <g transform="translate(840, 160)">
+    <path fill="#151B28" stroke="#2A3040" stroke-width="1" d="M4,0 H356 A4,4 0 0 1 360,4 V436 A4,4 0 0 1 356,440 H4 A4,4 0 0 1 0,436 V4 A4,4 0 0 1 4,0 Z" />
+    <path d="M 4 0 h 352 a 4 4 0 0 1 4 4 v 100 H 0 V 4 a 4 4 0 0 1 4 -4 Z" fill="#00C853" fill-opacity="0.12" />
+    <text x="180" y="55" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="36" font-weight="700" fill="#00C853">治理层面</text>
+    <text x="180" y="82" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="13" fill="#6B7280" letter-spacing="2">GOVERNANCE &amp; COMPLIANCE</text>
+    <line x1="24" y1="104" x2="336" y2="104" stroke="#2A3040" stroke-width="1" />
+    <circle cx="32" cy="148" r="4" fill="#00C853" />
+    <text x="50" y="153" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">智能体分类分级</text>
+    <text x="50" y="175" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">按风险等级差异化管理</text>
+    <circle cx="32" cy="218" r="4" fill="#00C853" />
+    <text x="50" y="223" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">敏感领域严格备案</text>
+    <text x="50" y="245" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">数据安全与隐私保护</text>
+    <circle cx="32" cy="288" r="4" fill="#00C853" />
+    <text x="50" y="293" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">可控/可审计/可追责</text>
+    <text x="50" y="315" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#9CA3AF">全生命周期监管体系</text>
+  </g>
+  
+  <text x="640" y="650" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="20" fill="#9CA3AF">
+    企业构建AI Agent知识平台，既是顺应国策、也是解决真实痛点的必然选择
+  </text>
+  <text x="1200" y="695" text-anchor="end" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">03</text>
+</svg>

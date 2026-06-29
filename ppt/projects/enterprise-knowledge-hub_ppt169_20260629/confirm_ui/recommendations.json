@@ -1,0 +1,168 @@
+{
+  "tier": 2,
+  "lang": "zh",
+  "recommend": {
+    "page_count": "21",
+    "icons": "tabler-outline",
+    "image_usage": ["ai"],
+    "image_ai_path": "auto",
+    "formula_policy": "text-only",
+    "generation_mode": "continuous",
+    "delivery_purpose": "balanced"
+  },
+  "page_count": { "value": "21" },
+  "image_notes": {
+    "value": "封面和章节过渡页使用AI生成蓝图风格主视觉；技术架构页用AI生成等距示意图；装饰性插图克制使用（blueprint风格以SVG线稿为主），仅在封面/分隔页用AI图像强化视觉冲击。"
+  },
+  "color": {
+    "selected": 0,
+    "candidates": [
+      {
+        "palette": {
+          "background": "#0D1117",
+          "secondary_bg": "#1A1F36",
+          "primary": "#1A73E8",
+          "accent": "#00C853",
+          "secondary_accent": "#7C4DFF",
+          "body_text": "#E8ECF0"
+        },
+        "name_zh": "经典蓝图",
+        "name_en": "Classic Blueprint",
+        "note_zh": "暗纸蓝线，工程图纸经典配色 — 蓝线承载全部结构线框，绿色为关键状态高亮，紫色仅用于次级标注。克制、精确、专业。",
+        "note_en": "Dark paper, blue line work — classic engineering drawing. Blue carries all structural line work, green for key state highlight, purple for secondary annotation."
+      },
+      {
+        "palette": {
+          "background": "#1A1F36",
+          "secondary_bg": "#0D1117",
+          "primary": "#7C4DFF",
+          "accent": "#00C853",
+          "secondary_accent": "#1A73E8",
+          "body_text": "#F0F0F5"
+        },
+        "name_zh": "霓虹工程",
+        "name_en": "Neon Engineering",
+        "note_zh": "紫色主导线稿，蓝绿双点缀 — 更具未来感，紫色发光线条替代传统蓝图蓝，适合AI/科技主题的工程美学。",
+        "note_en": "Purple-led line work with blue-green dual accents — more futuristic, luminous purple lines replace traditional blueprint blue for AI/tech engineering aesthetic."
+      },
+      {
+        "palette": {
+          "background": "#0A0E17",
+          "secondary_bg": "#0D1117",
+          "primary": "#E0E0E0",
+          "accent": "#1A73E8",
+          "secondary_accent": "#7C4DFF",
+          "body_text": "#D0D4D8"
+        },
+        "name_zh": "极简白线",
+        "name_en": "Minimal White-line",
+        "note_zh": "白线深底，蓝紫微光点缀 — 建筑剖面图般的极简克制，白线承载全部结构，蓝色仅在高亮处出现，接近纯白描美学。",
+        "note_en": "White line on deep dark, blue-purple micro-accents — architectural section-drawing minimalism. White carries all structure, blue appears only at highlights."
+      }
+    ]
+  },
+  "typography": {
+    "selected": 0,
+    "body_size": 24,
+    "candidates": [
+      {
+        "heading_cjk": "SimHei",
+        "heading_latin": "Arial",
+        "heading_css": "SimHei, Arial, \"Microsoft YaHei\", sans-serif",
+        "body_cjk": "Microsoft YaHei",
+        "body_latin": "Arial",
+        "body_css": "\"Microsoft YaHei\", \"PingFang SC\", Arial, sans-serif",
+        "code_cjk": null,
+        "code_latin": "Consolas",
+        "code_css": "Consolas, \"Courier New\", monospace",
+        "name_zh": "经典工程字",
+        "name_en": "Classic Engineering",
+        "note_zh": "标题SimHei粗壮有力，正文微软雅黑清晰易读，代码Consolas等宽 — 工程文档的标准字体搭配，克制可靠。",
+        "note_en": "SimHei bold titles, Microsoft YaHei readable body, Consolas monospace code — standard engineering document pairing.",
+        "sample_heading": "企业知识中枢 — 基于AI Agent的智能知识管理平台",
+        "sample_heading_latin": "Enterprise Knowledge Hub — AI Agent Platform",
+        "sample_body": "让每个员工都能像问资深同事一样，秒级获取企业知识。从"人脑记忆+散落文件"到"一个框、10秒钟、精准答案"。",
+        "sample_body_latin": "From scattered files and tribal knowledge to one search box, 10 seconds, and precise answers — powered by AI Agents."
+      },
+      {
+        "heading_cjk": "Microsoft YaHei",
+        "heading_latin": "Segoe UI",
+        "heading_css": "\"Segoe UI\", Arial, \"Microsoft YaHei\", \"PingFang SC\", sans-serif",
+        "body_cjk": "Microsoft YaHei",
+        "body_latin": "Segoe UI",
+        "body_css": "\"Microsoft YaHei\", \"PingFang SC\", \"Segoe UI\", Arial, sans-serif",
+        "code_cjk": null,
+        "code_latin": "Consolas",
+        "code_css": "Consolas, \"Courier New\", monospace",
+        "name_zh": "现代UI字",
+        "name_en": "Modern UI",
+        "note_zh": "Segoe UI拉丁主导，微软雅黑中文跟随 — Windows原生UI字体的现代组合，标题与正文统一在sans-serif家族中，轻量现代感。",
+        "note_en": "Segoe UI Latin-led, Microsoft YaHei CJK — native Windows UI font pairing, unified sans-serif across titles and body.",
+        "sample_heading": "企业知识中枢 — 基于AI Agent的智能知识管理平台",
+        "sample_heading_latin": "Enterprise Knowledge Hub — AI Agent Platform",
+        "sample_body": "让每个员工都能像问资深同事一样，秒级获取企业知识。从"人脑记忆+散落文件"到"一个框、10秒钟、精准答案"。",
+        "sample_body_latin": "From scattered files and tribal knowledge to one search box, 10 seconds, and precise answers — powered by AI Agents."
+      },
+      {
+        "heading_cjk": "SimHei",
+        "heading_latin": "Consolas",
+        "heading_css": "SimHei, Consolas, \"Courier New\", \"Microsoft YaHei\", monospace",
+        "body_cjk": "Microsoft YaHei",
+        "body_latin": "Arial",
+        "body_css": "\"Microsoft YaHei\", \"PingFang SC\", Arial, sans-serif",
+        "code_cjk": null,
+        "code_latin": "Consolas",
+        "code_css": "Consolas, \"Courier New\", monospace",
+        "name_zh": "技术蓝本字",
+        "name_en": "Technical Blueprint",
+        "note_zh": "标题SimHei + Consolas等宽混合，正文保持微软雅黑 — 标题中的英文数字呈现代码感，强化技术图纸气质。最大胆的选择。",
+        "note_en": "SimHei + Consolas monospace title mix, Microsoft YaHei body — code-flavored English/numerals in titles for technical drawing character.",
+        "sample_heading": "企业知识中枢 — 基于AI Agent的智能知识管理平台",
+        "sample_heading_latin": "Enterprise Knowledge Hub — v2.0 Architecture",
+        "sample_body": "让每个员工都能像问资深同事一样，秒级获取企业知识。从"人脑记忆+散落文件"到"一个框、10秒钟、精准答案"。",
+        "sample_body_latin": "From scattered files and tribal knowledge to one search box, 10 seconds, and precise answers — powered by AI Agents."
+      }
+    ]
+  },
+  "image_strategy": {
+    "selected": 0,
+    "candidates": [
+      {
+        "rendering": "blueprint",
+        "palette": "cool-corporate",
+        "name_zh": "经典蓝图",
+        "name_en": "Classic Blueprint",
+        "visual_zh": "细单线框，等距投影，尺寸标注线，网格底纹 — 纯粹工程图纸语言",
+        "visual_en": "Thin single-weight line frames, isometric projection, dimension lines, grid backdrop — pure engineering drawing language",
+        "color_zh": "暗纸 #0D1117 (~65%) + 蓝线 #1A73E8 (~25%) + 绿高亮 #00C853 (~5-8%) + 紫标注 #7C4DFF (~2-5%)",
+        "color_en": "Dark paper #0D1117 (~65%) + Blue lines #1A73E8 (~25%) + Green highlight #00C853 (~5-8%) + Purple annotation #7C4DFF (~2-5%)",
+        "mood_zh": "精确、克制、技术权威；如 NASA 工程简报",
+        "mood_en": "Precise, restrained, technically authoritative; like a NASA engineering schematic"
+      },
+      {
+        "rendering": "blueprint",
+        "palette": "tech-neon",
+        "name_zh": "霓虹工程",
+        "name_en": "Neon Engineering",
+        "visual_zh": "发光原理图线条，微光晕节点，暗场HUD风格 — 科幻工程技术美学",
+        "visual_en": "Luminous schematic lines, subtle glow halos around nodes, dark-field HUD style — sci-fi engineering aesthetic",
+        "color_zh": "暗场 #1A1F36 (~60%) + 紫光线 #7C4DFF (~28%) + 绿脉冲 #00C853 (~8%) + 蓝次级 #1A73E8 (~4%)",
+        "color_en": "Dark field #1A1F36 (~60%) + Purple glow #7C4DFF (~28%) + Green pulse #00C853 (~8%) + Blue secondary #1A73E8 (~4%)",
+        "mood_zh": "未来感、高能、赛博精密；如 赛博朋克HUD界面",
+        "mood_en": "Futuristic, energetic, cyber-precise; like a cyberpunk HUD interface"
+      },
+      {
+        "rendering": "blueprint",
+        "palette": "editorial-classic",
+        "name_zh": "建筑蓝本",
+        "name_en": "Architectural Blueprint",
+        "visual_zh": "精确测绘线条，建筑剖面图层次，标注引线 — 纪念碑式的工程美学",
+        "visual_en": "Precise measured line work, architectural section-drawing hierarchy, leader annotation — monumental engineering aesthetic",
+        "color_zh": "深底 #0D1117 (~68%) + 测绘蓝 #1A73E8 (~22%) + 标注紫 #7C4DFF (~7%) + 呼应绿 #00C853 (~3%)",
+        "color_en": "Deep paper #0D1117 (~68%) + Measured blue #1A73E8 (~22%) + Annotation purple #7C4DFF (~7%) + Callout green #00C853 (~3%)",
+        "mood_zh": "建筑感、庄重、不朽；如 伦佐·皮亚诺建筑剖面图",
+        "mood_en": "Architectural, monumental, timeless; like a Renzo Piano building section drawing"
+      }
+    ]
+  }
+}

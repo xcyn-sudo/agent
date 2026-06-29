@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <defs>
+    <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><line x1="0" y1="60" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /><line x1="60" y1="0" x2="60" y2="60" stroke="#1E2640" stroke-width="0.4" /></pattern>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L8,4 L0,8 Z" fill="#1A73E8" /></marker>
+  </defs>
+  <rect width="1280" height="720" fill="#0D1117" /><rect width="1280" height="720" fill="url(#grid)" />
+  <path fill="#1A73E8" d="M62,35 H62 A2,2 0 0 1 64,37 V81 A2,2 0 0 1 62,83 H62 A2,2 0 0 1 60,81 V37 A2,2 0 0 1 62,35 Z" />
+  <text x="78" y="60" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="42" font-weight="700" fill="#E8ECF0">亮点深挖：混合检索 + Rerank</text>
+  <text x="78" y="88" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280" letter-spacing="2">从用户问题到流式答案 · 五阶段检索全链路</text>
+  
+  
+  <path fill="#151B28" stroke="#1A73E8" stroke-width="1" d="M474,120 H806 A4,4 0 0 1 810,124 V162 A4,4 0 0 1 806,166 H474 A4,4 0 0 1 470,162 V124 A4,4 0 0 1 474,120 Z" />
+  <text x="640" y="149" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#E8ECF0">用户问题</text>
+  <line x1="640" y1="166" x2="640" y2="190" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  
+  <path fill="#1A73E8" fill-opacity="0.08" stroke="#1A73E8" stroke-width="1" d="M444,190 H836 A4,4 0 0 1 840,194 V238 A4,4 0 0 1 836,242 H444 A4,4 0 0 1 440,238 V194 A4,4 0 0 1 444,190 Z" />
+  <text x="640" y="215" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">意图解析 + 域路由</text>
+  <text x="640" y="235" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="14" fill="#9CA3AF">识别问题类型 · 路由到对应知识域</text>
+  
+  <line x1="530" y1="242" x2="300" y2="290" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  <line x1="750" y1="242" x2="980" y2="290" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  
+  <path fill="#151B28" stroke="#7C4DFF" stroke-width="1" d="M124,290 H476 A4,4 0 0 1 480,294 V346 A4,4 0 0 1 476,350 H124 A4,4 0 0 1 120,346 V294 A4,4 0 0 1 124,290 Z" />
+  <text x="300" y="316" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#7C4DFF">语义检索通道</text>
+  <text x="300" y="340" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">ChromaDB · 向量语义 · Top-20 召回</text>
+  
+  <path fill="#151B28" stroke="#1A73E8" stroke-width="1" d="M804,290 H1156 A4,4 0 0 1 1160,294 V346 A4,4 0 0 1 1156,350 H804 A4,4 0 0 1 800,346 V294 A4,4 0 0 1 804,290 Z" />
+  <text x="980" y="316" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#1A73E8">关键词检索通道</text>
+  <text x="980" y="340" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">Lucene BM25 · 精确匹配 · Top-20 召回</text>
+  
+  <line x1="300" y1="350" x2="400" y2="410" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  <line x1="980" y1="350" x2="880" y2="410" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  
+  <path fill="#7C4DFF" fill-opacity="0.08" stroke="#7C4DFF" stroke-width="1" d="M404,410 H876 A4,4 0 0 1 880,414 V458 A4,4 0 0 1 876,462 H404 A4,4 0 0 1 400,458 V414 A4,4 0 0 1 404,410 Z" />
+  <text x="640" y="435" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#7C4DFF">RRF 加权融合去重</text>
+  <text x="640" y="455" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">双路结果融合 · 40→10条</text>
+  <line x1="640" y1="462" x2="640" y2="500" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  
+  <path fill="#00C853" fill-opacity="0.08" stroke="#00C853" stroke-width="1" d="M444,500 H836 A4,4 0 0 1 840,504 V548 A4,4 0 0 1 836,552 H444 A4,4 0 0 1 440,548 V504 A4,4 0 0 1 444,500 Z" />
+  <text x="640" y="525" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">Rerank 交叉精排</text>
+  <text x="640" y="545" text-anchor="middle" font-family="Consolas, 'Courier New', monospace" font-size="14" fill="#9CA3AF">语义相关性重排序 · 10→5条</text>
+  <line x1="640" y1="552" x2="640" y2="590" stroke="#1A73E8" stroke-width="1.5" marker-end="url(#arrow)" />
+  
+  <path fill="#00C853" fill-opacity="0.05" stroke="#00C853" stroke-width="1.5" d="M474,590 H806 A4,4 0 0 1 810,594 V632 A4,4 0 0 1 806,636 H474 A4,4 0 0 1 470,632 V594 A4,4 0 0 1 474,590 Z" />
+  <text x="640" y="619" text-anchor="middle" font-family="SimHei, Arial, 'Microsoft YaHei', sans-serif" font-size="18" font-weight="700" fill="#00C853">LLM 生成答案</text>
+  
+  <text x="640" y="680" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', Arial, sans-serif" font-size="16" fill="#6B7280">单一语义检索易遗漏精确条件（如"薪资&gt;1万"），混合检索+结构化过滤补齐短板</text>
+</svg>
