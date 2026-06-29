@@ -14,7 +14,11 @@ const appStore = useAppStore()
     <div class="main-layout__right">
       <HeaderBar />
       <main class="main-layout__content">
-        <router-view />
+        <router-view v-slot="{ Component, route }">
+          <Transition name="page-fade" mode="out-in">
+            <component :is="Component" :key="route.path" />
+          </Transition>
+        </router-view>
       </main>
     </div>
   </div>
@@ -29,7 +33,7 @@ const appStore = useAppStore()
   &__sidebar {
     width: $sidebar-width;
     flex-shrink: 0;
-    transition: width 0.3s;
+    transition: width var(--transition-base);
 
     &.collapsed {
       width: $sidebar-collapsed-width;
@@ -46,7 +50,7 @@ const appStore = useAppStore()
   &__content {
     flex: 1;
     overflow-y: auto;
-    padding: 20px;
+    padding: var(--space-6);
     background-color: $bg-color;
   }
 }

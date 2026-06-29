@@ -446,35 +446,47 @@ onMounted(() => {
 }
 
 .dashboard-title {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   color: $text-primary;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .stat-cards {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .stat-card {
   text-align: center;
+  border-top: 3px solid transparent;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  // 第一行统计卡片 — 角色色系强调条
+  &:nth-child(1) { border-top-color: $login-orange; }
+  &:nth-child(2) { border-top-color: $login-purple; }
+  &:nth-child(3) { border-top-color: $login-yellow; }
+  &:nth-child(4) { border-top-color: $login-black; }
 
   .stat-number {
-    font-size: 32px;
-    font-weight: 700;
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-bold);
     color: $primary-color;
-    line-height: 1.2;
+    line-height: var(--line-height-tight);
   }
 
   .stat-label {
-    font-size: 13px;
+    font-size: var(--font-size-sm);
     color: $text-secondary;
-    margin-top: 8px;
+    margin-top: var(--space-2);
   }
 }
 
 .chart-section {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .chart-card {
@@ -485,8 +497,8 @@ onMounted(() => {
   }
 
   .chart-card-title {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
     color: $text-primary;
   }
 }

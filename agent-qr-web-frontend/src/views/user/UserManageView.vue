@@ -188,23 +188,23 @@ onMounted(() => {
 <style scoped lang="scss">
 .user-manage {
   &__title {
-    font-size: 20px;
-    font-weight: 600;
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-semibold);
     color: $text-primary;
-    margin-bottom: 20px;
+    margin-bottom: var(--space-5);
   }
 
   &__toolbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: var(--space-4);
   }
 
   &__filters {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: var(--space-2);
   }
 }
 

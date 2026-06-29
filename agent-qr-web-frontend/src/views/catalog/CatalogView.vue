@@ -160,19 +160,19 @@ onMounted(() => {
 }
 
 .catalog-title {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
   color: $text-primary;
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .catalog-search {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
   max-width: 480px;
 }
 
 .catalog-tabs {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-5);
 }
 
 .catalog-content {

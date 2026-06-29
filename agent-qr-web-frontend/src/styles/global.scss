@@ -9,7 +9,7 @@
 
 html, body, #app {
   height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-family-base);
   font-size: $font-size-base;
   color: $text-primary;
   background-color: $bg-color;
@@ -21,8 +21,8 @@ html, body, #app {
   height: 6px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c0c4cc;
-  border-radius: 3px;
+  background: var(--brand-gray-400);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-track {
   background: transparent;
@@ -33,7 +33,7 @@ a {
   color: $primary-color;
   text-decoration: none;
   &:hover {
-    color: lighten($primary-color, 10%);
+    color: var(--brand-primary-light, #7B9BFF);
   }
 }
 
@@ -49,7 +49,7 @@ a {
   content: '\258A';
   display: inline;
   animation: blink-cursor 1s step-end infinite;
-  color: #409eff;
+  color: $primary-color;
   font-weight: bold;
 }
 
@@ -60,69 +60,69 @@ a {
   margin-top: 12px;
 
   .feedback-btn {
-    font-size: 12px;
-    padding: 4px 12px;
-    border: 1px solid #dcdfe6;
-    border-radius: 12px;
+    font-size: $font-size-small;
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid $border-color;
+    border-radius: var(--radius-lg);
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all var(--transition-fast);
     background: #fff;
-    color: #606266;
+    color: $text-regular;
 
     &:hover {
-      border-color: #409eff;
-      color: #409eff;
+      border-color: $primary-color;
+      color: $primary-color;
     }
 
     &--active {
-      background: #ecf5ff;
-      border-color: #409eff;
-      color: #409eff;
+      background: var(--brand-primary-lightest, #EEF2FF);
+      border-color: $primary-color;
+      color: $primary-color;
     }
   }
 }
 
 // ★ 密级标签颜色
 .sensitivity-tag {
-  &--public  { color: #67c23a; }  // 公开 - 绿色
-  &--internal { color: #409eff; } // 内部 - 蓝色
-  &--confidential { color: #e6a23c; } // 机密 - 橙色
-  &--topsecret { color: #f56c6c; }    // 绝密 - 红色
+  &--public  { color: $success-color; }
+  &--internal { color: $primary-color; }
+  &--confidential { color: $warning-color; }
+  &--topsecret { color: $danger-color; }
 }
 
 // ★ 域标签
 .domain-tag {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  background: #ecf5ff;
-  color: #409eff;
+  padding: var(--space-0) var(--space-2);
+  border-radius: var(--radius-xs);
+  font-size: $font-size-small;
+  background: var(--brand-primary-lightest, #EEF2FF);
+  color: $primary-color;
 }
 
 // ★ 停止生成按钮
 .btn-stop-generate {
-  background: #f56c6c;
-  border-color: #f56c6c;
+  background: $danger-color;
+  border-color: $danger-color;
   color: #fff;
   &:hover {
-    background: #f78989;
+    background: var(--el-color-danger-light-3, #FF7A7B);
   }
 }
 
 // ★ 阻断行高亮
 .row--blocked {
-  background-color: #fef0f0 !important;
+  background-color: var(--brand-danger-light, #FFEDED) !important;
 }
 
 // ★ Token 倒计时
 .token-countdown {
-  font-size: 12px;
-  color: #909399;
-  margin-right: 8px;
+  font-size: $font-size-small;
+  color: $text-secondary;
+  margin-right: var(--space-2);
 
   &--warning {
-    color: #f56c6c;
+    color: $danger-color;
     font-weight: 600;
   }
 }
@@ -173,36 +173,152 @@ a {
 
     .mobile-card {
       background: #fff;
-      border-radius: 8px;
-      padding: 16px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      box-shadow: var(--shadow-sm);
 
       &__title {
-        font-weight: 600;
-        margin-bottom: 8px;
+        font-weight: var(--font-weight-semibold);
+        margin-bottom: var(--space-2);
       }
 
       &__row {
         display: flex;
         justify-content: space-between;
-        font-size: 13px;
+        font-size: var(--font-size-sm);
         color: $text-secondary;
-        margin-bottom: 4px;
+        margin-bottom: var(--space-1);
       }
     }
   }
 }
 
+// ==================== P4 登录页动画 ====================
+
+// 角色轻微浮动
+@keyframes float-char {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+// 眨眼
+@keyframes blink-eye {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+// 背景渐变缓慢移动
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// ★ 入场动画 - 角色从下方滑入
+@keyframes char-entrance {
+  from {
+    transform: translateY(60px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// ★ 抖动动画 - 错误反馈
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-8px); }
+  30% { transform: translateX(8px); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(6px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(3px); }
+}
+
 // ★ 图表导出按钮
 .chart-export-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 5;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: var(--z-dropdown);
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity var(--transition-fast);
 
   .chart-container:hover & {
     opacity: 1;
+  }
+}
+
+// ==================== P5 动画系统 ====================
+
+// ★ 页面过渡动画
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity var(--transition-base), transform var(--transition-base);
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+// ★ 骨骼屏加载态
+@keyframes skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--brand-gray-200) 25%,
+    var(--brand-gray-100) 50%,
+    var(--brand-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+// ★ 可交互卡片微交互
+.card-interactive {
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+  }
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// ★ 缩放弹入（用于对话框）
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// ★ 上滑淡入（用于通知/Toast）
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

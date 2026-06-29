@@ -115,7 +115,7 @@ async function handleDelete(id: number, event: Event) {
     padding: 10px 12px;
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color var(--transition-fast);
     margin-bottom: 4px;
 
     &:hover {
@@ -127,10 +127,10 @@ async function handleDelete(id: number, event: Event) {
     }
 
     &--active {
-      background-color: lighten($primary-color, 40%);
+      background-color: var(--brand-primary-lightest, #EEF2FF);
 
       &:hover {
-        background-color: lighten($primary-color, 40%);
+        background-color: var(--brand-primary-lightest, #EEF2FF);
       }
     }
   }
@@ -170,7 +170,7 @@ async function handleDelete(id: number, event: Event) {
     margin-left: 4px;
     font-size: 16px;
     color: $text-secondary;
-    transition: opacity 0.2s;
+    transition: opacity var(--transition-fast);
 
     &:hover {
       color: $danger-color;
