@@ -493,10 +493,25 @@ function handleTestConnection() {
             placeholder="https://api.example.com"
           />
         </el-form-item>
+        <el-form-item label="请求方式">
+          <el-select v-model="connectionConfig.method" style="width: 100%">
+            <el-option label="GET" value="GET" />
+            <el-option label="POST" value="POST" />
+            <el-option label="PUT" value="PUT" />
+            <el-option label="DELETE" value="DELETE" />
+            <el-option label="HEAD" value="HEAD" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="接口路径">
+          <el-input
+            v-model="connectionConfig.endpoint"
+            placeholder="/api/data（默认 /）"
+          />
+        </el-form-item>
         <el-form-item label="认证头">
           <el-input
             v-model="connectionConfig.authHeader"
-            placeholder="请输入认证头"
+            placeholder="Authorization: Bearer xxx"
           />
         </el-form-item>
         <el-form-item label="分页参数">
