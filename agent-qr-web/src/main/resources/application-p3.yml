@@ -7,7 +7,7 @@ spring:
   datasource:
     # 写库（主库）— 与 P1/P2 配置一致
     write:
-      jdbc-url: jdbc:mysql://localhost:3308/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      jdbc-url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_WRITE_PORT:3308}/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
       username: ${MYSQL_USERNAME:root}
       password: ${MYSQL_PASSWORD:root}
       driver-class-name: com.mysql.cj.jdbc.Driver
@@ -19,7 +19,7 @@ spring:
         max-lifetime: 1800000
     # 读库（从库）— 初期可与主库同实例
     read:
-      jdbc-url: jdbc:mysql://localhost:3309/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      jdbc-url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_READ_PORT:3309}/agent_qr?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
       username: ${MYSQL_USERNAME:root}
       password: ${MYSQL_PASSWORD:root}
       driver-class-name: com.mysql.cj.jdbc.Driver

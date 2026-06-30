@@ -74,6 +74,9 @@ services:
       # Spring 配置
       SPRING_PROFILES_ACTIVE: p1, p2, p3
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-agent_qr}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
+      MYSQL_HOST: mysql
+      MYSQL_WRITE_PORT: 3306
+      MYSQL_READ_PORT: 3306
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
       # JWT
