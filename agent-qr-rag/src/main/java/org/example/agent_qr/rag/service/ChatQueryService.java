@@ -466,6 +466,25 @@ public class ChatQueryService {
      * 任何环节异常均自动降级，不影响问答主流程。
      * </p>
      */
+    /**
+     * 提取结构化过滤条件（P3 扩展）。
+     * <p>只在域路由成功时触发 LLM 提取，不可用时返回空列表。</p>
+     */
+    private List<FilterCondition> extractFilterConditions(String query, DomainRoutingResult routing) {
+        if (filterConditionExtractor == null) {
+            return List.of();
+        }
+        if (routing == null || routing.isFallbackToGlobal()) {
+            return List.of();
+        }
+        try {
+            return filterConditionExtractor.extract(query, routing.getPrimaryDomain());
+        } catch (Exception e) {
+            log.warn("结构化过滤条件提取异常，降级全量检索: query={}", query, e);
+            return List.of();
+        }
+    }
+
     private DomainRoutingResult resolveRouting(String query) {
         // 1. 优先使用 P3 语义路由
         if (domainRouterV2 != null) {
