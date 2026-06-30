@@ -244,9 +244,9 @@ public class DataSourceService {
      * @return 字段名列表
      */
     @SuppressWarnings("unchecked")
-    public List<String> detectColumns(String connectionConfigJson, String tableName) {
+    public List<String> detectColumns(String connectionConfigJson, String tableName, String sourceType) {
         Map<String, Object> config = parseJson(connectionConfigJson);
-        DataSourceConnector connector = getConnector("JDBC");
+        DataSourceConnector connector = getConnector(sourceType != null ? sourceType : "JDBC");
         return connector.detectColumns(config, tableName);
     }
 

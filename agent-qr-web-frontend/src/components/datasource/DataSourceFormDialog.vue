@@ -29,6 +29,10 @@ const fieldInput = reactive<Record<string, string>>({})
 // 完整性检查字段选择状态（字段名 → 是否选中）
 const contentFieldsSelected = reactive<Record<string, boolean>>({})
 
+// REST 数据源字段检测
+const restDetecting = ref(false)
+const restDetectedFields = ref<string[]>([])
+
 // 所有已检测字段的并集（跨表去重）
 const allDetectedFields = computed(() => {
   const set = new Set<string>()
@@ -104,6 +108,8 @@ function clearConnectionConfig() {
   Object.keys(detectingTables).forEach((key) => delete detectingTables[key])
   Object.keys(fieldInput).forEach((key) => delete fieldInput[key])
   Object.keys(contentFieldsSelected).forEach((key) => delete contentFieldsSelected[key])
+  restDetectedFields.value = []
+  restDetecting.value = false
 }
 
 watch(sourceType, () => {
@@ -205,6 +211,31 @@ async function detectFields(tableName: string) {
     if (!connectionConfig.tableFields[tableName]) connectionConfig.tableFields[tableName] = []
   } finally {
     detectingTables[tableName] = false
+  }
+}
+
+/** REST 数据源字段检测：请求一次 API，提取响应 JSON 的所有字段名 */
+async function detectRestFields() {
+  const config = {
+    baseUrl: connectionConfig.baseUrl,
+    endpoint: connectionConfig.endpoint,
+    method: connectionConfig.method,
+    authHeader: connectionConfig.authHeader,
+    dataPath: connectionConfig.dataPath,
+  }
+  if (!config.baseUrl) return
+  restDetecting.value = true
+  try {
+    const res = await datasourceApi.detectColumns(JSON.stringify(config), '', 'REST')
+    restDetectedFields.value = res.data || []
+    // 默认全选所有检测到的字段
+    for (const field of restDetectedFields.value) {
+      if (contentFieldsSelected[field] === undefined) {
+        contentFieldsSelected[field] = true
+      }
+    }
+  } finally {
+    restDetecting.value = false
   }
 }
 
@@ -513,6 +544,39 @@ function handleTestConnection() {
             v-model="connectionConfig.dataPath"
             placeholder="如 stories、data.items（选填，自动检测）"
           />
+        </el-form-item>
+        <el-form-item label="完整性检查字段">
+          <div class="table-input-area">
+            <div class="table-card">
+              <div class="table-card-header">
+                <el-button
+                  size="small"
+                  type="success"
+                  :loading="restDetecting"
+                  @click="detectRestFields"
+                >
+                  检测字段
+                </el-button>
+                <span v-if="restDetectedFields.length === 0 && !restDetecting" style="color: #909399; font-size: 12px;">
+                  点击检测按钮自动获取字段
+                </span>
+              </div>
+              <!-- 检测到的字段复选框 -->
+              <div v-if="restDetectedFields.length > 0" class="field-checkboxes">
+                <el-checkbox
+                  v-for="field in restDetectedFields"
+                  :key="field"
+                  :model-value="!!contentFieldsSelected[field]"
+                  @change="toggleContentField(field)"
+                >
+                  {{ field }}
+                </el-checkbox>
+              </div>
+            </div>
+            <p v-if="restDetectedFields.length > 0 && !restDetectedFields.some(f => contentFieldsSelected[f])" class="content-fields-warn">
+              未选择任何字段，将使用全局默认值（content, text, _content）
+            </p>
+          </div>
         </el-form-item>
         <el-form-item label="认证头">
           <el-input

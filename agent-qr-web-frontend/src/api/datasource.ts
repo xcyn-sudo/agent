@@ -26,10 +26,11 @@ export const datasourceApi = {
     return request.post<any, ApiResult<ConnectionTestResult>>(`/api/datasource/${id}/test`)
   },
 
-  detectColumns(connectionConfig: string, tableName: string) {
+  detectColumns(connectionConfig: string, tableName: string, sourceType?: string) {
     return request.post<any, ApiResult<string[]>>('/api/datasource/detect-columns', {
       connectionConfig,
-      tableName,
+      tableName: tableName || '',
+      sourceType: sourceType || 'JDBC',
     })
   },
 

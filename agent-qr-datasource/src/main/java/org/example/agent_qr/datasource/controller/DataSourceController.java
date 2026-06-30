@@ -139,13 +139,11 @@ public class DataSourceController {
     public Result<List<String>> detectColumns(@RequestBody Map<String, String> body) {
         String connectionConfig = body.get("connectionConfig");
         String tableName = body.get("tableName");
+        String sourceType = body.get("sourceType");
         if (connectionConfig == null || connectionConfig.isBlank()) {
             throw new BusinessException("connectionConfig 不能为空");
         }
-        if (tableName == null || tableName.isBlank()) {
-            throw new BusinessException("tableName 不能为空");
-        }
-        List<String> columns = dataSourceService.detectColumns(connectionConfig, tableName);
+        List<String> columns = dataSourceService.detectColumns(connectionConfig, tableName, sourceType);
         return Result.success("字段检测成功", columns);
     }
 
