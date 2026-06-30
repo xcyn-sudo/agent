@@ -13,6 +13,7 @@ COPY pom.xml ./
 COPY .mvn .mvn
 COPY mvnw mvnw.cmd ./
 
+# 复制全部模块的 pom.xml（父 pom 的 <modules> 中列出的所有模块都需要存在）
 COPY agent-qr-common/pom.xml agent-qr-common/
 COPY agent-qr-auth/pom.xml    agent-qr-auth/
 COPY agent-qr-user/pom.xml    agent-qr-user/
@@ -20,6 +21,11 @@ COPY agent-qr-knowledge/pom.xml agent-qr-knowledge/
 COPY agent-qr-rag/pom.xml     agent-qr-rag/
 COPY agent-qr-statistics/pom.xml agent-qr-statistics/
 COPY agent-qr-web/pom.xml     agent-qr-web/
+COPY agent-qr-catalog/pom.xml agent-qr-catalog/
+COPY agent-qr-datasource/pom.xml agent-qr-datasource/
+COPY agent-qr-etl/pom.xml     agent-qr-etl/
+COPY agent-qr-compensation/pom.xml agent-qr-compensation/
+COPY agent-qr-data-quality/pom.xml agent-qr-data-quality/
 
 # 复制全部源码
 COPY agent-qr-common/src agent-qr-common/src
@@ -29,6 +35,11 @@ COPY agent-qr-knowledge/src agent-qr-knowledge/src
 COPY agent-qr-rag/src     agent-qr-rag/src
 COPY agent-qr-statistics/src agent-qr-statistics/src
 COPY agent-qr-web/src     agent-qr-web/src
+COPY agent-qr-catalog/src agent-qr-catalog/src
+COPY agent-qr-datasource/src agent-qr-datasource/src
+COPY agent-qr-etl/src     agent-qr-etl/src
+COPY agent-qr-compensation/src agent-qr-compensation/src
+COPY agent-qr-data-quality/src agent-qr-data-quality/src
 
 # 一步构建：package 会自动下载依赖
 # -pl agent-qr-web -am: 只构建 web 模块及其依赖模块
