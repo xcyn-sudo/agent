@@ -38,9 +38,10 @@ public class BatchEmbeddingService {
     @Autowired
     private ProviderFactory providerFactory;
 
-    /** P3 新增：向量维度管理器，用于动态获取 Collection 名称 */
-    @Autowired
-    private EmbeddingDimensionManager dimensionManager;
+    /** P3 新增：向量维度管理器，用于动态获取 Collection 名称（暂未实现，待后续版本） */
+    // EmbeddingDimensionManager 类尚未创建，暂时禁用
+    // @Autowired
+    // private EmbeddingDimensionManager dimensionManager;
 
     /** 攒批队列，容量 2000 */
     private final BlockingQueue<EmbedTask> taskQueue = new LinkedBlockingQueue<>(2000);
@@ -179,18 +180,12 @@ public class BatchEmbeddingService {
 
     /**
      * 获取当前 Embedding 模型对应的 ChromaDB Collection 名称（P3 新增）。
-     * <p>优先使用 {@link EmbeddingDimensionManager} 动态生成，不可用时返回 {@code null}。</p>
+     * <p>EmbeddingDimensionManager 类尚未创建，当前始终返回 {@code null}。</p>
      *
-     * @return Collection 名称，不可用时返回 {@code null}
+     * @return Collection 名称，暂不可用返回 {@code null}
      */
     public String getEffectiveCollectionName() {
-        if (dimensionManager != null) {
-            try {
-                return dimensionManager.getCollectionName();
-            } catch (Exception e) {
-                log.warn("获取动态 Collection 名称失败，降级使用 P2 配置", e);
-            }
-        }
+        // EmbeddingDimensionManager 尚未实现，返回 null 使用 P2 默认配置
         return null;
     }
 

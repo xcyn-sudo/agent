@@ -157,4 +157,89 @@ public class StructuredFilterService {
             return LocalDate.of(2099, 12, 31);
         }
     }
+
+    // ==================== 聚合查询路径专用（无界查询） ====================
+
+    /**
+     * 无界结构化过滤（聚合查询路径专用）。
+     * <p>
+     * 与 {@link #filterChunkIds(String, List)} 的区别：
+     * <ul>
+     *   <li>去掉 subList(0, 500) 硬截断，SQL 层安全上限 2000</li>
+     *   <li>仅当 FilterConditionExtractor 已提取到条件时才调用</li>
+     *   <li>避免无条件全表扫描</li>
+     * </ul>
+     * </p>
+     *
+     * @param domain     业务域（可为 null）
+     * @param conditions 过滤条件列表（不应为空）
+     * @return 全部匹配的切片 ID 列表（上限 2000）
+     */
+    public List<Long> filterChunkIdsUnbounded(String domain, List<FilterCondition> conditions) {
+        if (conditions == null || conditions.isEmpty()) {
+            return filterChunkIds(domain, conditions); // 回退到原方法
+        }
+
+        Set<Long> resultSet = null;
+        for (FilterCondition condition : conditions) {
+            List<Long> ids = dispatchConditionUnbounded(condition);
+            if (resultSet == null) {
+                resultSet = new HashSet<>(ids);
+            } else {
+                resultSet.retainAll(ids); // 多条件交集（AND）
+            }
+        }
+
+        // 域过滤：覆盖两条管线
+        if (domain != null && !domain.isBlank()) {
+            Set<Long> domainIds = new HashSet<>();
+            domainIds.addAll(chunkStructuredFilterMapper.selectChunkIdsByDomainUnbounded(domain));
+            domainIds.addAll(chunkStructuredFilterMapper.selectChunkIdsByDocumentDomainUnbounded(domain));
+            if (resultSet == null) {
+                resultSet = domainIds;
+            } else {
+                resultSet.retainAll(domainIds);
+            }
+        }
+
+        if (resultSet == null || resultSet.isEmpty()) {
+            return List.of();
+        }
+
+        List<Long> result = new ArrayList<>(resultSet);
+        result.sort(Comparator.naturalOrder());
+
+        // 安全上限 2000（防止极端情况），但不做 500 的硬截断
+        if (result.size() > 2000) {
+            log.warn("无界查询结果超过安全上限: size={}, domain={}", result.size(), domain);
+            result = result.subList(0, 2000);
+        }
+
+        log.info("无界结构化过滤: domain={}, conditions={}, resultSize={}",
+                domain, conditions.size(), result.size());
+        return result;
+    }
+
+    /**
+     * 分派到无界 Mapper 方法（聚合查询专用）。
+     */
+    private List<Long> dispatchConditionUnbounded(FilterCondition condition) {
+        return switch (condition.getFieldType()) {
+            case "NUMBER" -> {
+                BigDecimal min = parseMinNumber(condition);
+                BigDecimal max = parseMaxNumber(condition);
+                yield chunkStructuredFilterMapper.selectAllChunkIdsByNumberRange(
+                        condition.getFieldName(), min, max);
+            }
+            case "DATE" -> {
+                LocalDate start = parseStartDate(condition);
+                LocalDate end = parseEndDate(condition);
+                yield chunkStructuredFilterMapper.selectAllChunkIdsByDateRange(
+                        condition.getFieldName(), start, end);
+            }
+            case "ENUM", "STRING" -> chunkStructuredFilterMapper.selectAllChunkIdsByStringValue(
+                    condition.getFieldName(), condition.getValue());
+            default -> List.<Long>of();
+        };
+    }
 }

@@ -15,7 +15,9 @@ import org.example.agent_qr.common.event.AnswerGeneratedEvent;
 import org.example.agent_qr.rag.circuitbreaker.LLMCircuitBreaker;
 import org.example.agent_qr.rag.entity.Message;
 import org.example.agent_qr.rag.entity.RetrievedDocument;
+import org.example.agent_qr.rag.classifier.QueryIntentClassifier;
 import org.example.agent_qr.rag.filter.FilterCondition;
+import org.example.agent_qr.rag.filter.FilterConditionExtractor;
 import org.example.agent_qr.rag.mapper.MessageMapper;
 import org.example.agent_qr.rag.prompt.PromptTemplate;
 import org.example.agent_qr.rag.provider.EmbeddingProvider;
@@ -65,6 +67,18 @@ public class ChatQueryService {
     @Autowired(required = false)
     private DomainRouterV2 domainRouterV2;
 
+    /** 结构化过滤条件提取器 — 可选注入，LLM 自动提取过滤条件 */
+    @Autowired(required = false)
+    private FilterConditionExtractor filterConditionExtractor;
+
+    /** 查询意图分类器 — 可选注入，区分语义类 vs 聚合类查询 */
+    @Autowired(required = false)
+    private QueryIntentClassifier intentClassifier;
+
+    /** 聚合查询编排服务 — 可选注入，处理列举/统计类查询 */
+    @Autowired(required = false)
+    private AggregationQueryService aggregationQueryService;
+
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     public ChatQueryService(ProviderFactory providerFactory,
@@ -108,10 +122,34 @@ public class ChatQueryService {
         EmbeddingProvider embeddingProvider = providerFactory.getEmbeddingProvider();
         float[] queryEmbedding = embeddingProvider.embed(query);
 
-        // 5. P2: 域路由 + 混合检索（domainRouter 可选）
+        // 5. 域路由 + 意图分类 + 检索
         DomainRoutingResult routing = resolveRouting(query);
-        List<RetrievedDocument> retrievedDocs = hybridRetriever.hybridSearch(
-                query, queryEmbedding, routing, List.of());
+        List<RetrievedDocument> retrievedDocs;
+        boolean isAggregation = false;
+        int totalMatchCount = 0;
+
+        // 意图分类：聚合类查询（列举/统计）走聚合路径，语义类走混合检索
+        QueryIntentClassifier.IntentType intent = (intentClassifier != null)
+                ? intentClassifier.classify(query)
+                : QueryIntentClassifier.IntentType.SEMANTIC;
+
+        if (intent == QueryIntentClassifier.IntentType.AGGREGATION
+                && aggregationQueryService != null) {
+            log.info("查询意图: AGGREGATION, 走聚合查询路径");
+            retrievedDocs = aggregationQueryService.aggregate(query, routing);
+            if (retrievedDocs.isEmpty()) {
+                // 聚合路径无结果，降级到语义路径
+                log.info("聚合查询无结果，降级到语义路径");
+                retrievedDocs = hybridRetriever.hybridSearch(
+                        query, queryEmbedding, routing, extractFilterConditions(query, routing));
+            } else {
+                isAggregation = true;
+                totalMatchCount = retrievedDocs.size();
+            }
+        } else {
+            retrievedDocs = hybridRetriever.hybridSearch(
+                    query, queryEmbedding, routing, extractFilterConditions(query, routing));
+        }
 
         // 6. 无结果处理
         String answer;
@@ -120,8 +158,47 @@ public class ChatQueryService {
 
         if (retrievedDocs.isEmpty()) {
             answer = "知识库中暂无相关信息";
-            log.info("混合检索无结果，conversationId={}", conversationId);
+            log.info("检索无结果，conversationId={}", conversationId);
+        } else if (isAggregation) {
+            // 聚合查询路径：使用紧凑上下文 + 聚合 Prompt
+            String aggregationPromptBase = promptTemplate.getAggregationPromptBase();
+            String contextText = contextTokenManager.buildAggregationContext(
+                    retrievedDocs, aggregationPromptBase, query, totalMatchCount);
+            String systemPrompt = promptTemplate.buildAggregationSystemPrompt(contextText);
+
+            List<ChatMessage> messages = new ArrayList<>();
+            messages.add(new SystemMessage(systemPrompt));
+            messages.add(new UserMessage(query));
+
+            LLMProvider llmProvider = circuitBreaker.getActiveProvider();
+            try {
+                answer = llmProvider.generate(messages);
+                if (answer == null || answer.isBlank()) {
+                    log.warn("LLM 返回空内容，conversationId={}, query={}", conversationId, query);
+                    answer = "抱歉，AI 未能生成有效回答，请稍后重试";
+                }
+                circuitBreaker.recordSuccess();
+            } catch (Exception e) {
+                circuitBreaker.recordFailure();
+                log.error("LLM 调用失败", e);
+                answer = "抱歉，AI 服务暂时不可用，请稍后重试";
+            }
+
+            for (RetrievedDocument doc : retrievedDocs) {
+                Map<String, Object> sourceMap = new HashMap<>();
+                sourceMap.put("documentId", doc.getDocumentId());
+                sourceMap.put("documentTitle", doc.getDocumentTitle());
+                sourceMap.put("content", doc.getContent());
+                sourceMap.put("similarity", doc.getSimilarity());
+                sources.add(sourceMap);
+            }
+            try {
+                sourcesJson = OBJECT_MAPPER.writeValueAsString(sources);
+            } catch (JsonProcessingException e) {
+                log.error("序列化 sources 失败", e);
+            }
         } else {
+            // 语义查询路径：使用完整上下文 + 标准 Prompt（现有逻辑不变）
             String systemPromptBase = promptTemplate.getSystemPromptBase();
             String contextText = contextTokenManager.buildContextWithBudget(
                     retrievedDocs, systemPromptBase, query);
@@ -191,11 +268,38 @@ public class ChatQueryService {
             messageMapper.insert(userMessage);
             conversationService.incrementMessageCount(conversationId);
 
-            EmbeddingProvider embeddingProvider = providerFactory.getEmbeddingProvider();
-            float[] queryEmbedding = embeddingProvider.embed(query);
             DomainRoutingResult routing = resolveRouting(query);
-            List<RetrievedDocument> retrievedDocs = hybridRetriever.hybridSearch(
-                    query, queryEmbedding, routing, List.of());
+
+            // 意图分类
+            QueryIntentClassifier.IntentType intent = (intentClassifier != null)
+                    ? intentClassifier.classify(query)
+                    : QueryIntentClassifier.IntentType.SEMANTIC;
+
+            List<RetrievedDocument> retrievedDocs;
+            boolean isAggregation = false;
+            int totalMatchCount = 0;
+
+            if (intent == QueryIntentClassifier.IntentType.AGGREGATION
+                    && aggregationQueryService != null) {
+                log.info("SSE 查询意图: AGGREGATION, 走聚合查询路径");
+                retrievedDocs = aggregationQueryService.aggregate(query, routing);
+                if (retrievedDocs.isEmpty()) {
+                    // 降级到语义路径
+                    log.info("SSE 聚合查询无结果，降级到语义路径");
+                    EmbeddingProvider embeddingProvider = providerFactory.getEmbeddingProvider();
+                    float[] queryEmbedding = embeddingProvider.embed(query);
+                    retrievedDocs = hybridRetriever.hybridSearch(
+                            query, queryEmbedding, routing, extractFilterConditions(query, routing));
+                } else {
+                    isAggregation = true;
+                    totalMatchCount = retrievedDocs.size();
+                }
+            } else {
+                EmbeddingProvider embeddingProvider = providerFactory.getEmbeddingProvider();
+                float[] queryEmbedding = embeddingProvider.embed(query);
+                retrievedDocs = hybridRetriever.hybridSearch(
+                        query, queryEmbedding, routing, extractFilterConditions(query, routing));
+            }
 
             List<Map<String, Object>> sources = new ArrayList<>();
             if (!retrievedDocs.isEmpty()) {
@@ -225,10 +329,21 @@ public class ChatQueryService {
                 return;
             }
 
-            String systemPromptBase = promptTemplate.getSystemPromptBase();
-            String contextText = contextTokenManager.buildContextWithBudget(
-                    retrievedDocs, systemPromptBase, query);
-            String systemPrompt = promptTemplate.buildSystemPrompt(contextText);
+            // 根据路径选择上下文构建方式和 Prompt
+            final String systemPromptBase;
+            final String contextText;
+            final String systemPrompt;
+            if (isAggregation) {
+                systemPromptBase = promptTemplate.getAggregationPromptBase();
+                contextText = contextTokenManager.buildAggregationContext(
+                        retrievedDocs, systemPromptBase, query, totalMatchCount);
+                systemPrompt = promptTemplate.buildAggregationSystemPrompt(contextText);
+            } else {
+                systemPromptBase = promptTemplate.getSystemPromptBase();
+                contextText = contextTokenManager.buildContextWithBudget(
+                        retrievedDocs, systemPromptBase, query);
+                systemPrompt = promptTemplate.buildSystemPrompt(contextText);
+            }
 
             List<ChatMessage> messages = new ArrayList<>();
             messages.add(new SystemMessage(systemPrompt));
@@ -315,6 +430,32 @@ public class ChatQueryService {
                 }
             }
             emitter.completeWithError(e);
+        }
+    }
+
+    /**
+     * 提取结构化过滤条件（LLM 自动提取，含完整降级保护）。
+     * <p>
+     * 任何异常场景均返回空列表，不影响检索主流程：
+     * <ul>
+     *   <li>extractor 未注入 → List.of()</li>
+     *   <li>路由为空或 fallback → List.of()</li>
+     *   <li>提取异常 → List.of()</li>
+     * </ul>
+     * </p>
+     */
+    private List<FilterCondition> extractFilterConditions(String query, DomainRoutingResult routing) {
+        if (filterConditionExtractor == null) {
+            return List.of();
+        }
+        if (routing == null || routing.isFallbackToGlobal()) {
+            return List.of();
+        }
+        try {
+            return filterConditionExtractor.extract(query, routing.getPrimaryDomain());
+        } catch (Exception e) {
+            log.warn("结构化过滤条件提取异常，降级全量检索: query={}", query, e);
+            return List.of();
         }
     }
 

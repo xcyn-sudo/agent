@@ -16,16 +16,25 @@ ollama:
     base-url: http://localhost:11434
     model: qwen3-embedding:4b
 
+# ── DashScope（阿里云千问）LLM Provider — 结构化过滤条件提取专用 ──
+dashscope:
+  llm:
+    api-key: ${DASHSCOPE_API_KEY:}
+    base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
+    model: qwen-turbo
+    temperature: 0.1
+    max-tokens: 1024
+
 # ── Agent-QR P2 增强配置 ──
 agent-qr:
   # 混合检索
   retrieval:
     semantic-weight: 0.55       # 语义检索权重（从 0.6 下调，提升 BM25 关键词匹配地位）
     keyword-weight: 0.45        # 关键词检索权重（从 0.4 上调）
-    wide-top-k: 30              # 宽召回 TopK（每次从 ChromaDB/BM25 各拉取 30 条候选）
-    final-top-k: 15             # Reranker 精排后的候选数（由 token 预算层进一步裁剪）
+    wide-top-k: 50              # 宽召回 TopK（30→50，扩大宽召回支撑聚合查询）
+    final-top-k: 30             # Reranker 精排后的候选数（15→30，翻倍精排保留）
     rrf-k: 15                   # RRF 融合常数 k（越小排名区分度越大，原值 60）
-    max-context-tokens: 8000    # 文档上下文 token 预算上限（含 LLM 回复预留 2048）
+    max-context-tokens: 16000   # 文档上下文 token 预算上限（8000→16000，更多文档可进入上下文）
 
   # Reranker
   reranker:

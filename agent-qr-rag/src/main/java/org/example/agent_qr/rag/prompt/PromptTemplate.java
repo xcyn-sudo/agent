@@ -27,6 +27,21 @@ public class PromptTemplate {
 
             请基于以上参考资料给出准确、简洁的回答：""";
 
+    /** 聚合查询系统提示词前缀：完整记录列表展示 */
+    private static final String AGGREGATION_PROMPT_PREFIX = """
+            你是一个企业知识库助手。以下是从知识库中检索到的完整记录列表。
+            请根据用户问题，完整列出或统计所有匹配的记录。
+            如果记录数量较多，请以清晰的结构化格式（如表格或列表）展示。
+            不要在回答中遗漏任何记录。""";
+
+    /** 聚合查询系统提示词后缀：统计/列举指令 */
+    private static final String AGGREGATION_PROMPT_SUFFIX = """
+
+            请根据以上完整记录列表，回答用户的问题。请确保：
+            1. 如果用户要求列出，请列出所有记录，不要遗漏。
+            2. 如果用户要求统计，请给出准确的数字。
+            3. 如果记录已被截断（上下文中有截断提示），请在回答中注明。""";
+
     /**
      * 返回不含文档内容的系统提示词基础文本。
      * <p>
@@ -57,6 +72,25 @@ public class PromptTemplate {
      */
     public String buildUserPrompt(String query) {
         return query;
+    }
+
+    /**
+     * 返回聚合查询专用的系统提示词基础文本（不含上下文内容）。
+     *
+     * @return 聚合查询提示词前缀 + 后缀的拼接
+     */
+    public String getAggregationPromptBase() {
+        return AGGREGATION_PROMPT_PREFIX + AGGREGATION_PROMPT_SUFFIX;
+    }
+
+    /**
+     * 构建聚合查询的 System Prompt（角色指令 + 完整记录上下文）。
+     *
+     * @param context 聚合查询的上下文文本（紧凑格式）
+     * @return 系统 Prompt 文本
+     */
+    public String buildAggregationSystemPrompt(String context) {
+        return AGGREGATION_PROMPT_PREFIX + context + AGGREGATION_PROMPT_SUFFIX;
     }
 
     /**

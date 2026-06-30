@@ -51,3 +51,12 @@ agent-qr:
   embedding:
     collection-prefix: kb                  # ChromaDB Collection 前缀（暂未使用）
     auto-dimension-check: true             # 启动时自动检测向量维度一致性
+
+  filter:
+    llm-extract:
+      enabled: false                       # 默认关闭，灰度验证后开启
+      timeout-seconds: 5                   # LLM 调用超时（秒）
+
+  aggregation:
+    max-chunk-ids: 2000                    # 无界查询安全上限
+    compact-json: true                     # 使用紧凑 JSON 格式化

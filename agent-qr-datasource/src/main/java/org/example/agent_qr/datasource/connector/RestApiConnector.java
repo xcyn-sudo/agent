@@ -1,5 +1,8 @@
 package org.example.agent_qr.datasource.connector;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.datasource.dto.ConnectionTestResult;
 import org.example.agent_qr.datasource.dto.SyncContext;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +34,16 @@ import java.util.Map;
  *   <li>method - 请求方式 GET/POST/HEAD（选填，默认 GET）</li>
  *   <li>authHeader - 认证头，格式 "Authorization: Bearer xxx"（选填）</li>
  *   <li>pagination - 分页参数模板，如 "page={page}&size={size}"（选填）</li>
+ *   <li>dataPath - 数据数组所在路径，如 "stories"、"data.items"（选填，不填则自动检测）</li>
  * </ul>
+ * </p>
+ * <p>
+ * 响应解析策略（按优先级）：
+ * <ol>
+ *   <li>若指定 dataPath，按点号分隔导航 JSON（如 data.items → obj.data.items）</li>
+ *   <li>若响应为 JSON 数组，直接解析</li>
+ *   <li>若响应为 JSON 对象，自动查找第一个数组字段</li>
+ * </ol>
  * </p>
  *
  * @author agent-qr
@@ -40,6 +53,7 @@ import java.util.Map;
 public class RestApiConnector implements DataSourceConnector {
 
     private final RestTemplate restTemplate = new RestTemplate();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public String getType() {
@@ -72,13 +86,13 @@ public class RestApiConnector implements DataSourceConnector {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public SyncResult fullSync(SyncContext context) {
         Map<String, Object> config = context.getConfig();
         String baseUrl = (String) config.get("baseUrl");
         String endpoint = (String) config.getOrDefault("endpoint", "/");
         String methodStr = (String) config.getOrDefault("method", "GET");
         String pagination = (String) config.get("pagination");
+        String dataPath = (String) config.get("dataPath");
         HttpMethod method = parseHttpMethod(methodStr);
 
         List<Map<String, Object>> allRows = new ArrayList<>();
@@ -90,29 +104,20 @@ public class RestApiConnector implements DataSourceConnector {
             while (page < maxPages) {
                 String url = buildUrl(baseUrl, endpoint, pagination, page, cursor);
 
-                ResponseEntity<List> response = restTemplate.exchange(
-                        url, method, buildEntity(config), List.class);
+                ResponseEntity<String> response = restTemplate.exchange(
+                        url, method, buildEntity(config), String.class);
 
-                if (response.getBody() != null) {
-                    for (Object item : response.getBody()) {
-                        if (item instanceof Map) {
-                            allRows.add(new LinkedHashMap<>((Map<String, Object>) item));
-                        }
-                    }
-                }
+                List<Map<String, Object>> pageRows = extractList(response.getBody(), dataPath);
+                allRows.addAll(pageRows);
 
                 // X-Next-Cursor 游标翻页
                 List<String> cursorHeaders = response.getHeaders().get("X-Next-Cursor");
                 if (cursorHeaders != null && !cursorHeaders.isEmpty()) {
                     cursor = cursorHeaders.get(0);
                     if (cursor == null || cursor.isEmpty()) break;
-                } else if (pagination != null && !pagination.isEmpty()) {
-                    // 使用分页参数模板
-                } else {
-                    // 无分页：一次请求即完成
                 }
 
-                if (response.getBody() == null || response.getBody().isEmpty()) {
+                if (pageRows.isEmpty()) {
                     break;
                 }
                 // 无分页参数且无游标：单次请求
@@ -130,13 +135,13 @@ public class RestApiConnector implements DataSourceConnector {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public SyncResult incrementalSync(SyncContext context, String lastCursor) {
         Map<String, Object> config = context.getConfig();
         String baseUrl = (String) config.get("baseUrl");
         String endpoint = (String) config.getOrDefault("endpoint", "/");
         String methodStr = (String) config.getOrDefault("method", "GET");
         String cursorParam = (String) config.getOrDefault("cursorParam", "since");
+        String dataPath = (String) config.get("dataPath");
         HttpMethod method = parseHttpMethod(methodStr);
 
         List<Map<String, Object>> allRows = new ArrayList<>();
@@ -145,15 +150,9 @@ public class RestApiConnector implements DataSourceConnector {
         try {
             String url = baseUrl + endpoint + "?" + cursorParam + "="
                     + (lastCursor != null ? lastCursor : "");
-            ResponseEntity<List> response = restTemplate.exchange(
-                    url, method, buildEntity(config), List.class);
-            if (response.getBody() != null) {
-                for (Object item : response.getBody()) {
-                    if (item instanceof Map) {
-                        allRows.add(new LinkedHashMap<>((Map<String, Object>) item));
-                    }
-                }
-            }
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url, method, buildEntity(config), String.class);
+            allRows = extractList(response.getBody(), dataPath);
             List<String> cursorHeaders = response.getHeaders().get("X-Next-Cursor");
             if (cursorHeaders != null && !cursorHeaders.isEmpty()) {
                 newCursor = cursorHeaders.get(0);
@@ -164,6 +163,71 @@ public class RestApiConnector implements DataSourceConnector {
         }
 
         return new SyncResult(allRows.size(), allRows, newCursor);
+    }
+
+    /**
+     * 从 JSON 响应中提取数据列表，同时支持 JSON 数组和 JSON 对象。
+     * <p>
+     * 解析优先级：
+     * <ol>
+     *   <li>若指定 dataPath，按点号分隔逐级导航（如 "data.items" → root.data.items）</li>
+     *   <li>若响应为 JSON 数组，直接解析</li>
+     *   <li>若响应为 JSON 对象，自动查找第一个值为数组的字段</li>
+     * </ol>
+     *
+     * @param json     响应体字符串
+     * @param dataPath 数据路径（可选），点号分隔，如 "stories"、"data.items"
+     * @return 解析后的数据行列表，解析失败返回空列表
+     */
+    private List<Map<String, Object>> extractList(String json, String dataPath) {
+        if (json == null || json.isBlank()) return List.of();
+        try {
+            JsonNode root = objectMapper.readTree(json);
+            JsonNode target = null;
+
+            // 1. 优先使用 dataPath 导航
+            if (dataPath != null && !dataPath.isBlank()) {
+                target = root;
+                for (String key : dataPath.split("\\.")) {
+                    if (target == null) break;
+                    target = target.get(key.trim());
+                }
+                if (target != null && target.isArray()) {
+                    log.debug("通过 dataPath={} 定位到数组", dataPath);
+                } else {
+                    log.warn("dataPath={} 未找到数组，target={}", dataPath, target);
+                }
+            }
+
+            // 2. 响应本身就是 JSON 数组
+            if (target == null && root.isArray()) {
+                target = root;
+                log.debug("响应为 JSON 数组");
+            }
+
+            // 3. 响应是对象：自动查找第一个数组字段
+            if (target == null && root.isObject()) {
+                Iterator<Map.Entry<String, JsonNode>> fields = root.fields();
+                while (fields.hasNext()) {
+                    Map.Entry<String, JsonNode> field = fields.next();
+                    if (field.getValue().isArray()) {
+                        target = field.getValue();
+                        log.info("自动检测到数组字段: {}", field.getKey());
+                        break;
+                    }
+                }
+            }
+
+            if (target != null && target.isArray()) {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> result = objectMapper.convertValue(
+                        target, List.class);
+                return result;
+            }
+        } catch (Exception e) {
+            log.error("JSON 解析失败: {}", e.getMessage(), e);
+        }
+        return List.of();
     }
 
     // ── 工具方法 ──
