@@ -75,6 +75,10 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-agent_qr}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai
       MYSQL_USERNAME: root
       MYSQL_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root}
+      # P3 CQRS 读写分离 Datasource 配置
+      MYSQL_HOST: mysql
+      MYSQL_WRITE_PORT: "3306"
+      MYSQL_READ_PORT: "3306"
       # JWT
       JWT_SECRET: ${JWT_SECRET:-change-me-to-a-random-secret}
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
