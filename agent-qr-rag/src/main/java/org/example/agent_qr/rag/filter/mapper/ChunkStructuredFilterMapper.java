@@ -58,25 +58,6 @@ public interface ChunkStructuredFilterMapper extends BaseMapper<ChunkStructured>
     List<Long> selectChunkIdsByDomain(@Param("domain") String domain);
 
     /**
-     * 查询指定域下的所有可用字段定义（去重）。
-     * 用于 FilterConditionExtractor 构建 LLM Prompt 中的字段列表。
-     */
-    @Select("SELECT DISTINCT field_name AS fieldName, field_type AS fieldType " +
-            "FROM kb_chunk_structured WHERE domain = #{domain} " +
-            "ORDER BY field_name")
-    List<FieldDefinition> selectDistinctFieldsByDomain(@Param("domain") String domain);
-
-    /**
-     * 查询指定域下某枚举字段的所有去重值。
-     * 用于 FilterConditionExtractor 校验 LLM 提取的枚举值是否合法。
-     */
-    @Select("SELECT DISTINCT field_value FROM kb_chunk_structured " +
-            "WHERE field_name = #{fieldName} AND domain = #{domain} " +
-            "ORDER BY field_value LIMIT 50")
-    List<String> selectEnumValues(@Param("fieldName") String fieldName,
-                                  @Param("domain") String domain);
-
-    /**
      * 按文档 domain 查询切片 ID（用于域过滤，文档上传管线）。
      * JOIN kb_chunk + kb_document，仅返回未删除的切片。
      */
