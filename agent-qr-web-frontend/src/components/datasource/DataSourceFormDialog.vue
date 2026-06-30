@@ -508,6 +508,12 @@ function handleTestConnection() {
             placeholder="/api/data（默认 /）"
           />
         </el-form-item>
+        <el-form-item label="数据路径">
+          <el-input
+            v-model="connectionConfig.dataPath"
+            placeholder="如 stories、data.items（选填，自动检测）"
+          />
+        </el-form-item>
         <el-form-item label="认证头">
           <el-input
             v-model="connectionConfig.authHeader"
