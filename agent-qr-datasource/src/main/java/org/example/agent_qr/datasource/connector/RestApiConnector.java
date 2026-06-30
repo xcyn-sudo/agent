@@ -219,8 +219,12 @@ public class RestApiConnector implements DataSourceConnector {
             }
 
             if (target != null && target.isArray()) {
-                return objectMapper.convertValue(
-                        target, new TypeReference<List<LinkedHashMap<String, Object>>>() {});
+                List<Map<String, Object>> result = new ArrayList<>();
+                for (JsonNode item : target) {
+                    result.add(objectMapper.convertValue(
+                            item, new TypeReference<LinkedHashMap<String, Object>>() {}));
+                }
+                return result;
             }
         } catch (Exception e) {
             log.error("JSON 解析失败: {}", e.getMessage(), e);
