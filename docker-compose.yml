@@ -11,7 +11,7 @@ services:
   # MySQL 8.0 - 关系型数据库
   # ==========================================
   mysql:
-    image: mysql
+    image: mysql:8.0
     container_name: agent-qr-mysql
     restart: unless-stopped
     environment:
