@@ -3,6 +3,7 @@ package org.example.agent_qr.rag.provider;
 import lombok.extern.slf4j.Slf4j;
 import org.example.agent_qr.common.BusinessException;
 import org.example.agent_qr.rag.provider.deepseek.DeepSeekLLMProvider;
+import org.example.agent_qr.rag.provider.dashscope.DashScopeEmbeddingProvider;
 import org.example.agent_qr.rag.provider.ollama.OllamaEmbeddingProvider;
 import org.example.agent_qr.rag.provider.ollama.OllamaLLMProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +43,9 @@ public class ProviderFactory {
     @Autowired(required = false)
     private OllamaEmbeddingProvider ollamaEmbeddingProvider;
 
+    @Autowired(required = false)
+    private DashScopeEmbeddingProvider dashScopeEmbeddingProvider;
+
     /**
      * 根据配置获取 LLM 提供商实例（P2 扩展：支持 ollama；P3：集成决策引擎）。
      */
@@ -79,6 +83,7 @@ public class ProviderFactory {
         }
         EmbeddingProvider embeddingProvider = switch (provider) {
             case "ollama" -> ollamaEmbeddingProvider;
+            case "dashscope" -> dashScopeEmbeddingProvider;
             default -> {
                 log.warn("未知的 Embedding Provider 配置: {}，回退到 Ollama", provider);
                 yield ollamaEmbeddingProvider;

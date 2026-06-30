@@ -84,6 +84,8 @@ services:
       JWT_EXPIRATION: ${JWT_EXPIRATION:-86400000}
       # DeepSeek API
       DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY}
+      # DashScope API (Embedding + 过滤条件提取)
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY}
       # ChromaDB
       LANGCHAIN4J_CHROMA_BASE_URL: http://chromadb:8000
       # 文件上传
