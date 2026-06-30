@@ -44,7 +44,7 @@ public class FormatRule implements QualityRule {
             }
 
             // 日期字段检查
-            if (key.contains("date") || key.contains("time") || key.contains("_at")) {
+            if (key.contains("date") || key.contains("time") || key.endsWith("_at")) {
                 try {
                     // 尝试解析 ISO 日期时间格式
                     if (strValue.contains("T")) {
