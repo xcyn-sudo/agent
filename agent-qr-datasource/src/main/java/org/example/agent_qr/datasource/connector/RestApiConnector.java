@@ -61,6 +61,30 @@ public class RestApiConnector implements DataSourceConnector {
     }
 
     @Override
+    public List<String> detectColumns(Map<String, Object> config, String tableName) {
+        String baseUrl = (String) config.get("baseUrl");
+        String endpoint = (String) config.getOrDefault("endpoint", "/");
+        String methodStr = (String) config.getOrDefault("method", "GET");
+        String dataPath = (String) config.get("dataPath");
+        HttpMethod method = parseHttpMethod(methodStr);
+        String url = baseUrl + endpoint;
+
+        try {
+            HttpEntity<Void> entity = buildEntity(config);
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url, method, entity, String.class);
+            List<Map<String, Object>> rows = extractList(response.getBody(), dataPath);
+            if (!rows.isEmpty()) {
+                return new ArrayList<>(rows.get(0).keySet());
+            }
+            log.warn("REST 字段检测: 响应中无数据行, url={}", url);
+        } catch (Exception e) {
+            log.error("REST 字段检测失败: url={}, error={}", url, e.getMessage());
+        }
+        return List.of();
+    }
+
+    @Override
     public ConnectionTestResult testConnection(Map<String, Object> config) {
         String baseUrl = (String) config.get("baseUrl");
         String endpoint = (String) config.getOrDefault("endpoint", "/");
